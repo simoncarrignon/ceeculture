@@ -4,7 +4,7 @@
 #include <World.hxx>
 #include <Roman.hxx>
 
-namespace Roman
+namespace Epnet
 {
 
 EatAction::EatAction()
@@ -29,6 +29,6 @@ std::string EatAction::describe() const
 	return "Eat action";
 }
 
-} // namespace Roman
+} // namespace Epnet
 
 

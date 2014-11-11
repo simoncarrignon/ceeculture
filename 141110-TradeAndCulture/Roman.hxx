@@ -7,7 +7,7 @@
 
 #include <string>
 
-namespace Roman
+namespace Epnet
 {
 
 class Roman : public Engine::Agent
@@ -41,7 +41,7 @@ public:
 
 };
 
-} // namespace Roman
+} // namespace Epnet
 
 #endif // __Roman_hxx__
 

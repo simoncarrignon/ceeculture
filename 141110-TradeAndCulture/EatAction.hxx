@@ -10,7 +10,7 @@ namespace Engine
 	class Agent;
 }
 
-namespace Roman
+namespace Epnet
 {
 
 class EatAction : public Engine::Action
@@ -22,7 +22,7 @@ public:
 	std::string describe() const;
 };
 
-} // namespace Roman
+} // namespace Epnet
 
 #endif // __EatAction_hxx__
 

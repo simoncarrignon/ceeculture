@@ -4,7 +4,7 @@
 #include <Statistics.hxx>
 #include <World.hxx>
 
-namespace Roman
+namespace Epnet
 {
 
 Roman::Roman( const std::string & id ) : Agent(id), _resources(5)

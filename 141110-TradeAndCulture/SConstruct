@@ -5,13 +5,13 @@
 ##### please fill with information about your model ##
 ######################################################
 
-nameProgram = 'trade'
+nameProgram = 'province'
 
 agents = ['Roman']
-world = 'TradeWorld'
-namespaceAgents = ['Roman']
+world = 'Province'
+namespaceAgents = ['Epnet']
 
-srcFiles = Split('main.cxx Roman.cxx TradeWorld.cxx TradeWorldConfig.cxx EatAction.cxx')
+srcFiles = Split('main.cxx Roman.cxx Province.cxx ProvinceConfig.cxx EatAction.cxx')
 
 ###################################################
 ########## END OF CUSTOM INFORMATION  #############

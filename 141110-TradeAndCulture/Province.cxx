@@ -1,25 +1,25 @@
 
-#include <TradeWorld.hxx>
+#include <Province.hxx>
 
-#include <TradeWorldConfig.hxx>
+#include <ProvinceConfig.hxx>
 #include <Roman.hxx>
 #include <DynamicRaster.hxx>
 #include <Point2D.hxx>
 #include <GeneralState.hxx>
 #include <Logger.hxx>
 
-namespace Roman 
+namespace Epnet
 {
 
-TradeWorld::TradeWorld(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, false)
-{
-}
-
-TradeWorld::~TradeWorld()
+Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, false)
 {
 }
 
-void TradeWorld::createRasters()
+Province::~Province()
+{
+}
+
+void Province::createRasters()
 {
 	registerDynamicRaster("resources", true);
 	getDynamicRaster("resources").setInitValues(0, 5, 0);
@@ -32,12 +32,12 @@ void TradeWorld::createRasters()
 	updateRasterToMaxValues("resources");
 }
 
-void TradeWorld::createAgents()
+void Province::createAgents()
 {
     std::stringstream logName;
 	logName << "agents_" << getId();
 
-    const TradeWorldConfig & randomConfig = (const TradeWorldConfig&)getConfig();
+    const ProvinceConfig & randomConfig = (const ProvinceConfig&)getConfig();
 	for(int i=0; i<randomConfig._numAgents; i++)
 	{
 		if((i%getNumTasks())==getId())

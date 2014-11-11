@@ -1,5 +1,5 @@
-#include <TradeWorld.hxx>
-#include <TradeWorldConfig.hxx>
+#include <Province.hxx>
+#include <ProvinceConfig.hxx>
 #include <Exception.hxx>
 #include <Config.hxx>
 
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 		{
 			fileName = argv[1];
 		}
-		Roman::TradeWorld tradeWorld(new Roman::TradeWorldConfig(fileName));
+		Epnet::Province tradeWorld(new Epnet::ProvinceConfig(fileName));
 	
 		tradeWorld.initialize(argc, argv);
 		tradeWorld.run();
