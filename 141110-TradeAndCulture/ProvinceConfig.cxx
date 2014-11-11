@@ -8,6 +8,10 @@ ProvinceConfig::ProvinceConfig( const std::string & xmlFile ) : Config(xmlFile),
 {
 }
 
+ProvinceConfig::ProvinceConfig( const Engine::Size <int> & size, const int & numSteps ) : Engine::Config(size,numSteps), _numAgents(0)
+{
+}
+
 ProvinceConfig::~ProvinceConfig()
 {
 }

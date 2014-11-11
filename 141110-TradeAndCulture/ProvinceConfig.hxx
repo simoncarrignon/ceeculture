@@ -12,6 +12,7 @@ class ProvinceConfig : public Engine::Config
 	int _numAgents;
 public:
 	ProvinceConfig( const std::string & xmlFile );
+	ProvinceConfig( const Engine::Size <int> & size, const int & numSteps );
 	virtual ~ProvinceConfig();
 
 	void loadParams();

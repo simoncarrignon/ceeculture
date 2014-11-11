@@ -34,11 +34,11 @@ void Province::createRasters()
 
 void Province::createAgents()
 {
-    std::stringstream logName;
+	std::stringstream logName;
 	logName << "agents_" << getId();
 
-    const ProvinceConfig & randomConfig = (const ProvinceConfig&)getConfig();
-	for(int i=0; i<randomConfig._numAgents; i++)
+	const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+	for(int i=0; i<provinceConfig._numAgents; i++)
 	{
 		if((i%getNumTasks())==getId())
 		{
