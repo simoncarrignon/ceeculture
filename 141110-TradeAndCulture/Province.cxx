@@ -52,5 +52,16 @@ void Province::createAgents()
 	}
 }
 
+void Province::proposeConnection(Roman* source, Roman* target)
+{
+	source->proposeConnectionTo(target);
+}
+
+void Province::buildConnection(Roman* source, Roman* target)
+{
+	source->proposeConnectionTo(target);
+	target->acceptConnectionFrom(source);
+}
+
 } // namespace Roman
 

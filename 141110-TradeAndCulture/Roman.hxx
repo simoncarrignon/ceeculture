@@ -14,6 +14,18 @@ class Roman : public Engine::Agent
 {
 	int _resources; // MpiBasicAttribute
 
+private:
+	std::vector<Roman*> proposedConnections;
+
+	void requestConnectionFrom(Roman* source);
+	std::vector<Roman*> receivedConnections;
+
+	std::vector<Roman*> validRcvConnections;
+
+	int ackConnectionFrom(Roman* target);
+	int nackConnectionFrom(Roman* target);
+	std::vector<Roman*> validSendConnections;
+
 public:
 	// todo remove environment from here
 	Roman( const std::string & id );
@@ -26,6 +38,19 @@ public:
 
 	void setResources( int resources );
 	int getResources() const;
+
+	void proposeConnectionTo(Roman* target);
+	void killConnectionTo(Roman* target);
+	std::vector<Roman*> getProposedConnections() {return proposedConnections;};
+	std::vector<Roman*> getValidSendConnections() {return validSendConnections;};
+
+
+	void acceptConnectionFrom(Roman* source);
+	void refuseConnectionFrom(Roman* source);
+	void killConnectionFrom(Roman* source);
+	std::vector<Roman*> getReceivedConnections() {return receivedConnections;};
+	std::vector<Roman*> getValidRcvConnections() {return validRcvConnections;};
+
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //
