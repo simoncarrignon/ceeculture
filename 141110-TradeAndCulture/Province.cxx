@@ -63,5 +63,28 @@ void Province::buildConnection(Roman* source, Roman* target)
 	target->acceptConnectionFrom(source);
 }
 
+void Province::killConnection(Roman* source, Roman* target)
+{
+	source->killConnectionTo(target);
+}
+
+void Province::proposeTwoWayConnection(Roman* source, Roman* target)
+{
+	source->proposeConnectionTo(target);
+	target->proposeConnectionTo(source);
+}
+
+void Province::buildTwoWayConnection(Roman* source, Roman* target)
+{
+	buildConnection(source,target);
+	buildConnection(target,source);
+}
+
+void Province::killTwoWayConnection(Roman* source, Roman* target)
+{
+	source->killConnectionTo(target);
+	target->killConnectionTo(source);
+}
+
 } // namespace Roman
 

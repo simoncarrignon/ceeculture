@@ -51,6 +51,8 @@ public:
 	std::vector<Roman*> getReceivedConnections() {return receivedConnections;};
 	std::vector<Roman*> getValidRcvConnections() {return validRcvConnections;};
 
+	void killConnections(Roman *target);
+
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //

@@ -21,6 +21,11 @@ public:
 
 	void proposeConnection(Roman* source, Roman* target);
 	void buildConnection(Roman* source, Roman* target);
+	void killConnection(Roman* source, Roman* target);
+
+	void proposeTwoWayConnection(Roman* source, Roman* target);
+	void buildTwoWayConnection(Roman* source, Roman* target);
+	void killTwoWayConnection(Roman* source, Roman* target);
 };
 
 } // namespace Epnet

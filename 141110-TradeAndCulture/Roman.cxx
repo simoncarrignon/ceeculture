@@ -64,17 +64,56 @@ void Roman::proposeConnectionTo(Roman* target)
 
 void Roman::killConnectionTo(Roman* target)
 {
+	bool wasPresent = false;
 	//remove traces from the proposedConnections
 	if( std::find(proposedConnections.begin(), proposedConnections.end(), target) != proposedConnections.end() )
 	{
 		proposedConnections.erase(std::remove(proposedConnections.begin(), proposedConnections.end(), target), proposedConnections.end());
+		wasPresent = true;
 	}
 
 	//remove trances from valid connections
 	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
 	{
 		validSendConnections.erase(std::remove(validSendConnections.begin(), validSendConnections.end(), target), validSendConnections.end());
+		wasPresent = true;
 	}
+
+	//if the target was present there is a chance that we are in its lists
+	if (wasPresent == true)
+	{
+		target->killConnectionFrom(this);
+	}
+}
+
+void Roman::killConnectionFrom(Roman* source)
+{
+	bool wasPresent = false;
+	//remove traces from the receivedConnections
+	if( std::find(receivedConnections.begin(), receivedConnections.end(), source) != receivedConnections.end() )
+	{
+		receivedConnections.erase(std::remove(receivedConnections.begin(), receivedConnections.end(), source), receivedConnections.end());
+		wasPresent = true;
+	}
+
+	//remove trances from valid connections
+	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) != validRcvConnections.end() )
+	{
+		validRcvConnections.erase(std::remove(validRcvConnections.begin(), validRcvConnections.end(), source), validRcvConnections.end());
+		wasPresent = true;
+	}
+
+	//if the source was present there is a chance that we are in its lists
+	if (wasPresent == true)
+	{
+		source->killConnectionTo(this);
+	}
+}
+
+void Roman::killConnections(Roman* target)
+{
+	killConnectionTo(target);
+	killConnectionFrom(target);
 }
 
 void Roman::requestConnectionFrom(Roman* source)
