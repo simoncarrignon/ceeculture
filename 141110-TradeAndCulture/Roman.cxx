@@ -166,7 +166,6 @@ void Roman::killConnectionBetween(Roman* source, Roman* target)
 	source->killConnectionTo(target);
 }
 
-
 int Roman::ackConnectionFrom(Roman* target)
 {
 	//if we had sent a connection we acknowledge it, otherwise we just return an error
@@ -194,6 +193,16 @@ int Roman::nackConnectionFrom(Roman* target)
 	{
 		return 0;
 	}
+}
+
+void Roman::receiveMessageFrom(Roman* source, std::string msg)
+{
+	receivedMessages.push_back(msg);
+}
+
+void Roman::sendMessageTo(Roman* target, std::string msg)
+{
+	target->receiveMessageFrom(this, msg);
 }
 
 } // namespace Roman

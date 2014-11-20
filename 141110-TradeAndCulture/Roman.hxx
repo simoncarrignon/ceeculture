@@ -26,6 +26,9 @@ private:
 	int nackConnectionFrom(Roman* target);
 	std::vector<Roman*> validSendConnections;
 
+	void receiveMessageFrom(Roman* source, std::string msg);
+	std::vector<std::string> receivedMessages;
+
 public:
 	// todo remove environment from here
 	Roman( const std::string & id );
@@ -56,6 +59,8 @@ public:
 	void proposeConnectionBetween(Roman *source, Roman * target);
 	void killConnectionBetween(Roman *source, Roman * target);
 
+	void sendMessageTo(Roman *target, std::string msg);
+	std::vector<std::string> getReceivedMessages() {return receivedMessages;};
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //
