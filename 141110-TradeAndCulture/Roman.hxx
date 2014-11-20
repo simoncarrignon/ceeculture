@@ -53,6 +53,9 @@ public:
 
 	void killConnections(Roman *target);
 
+	void proposeConnectionBetween(Roman *source, Roman * target);
+	void killConnectionBetween(Roman *source, Roman * target);
+
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //

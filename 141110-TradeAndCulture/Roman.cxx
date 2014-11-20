@@ -156,6 +156,17 @@ void Roman::refuseConnectionFrom(Roman* source)
 	receivedConnections.erase(std::remove(receivedConnections.begin(), receivedConnections.end(), source), receivedConnections.end());
 }
 
+void Roman::proposeConnectionBetween(Roman* source, Roman* target)
+{
+	source->proposeConnectionTo(target);
+}
+
+void Roman::killConnectionBetween(Roman* source, Roman* target)
+{
+	source->killConnectionTo(target);
+}
+
+
 int Roman::ackConnectionFrom(Roman* target)
 {
 	//if we had sent a connection we acknowledge it, otherwise we just return an error

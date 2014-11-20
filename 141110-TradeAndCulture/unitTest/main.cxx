@@ -688,7 +688,79 @@ BOOST_AUTO_TEST_CASE( WorldBuildKillTwoWayConnection )
 	myWorld.run();
 }
 
+BOOST_AUTO_TEST_SUITE_END()
 
+
+
+
+BOOST_AUTO_TEST_SUITE( ConnectionFromOther )
+
+BOOST_AUTO_TEST_CASE( AgentProposeOtherConnection ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	Roman * myAgent2 = new Roman("agent_2");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myWorld.addAgent(myAgent2);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+	myAgent2->setRandomPosition();
+
+	myAgent0->proposeConnectionBetween(myAgent1, myAgent2);
+	std::vector<Roman*> proposedAgent1 = myAgent1->getProposedConnections();
+	BOOST_CHECK_EQUAL(proposedAgent1.size(), 1);
+	BOOST_CHECK_EQUAL(proposedAgent1[0], myAgent2);
+
+	std::vector<Roman*> receivedAgent2 = myAgent2->getReceivedConnections();
+	BOOST_CHECK_EQUAL(receivedAgent2.size(), 1);
+	BOOST_CHECK_EQUAL(receivedAgent2[0], myAgent1);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( AgentKillOtherConnection ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	Roman * myAgent2 = new Roman("agent_2");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myWorld.addAgent(myAgent2);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+	myAgent2->setRandomPosition();
+
+	myAgent1->proposeConnectionTo(myAgent2);
+	myAgent2->acceptConnectionFrom(myAgent1);
+	myAgent0->killConnectionBetween(myAgent1, myAgent2);
+
+	std::vector<Roman*> proposedAgent1 = myAgent1->getProposedConnections();
+	std::vector<Roman*> validSendAgent1 = myAgent1->getValidSendConnections();
+	std::vector<Roman*> receivedAgent1 = myAgent1->getReceivedConnections();
+	std::vector<Roman*> validRcvAgent1 = myAgent1->getValidRcvConnections();
+	BOOST_CHECK_EQUAL(proposedAgent1.size(), 0);
+	BOOST_CHECK_EQUAL(validSendAgent1.size(), 0);
+	BOOST_CHECK_EQUAL(receivedAgent1.size(), 0);
+	BOOST_CHECK_EQUAL(validRcvAgent1.size(), 0);
+
+	std::vector<Roman*> proposedAgent2 = myAgent2->getProposedConnections();
+	std::vector<Roman*> validSendAgent2 = myAgent2->getValidSendConnections();
+	std::vector<Roman*> receivedAgent2 = myAgent2->getReceivedConnections();
+	std::vector<Roman*> validRcvAgent2 = myAgent2->getValidRcvConnections();
+	BOOST_CHECK_EQUAL(proposedAgent2.size(), 0);
+	BOOST_CHECK_EQUAL(validSendAgent2.size(), 0);
+	BOOST_CHECK_EQUAL(receivedAgent2.size(), 0);
+	BOOST_CHECK_EQUAL(validRcvAgent2.size(), 0);
+
+	myWorld.run();
+}
 BOOST_AUTO_TEST_SUITE_END()
 
 } // namespace Test
