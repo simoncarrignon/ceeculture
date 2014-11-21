@@ -6,6 +6,7 @@
 #include <Action.hxx>
 
 #include <string>
+#include <tuple>
 
 namespace Epnet
 {
@@ -27,7 +28,7 @@ private:
 	std::vector<Roman*> validSendConnections;
 
 	void receiveMessageFrom(Roman* source, std::string msg);
-	std::vector<std::string> receivedMessages;
+	std::vector<std::tuple<Roman*,std::string> > receivedMessages;
 
 public:
 	// todo remove environment from here
@@ -60,7 +61,7 @@ public:
 	void killConnectionBetween(Roman *source, Roman * target);
 
 	void sendMessageTo(Roman *target, std::string msg);
-	std::vector<std::string> getReceivedMessages() {return receivedMessages;};
+	std::vector<std::tuple<Roman*,std::string> > getReceivedMessages() {return receivedMessages;};
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //

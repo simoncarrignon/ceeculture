@@ -780,18 +780,83 @@ BOOST_AUTO_TEST_CASE( SourceSendMsg )
 	myAgent1->setRandomPosition();
 
 	myAgent0->proposeConnectionTo(myAgent1);
-	myAgent0->acceptConnectionFrom(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
 	myAgent0->sendMessageTo(myAgent1,"hello");
 
-	std::vector<std::string> receivedMsgAgent1 = myAgent1->getReceivedMessages();
+	std::vector<std::tuple<Roman*,std::string> > receivedMsgAgent1 = myAgent1->getReceivedMessages();
 	BOOST_CHECK_EQUAL(receivedMsgAgent1.size(), 1);
 	//TODO change to know where the message is coming from
-	BOOST_CHECK_EQUAL(receivedMsgAgent1[0], "hello");
+	BOOST_CHECK_EQUAL(std::get<0>(receivedMsgAgent1[0]), myAgent0);
+	BOOST_CHECK_EQUAL(std::get<1>(receivedMsgAgent1[0]), "hello");
 
 	myWorld.run();
 }
 
-//TODO: check that there is a connection with the target
+BOOST_AUTO_TEST_CASE( SendMsgToProposed ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent0->sendMessageTo(myAgent1,"hello");
+
+	std::vector<std::tuple<Roman*,std::string> > receivedMsgAgent1 = myAgent1->getReceivedMessages();
+	BOOST_CHECK_EQUAL(receivedMsgAgent1.size(), 0);
+	//TODO change to know where the message is coming from
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( SendMsgToUnconnected ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->sendMessageTo(myAgent1,"hello");
+
+	std::vector<std::tuple<Roman*,std::string> > receivedMsgAgent1 = myAgent1->getReceivedMessages();
+	BOOST_CHECK_EQUAL(receivedMsgAgent1.size(), 0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( SendMsgAfterConnectionKilled ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+	myAgent0->killConnectionTo(myAgent1);
+	myAgent0->sendMessageTo(myAgent1,"hello");
+
+	std::vector<std::tuple<Roman*,std::string> > receivedMsgAgent1 = myAgent1->getReceivedMessages();
+	BOOST_CHECK_EQUAL(receivedMsgAgent1.size(), 0);
+
+	myWorld.run();
+}
+
 
 BOOST_AUTO_TEST_SUITE_END()
 

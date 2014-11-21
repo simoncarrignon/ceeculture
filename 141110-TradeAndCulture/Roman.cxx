@@ -197,12 +197,19 @@ int Roman::nackConnectionFrom(Roman* target)
 
 void Roman::receiveMessageFrom(Roman* source, std::string msg)
 {
-	receivedMessages.push_back(msg);
+	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) != validRcvConnections.end() )
+	{
+		receivedMessages.push_back(std::make_tuple(source,msg));
+	}
 }
 
 void Roman::sendMessageTo(Roman* target, std::string msg)
 {
-	target->receiveMessageFrom(this, msg);
+	// if the connection with the target has been valideted
+	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
+	{
+		target->receiveMessageFrom(this, msg);
+	}
 }
 
 } // namespace Roman
