@@ -212,5 +212,10 @@ void Roman::sendMessageTo(Roman* target, std::string msg)
 	}
 }
 
+void Roman::addGoodType(std::string type)
+{
+}
+
+
 } // namespace Roman
 

@@ -30,6 +30,8 @@ private:
 	void receiveMessageFrom(Roman* source, std::string msg);
 	std::vector<std::tuple<Roman*,std::string> > receivedMessages;
 
+	std::vector<std::tuple<std::string,int> > listGoods;
+
 public:
 	// todo remove environment from here
 	Roman( const std::string & id );
@@ -43,6 +45,8 @@ public:
 	void setResources( int resources );
 	int getResources() const;
 
+
+	// setup connections
 	void proposeConnectionTo(Roman* target);
 	void killConnectionTo(Roman* target);
 	std::vector<Roman*> getProposedConnections() {return proposedConnections;};
@@ -60,8 +64,14 @@ public:
 	void proposeConnectionBetween(Roman *source, Roman * target);
 	void killConnectionBetween(Roman *source, Roman * target);
 
+	//message system
 	void sendMessageTo(Roman *target, std::string msg);
 	std::vector<std::tuple<Roman*,std::string> > getReceivedMessages() {return receivedMessages;};
+
+
+	//good system
+	void addGoodType(std::string type);
+	std::vector<std::tuple<std::string,int> > getListGoods() { return listGoods;};
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //

@@ -785,7 +785,6 @@ BOOST_AUTO_TEST_CASE( SourceSendMsg )
 
 	std::vector<std::tuple<Roman*,std::string> > receivedMsgAgent1 = myAgent1->getReceivedMessages();
 	BOOST_CHECK_EQUAL(receivedMsgAgent1.size(), 1);
-	//TODO change to know where the message is coming from
 	BOOST_CHECK_EQUAL(std::get<0>(receivedMsgAgent1[0]), myAgent0);
 	BOOST_CHECK_EQUAL(std::get<1>(receivedMsgAgent1[0]), "hello");
 
@@ -809,7 +808,6 @@ BOOST_AUTO_TEST_CASE( SendMsgToProposed )
 
 	std::vector<std::tuple<Roman*,std::string> > receivedMsgAgent1 = myAgent1->getReceivedMessages();
 	BOOST_CHECK_EQUAL(receivedMsgAgent1.size(), 0);
-	//TODO change to know where the message is coming from
 
 	myWorld.run();
 }
@@ -857,10 +855,30 @@ BOOST_AUTO_TEST_CASE( SendMsgAfterConnectionKilled )
 	myWorld.run();
 }
 
-
 BOOST_AUTO_TEST_SUITE_END()
 
 
+BOOST_AUTO_TEST_SUITE( GoodSystem )
+
+BOOST_AUTO_TEST_CASE( AddGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A");
+
+	std::vector<std::tuple<std::string, int> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_SUITE_END()
 
 } // namespace Test
 
