@@ -858,7 +858,111 @@ BOOST_AUTO_TEST_CASE( SendMsgAfterConnectionKilled )
 BOOST_AUTO_TEST_SUITE_END()
 
 
-BOOST_AUTO_TEST_SUITE( GoodSystem )
+BOOST_AUTO_TEST_SUITE( GoodsSystem )
+
+BOOST_AUTO_TEST_CASE( AddTypeGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+
+	std::vector<std::tuple<std::string, double, double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( AddTwoTimesTypeGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",99.0);
+
+	std::vector<std::tuple<std::string, double, double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( AddTwoDifferentTypeGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("B",50.0);
+
+	std::vector<std::tuple<std::string, double, double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 2);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[1]), "B");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[1]), 0.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[1]), 50.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( RemoveTypeGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("B",50.0);
+	myAgent0->removeGoodType("A");
+
+	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "B");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 50.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( RemoveNoneExistingGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->removeGoodType("B");
+
+	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
 
 BOOST_AUTO_TEST_CASE( AddGood ) 
 {
@@ -868,12 +972,192 @@ BOOST_AUTO_TEST_CASE( AddGood )
 	Roman * myAgent0 = new Roman("agent_0");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A");
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",2.0);
 
-	std::vector<std::tuple<std::string, int> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
-	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0);
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 2.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( AddTooMuchGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",2.0);
+	myAgent0->addGood("A",98.1);
+
+	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 100.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( AddGoodToNotKnownType ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("B",2.0);
+
+	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( RemoveGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",50.0);
+	myAgent0->removeGood("A",2.0);
+
+	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 48.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( RemoveTooMuchGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",10.0);
+	myAgent0->removeGood("A",20.0);
+
+	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( RemoveGoodNotKnown ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",10.0);
+	myAgent0->removeGood("B",20.0);
+
+	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	BOOST_CHECK_EQUAL(listGoods.size(), 1);
+	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
+	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 10.0);
+	BOOST_CHECK_EQUAL(std::get<2>(listGoods[0]), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( GetGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",2.0);
+
+	std::tuple<double,double> goods = myAgent0->getGood("A");
+	BOOST_CHECK_EQUAL(std::get<0>(goods), 2.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( GetGoodUnknwon ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",2.0);
+
+	std::tuple<double,double> goods = myAgent0->getGood("B");
+	BOOST_CHECK_EQUAL(std::get<0>(goods), -1.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods), -1.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_SUITE_END()
+
+
+
+BOOST_AUTO_TEST_SUITE( SendingGoods )
+
+BOOST_AUTO_TEST_CASE( SendGoodToReceiver ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent1->addGoodType("A",100.0);
+
+	myAgent0->sendGoodTo(myAgent1,"A",15);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 5.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 15.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
 
 	myWorld.run();
 }

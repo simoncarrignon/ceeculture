@@ -212,10 +212,101 @@ void Roman::sendMessageTo(Roman* target, std::string msg)
 	}
 }
 
-void Roman::addGoodType(std::string type)
+void Roman::addGoodType(std::string type,double max)
 {
+	//check if a good of that type is already in that list
+	if ( std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;}) == listGoods.end() )
+	{
+		//if not, add it
+		listGoods.push_back(std::make_tuple(type,0,max));
+	}
 }
 
+void Roman::removeGoodType(std::string type)
+{
+	//check if a good of that type exist in that list
+	std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+	while ( it != listGoods.end() )
+	{
+		//if not, add it
+		listGoods.erase(it);
+		//update the presence of good of that type in the list
+		it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+	}
+}
+
+std::tuple<double,double> Roman::getGood(std::string type)
+{
+	//check if a good of that type exist in the list
+	std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+	if ( it != listGoods.end() )
+	{
+		//return quantity and type of that good
+		return std::make_tuple(std::get<1>(*it),std::get<2>(*it));
+	}
+
+	//return something impossible as an error
+	return std::make_tuple(-1.0,-1.0);
+}
+
+void Roman::addGood(std::string type,double value)
+{
+	//check if a good of that type exists in that list
+	std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+	//if yes add the value to it within the bound
+	if ( it != listGoods.end() )
+	{
+		double toSet = std::min(std::get<1>(*it) + value, std::get<2>(*it));
+		std::get<1>(*it) = toSet;
+	}
+}
+
+void Roman::removeGood(std::string type,double value)
+{
+	//check if a good of that type exists in that list
+	std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+	//if yes remove the value to it as long as it's superior to 0
+	if ( it != listGoods.end() )
+	{
+		double toSet = std::max(std::get<1>(*it) - value, 0.0);
+		std::get<1>(*it) = toSet;
+	}
+}
+
+void Roman::sendGoodTo(Roman* target, std::string type, double value)
+{
+	// if the connection with the target has been valideted
+	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
+	{
+		//check if a good of that type exists in that list
+		std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+		//if yes remove the value to it as long as it's superior to 0
+		if ( it != listGoods.end() )
+		{
+			if ( std::get<1>(*it) >= value)
+			{
+				if(target->receiveGoodFrom(this, type, value))
+				{
+					removeGood(type,value);
+				}
+			}
+		}
+	}
+}
+
+int Roman::receiveGoodFrom(Roman* source, std::string type, double value)
+{
+	//if in the list of validated senders receive the good
+	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) != validRcvConnections.end() )
+	{
+		//TODO modify add good to add a return value. return 0 if was not able to add the good (good type does not exist)
+		addGood(type,value);
+		return 1;
+	}
+	
+	//if arrive to that point, the agent was not a valid sender and we return an error
+	return 0;
+}
 
 } // namespace Roman
 

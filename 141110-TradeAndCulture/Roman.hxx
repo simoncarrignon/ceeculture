@@ -30,7 +30,9 @@ private:
 	void receiveMessageFrom(Roman* source, std::string msg);
 	std::vector<std::tuple<Roman*,std::string> > receivedMessages;
 
-	std::vector<std::tuple<std::string,int> > listGoods;
+	std::vector<std::tuple<std::string,double,double> > listGoods;
+
+	int receiveGoodFrom(Roman* source, std::string type, double value);
 
 public:
 	// todo remove environment from here
@@ -70,8 +72,16 @@ public:
 
 
 	//good system
-	void addGoodType(std::string type);
-	std::vector<std::tuple<std::string,int> > getListGoods() { return listGoods;};
+	void addGoodType(std::string type,double max);
+	void removeGoodType(std::string type);
+	std::vector<std::tuple<std::string,double,double> > getListGoods() { return listGoods;};
+	std::tuple<double,double> getGood(std::string type);
+
+	void addGood(std::string type,double value);
+	void removeGood(std::string type,double value);
+
+	//sending goods
+	void sendGoodTo(Roman* target, std::string type, double value);
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //
