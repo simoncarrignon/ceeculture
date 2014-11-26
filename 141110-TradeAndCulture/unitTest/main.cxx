@@ -1162,6 +1162,201 @@ BOOST_AUTO_TEST_CASE( SendGoodToReceiver )
 	myWorld.run();
 }
 
+BOOST_AUTO_TEST_CASE( SendUnknownGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent1->addGoodType("A",100.0);
+
+	myAgent0->sendGoodTo(myAgent1,"B",15);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( SendGoodUnknownToReceiver ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGoodType("B",100.0);
+	myAgent0->addGood("B",20.0);
+	myAgent1->addGoodType("A",100.0);
+
+	myAgent0->sendGoodTo(myAgent1,"B",15);
+
+	std::tuple<double,double> goodsA0 = myAgent0->getGood("A");
+	std::tuple<double,double> goodsB0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+
+	BOOST_CHECK_EQUAL(std::get<0>(goodsA0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goodsA0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(goodsB0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goodsB0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( SendGoodWithoutConnection ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent1->addGoodType("A",100.0);
+
+	myAgent0->sendGoodTo(myAgent1,"A",15);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( SendGoodToSender ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGood("A",20.0);
+
+	myAgent1->sendGoodTo(myAgent0,"A",15);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( SendSaturatingGood ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",100.0);
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGood("A",20.0);
+
+	myAgent0->sendGoodTo(myAgent1,"A",90);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 10.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( SendGoodNotInStock ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent1->addGoodType("A",100.0);
+
+	myAgent0->sendGoodTo(myAgent1,"A",30);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+
+	myWorld.run();
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 } // namespace Test
