@@ -34,13 +34,18 @@ private:
 
 	int receiveGoodFrom(Roman* source, std::string type, double value);
 
+	void consumeResources();
+	void checkDeath();
+
 public:
 	// todo remove environment from here
 	Roman( const std::string & id );
 	virtual ~Roman();
 	
-	void selectActions();
 	void updateState();
+	void selectActions();
+	void updateKnowledge();
+
 	void registerAttributes();
 	void serialize();
 

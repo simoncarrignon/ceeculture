@@ -1,8 +1,9 @@
 
 #include <Roman.hxx>
-#include <EatAction.hxx>
+#include <HarvestAction.hxx>
 #include <Statistics.hxx>
 #include <World.hxx>
+#include <Logger.hxx>
 
 namespace Epnet
 {
@@ -15,28 +16,49 @@ Roman::~Roman()
 {
 }
 
-void Roman::selectActions()
-{
-	_actions.push_back(new EatAction());
-}
-
-void Roman::updateState()
-{
-	if(_resources<0)
-	{
-		remove();
-	}
-}
-
 void Roman::registerAttributes()
 {
-	registerIntAttribute("resources");
+	registerFloatAttribute("good-a");
+	registerFloatAttribute("good-b");
 }
 
 void Roman::serialize()
 {
-	serializeAttribute("resources", _resources);
+	serializeAttribute("good-a", (float)std::get<0>(getGood("ess-a")));
+	serializeAttribute("good-b", (float)std::get<0>(getGood("ess-b")));
 }
+
+void Roman::updateState()
+{
+	consumeResources();
+	checkDeath();
+}
+
+void Roman::updateKnowledge()
+{
+}
+
+void Roman::selectActions()
+{
+	_actions.push_back(new HarvestAction("ess-a",1));
+	_actions.push_back(new HarvestAction("ess-b",1));
+}
+
+void Roman::consumeResources()
+{
+	removeGood("ess-a",2);
+	removeGood("ess-b",1);
+}
+
+void Roman::checkDeath()
+{
+	if(std::get<0>(getGood("ess-a")) < 1)
+		remove();
+	else if(std::get<0>(getGood("ess-b")) < 1)
+		remove();
+}
+
+
 
 void Roman::setResources( int resources )
 {

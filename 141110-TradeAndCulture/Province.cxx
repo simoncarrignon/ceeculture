@@ -21,15 +21,25 @@ Province::~Province()
 
 void Province::createRasters()
 {
-	registerDynamicRaster("resources", true);
-	getDynamicRaster("resources").setInitValues(0, 5, 0);
-
+	//registerStaticRaster("resources", false);
+	//
+	registerDynamicRaster("ess-a", true);
+	getDynamicRaster("ess-a").setInitValues(0, 5, 5);
 	for(auto index:getBoundaries())
 	{
 		int value = Engine::GeneralState::statistics().getUniformDistValue(0,5);
-        setMaxValue("resources", index, value);
+        setMaxValue("ess-a", index, value);
 	}
-	updateRasterToMaxValues("resources");
+	updateRasterToMaxValues("ess-a");
+
+	registerDynamicRaster("ess-b", true);
+	getDynamicRaster("ess-b").setInitValues(0, 5, 5);
+	for(auto index:getBoundaries())
+	{
+		int value = Engine::GeneralState::statistics().getUniformDistValue(0,5);
+        setMaxValue("ess-b", index, value);
+	}
+	updateRasterToMaxValues("ess-b");
 }
 
 void Province::createAgents()
@@ -47,7 +57,13 @@ void Province::createAgents()
 			Roman * agent = new Roman(oss.str());
 			addAgent(agent);
 			agent->setRandomPosition();
-	        log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
+			agent->addGoodType("ess-a",100);
+			agent->addGood("ess-a",50);
+			agent->addGoodType("ess-b",100);
+			agent->addGood("ess-b",50);
+			agent->addGoodType("noness-a",100);
+			agent->addGoodType("noness-b",100);
+			log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
 		}
 	}
 }
