@@ -30,6 +30,9 @@ void Roman::serialize()
 
 void Roman::updateState()
 {
+	proposeConnections();
+	treatIncomingConnections();
+	sendGoods();
 	consumeResources();
 	checkDeath();
 }
@@ -40,8 +43,8 @@ void Roman::updateKnowledge()
 
 void Roman::selectActions()
 {
-	_actions.push_back(new HarvestAction("ess-a",1));
-	_actions.push_back(new HarvestAction("ess-b",1));
+	_actions.push_back(new HarvestAction("ess-a",15));
+	_actions.push_back(new HarvestAction("ess-b",15));
 }
 
 void Roman::consumeResources()
@@ -53,10 +56,78 @@ void Roman::consumeResources()
 void Roman::checkDeath()
 {
 	if(std::get<0>(getGood("ess-a")) < 1)
+	{
+		for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
+		{
+			std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
+			Roman* ptrRoman = romanAgent.get();
+			if(ptrRoman != this)
+			{
+				killConnections(ptrRoman);
+			}
+		}
 		remove();
+	}
 	else if(std::get<0>(getGood("ess-b")) < 1)
+	{
+		for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
+		{
+			std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
+			Roman* ptrRoman = romanAgent.get();
+			if(ptrRoman != this)
+			{
+				killConnections(ptrRoman);
+			}
+		}
 		remove();
+	}
 }
+
+void Roman::proposeConnections()
+{
+	for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
+	{
+		std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
+		Roman* ptrRoman = romanAgent.get();
+		if(ptrRoman != this)
+		{
+			proposeConnectionTo(ptrRoman);
+		}
+	}
+}
+
+void Roman::treatIncomingConnections()
+{
+	std::vector<Roman*>::iterator it = receivedConnections.begin();
+	while(it != receivedConnections.end())
+	{
+		int dice = std::rand()%100;
+		if (dice <= 0)
+		{
+			acceptConnectionFrom(*it);
+		}
+		else
+		{
+			refuseConnectionFrom(*it);
+		}
+	}
+	++it;
+}
+
+void Roman::sendGoods()
+{
+	for(auto it = validSendConnections.begin() ; it != validSendConnections.end(); ++it)
+	{
+		sendGoodTo((*it),"ess-a",2);
+		sendGoodTo((*it),"ess-b",1);
+	}
+}
+
+
+
+
+
+
 
 
 

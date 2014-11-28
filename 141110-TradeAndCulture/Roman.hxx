@@ -35,6 +35,9 @@ private:
 	int receiveGoodFrom(Roman* source, std::string type, double value);
 
 	void consumeResources();
+	void sendGoods();
+	void proposeConnections();
+	void treatIncomingConnections();
 	void checkDeath();
 
 public:

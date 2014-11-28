@@ -24,19 +24,19 @@ void Province::createRasters()
 	//registerStaticRaster("resources", false);
 	//
 	registerDynamicRaster("ess-a", true);
-	getDynamicRaster("ess-a").setInitValues(0, 5, 5);
+	getDynamicRaster("ess-a").setInitValues(0, 20, 20);
 	for(auto index:getBoundaries())
 	{
-		int value = Engine::GeneralState::statistics().getUniformDistValue(0,5);
+		int value = Engine::GeneralState::statistics().getUniformDistValue(0,20);
         setMaxValue("ess-a", index, value);
 	}
 	updateRasterToMaxValues("ess-a");
 
 	registerDynamicRaster("ess-b", true);
-	getDynamicRaster("ess-b").setInitValues(0, 5, 5);
+	getDynamicRaster("ess-b").setInitValues(0, 20, 20);
 	for(auto index:getBoundaries())
 	{
-		int value = Engine::GeneralState::statistics().getUniformDistValue(0,5);
+		int value = Engine::GeneralState::statistics().getUniformDistValue(0,20);
         setMaxValue("ess-b", index, value);
 	}
 	updateRasterToMaxValues("ess-b");
