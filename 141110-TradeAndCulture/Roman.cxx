@@ -366,6 +366,11 @@ void Roman::removeGood(std::string type,double value)
 	}
 }
 
+std::vector<std::tuple<std::string,double,double> >  Roman::getListGoodsFrom(Roman* target)
+{
+	return target->getListGoods();
+}
+
 void Roman::sendGoodTo(Roman* target, std::string type, double value)
 {
 	// if the connection with the target has been valideted

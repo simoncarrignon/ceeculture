@@ -40,6 +40,7 @@ private:
 	void treatIncomingConnections();
 	void checkDeath();
 
+
 public:
 	// todo remove environment from here
 	Roman( const std::string & id );
@@ -87,6 +88,8 @@ public:
 
 	void addGood(std::string type,double value);
 	void removeGood(std::string type,double value);
+
+	std::vector<std::tuple<std::string,double,double> >  getListGoodsFrom(Roman* target);
 
 	//sending goods
 	void sendGoodTo(Roman* target, std::string type, double value);
