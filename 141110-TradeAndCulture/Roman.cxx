@@ -1,6 +1,8 @@
 
 #include <Roman.hxx>
 #include <HarvestAction.hxx>
+#include <ProposeConnectionAction.hxx>
+#include <SendGoodsAction.hxx>
 #include <Statistics.hxx>
 #include <World.hxx>
 #include <Logger.hxx>
@@ -8,7 +10,7 @@
 namespace Epnet
 {
 
-Roman::Roman( const std::string & id ) : Agent(id), _resources(5)
+Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(10)
 {
 }
 
@@ -28,14 +30,7 @@ void Roman::serialize()
 	serializeAttribute("good-b", (float)std::get<0>(getGood("ess-b")));
 }
 
-void Roman::updateState()
-{
-	proposeConnections();
-	treatIncomingConnections();
-	sendGoods();
-	consumeResources();
-	checkDeath();
-}
+
 
 void Roman::updateKnowledge()
 {
@@ -43,9 +38,68 @@ void Roman::updateKnowledge()
 
 void Roman::selectActions()
 {
-	_actions.push_back(new HarvestAction("ess-a",15));
-	_actions.push_back(new HarvestAction("ess-b",15));
+	int action = _maxActions;
+	while (action >=0)
+	{
+		int dice = std::rand()%5;
+		switch (dice)
+		{
+			case 0:
+				_actions.push_back(new HarvestAction("ess-a",1));
+				action--;
+				break;
+
+			case 1:
+				_actions.push_back(new HarvestAction("ess-b",1));
+				action--;
+				break;
+
+			case 2:
+				for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
+				{
+					std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
+					Roman* ptrRoman = romanAgent.get();
+					if(ptrRoman != this)
+					{
+						int dice2 = std::rand()%100;
+						if(dice2 < 80)
+						{
+							_actions.push_back(new ProposeConnectionAction(ptrRoman));
+							action--;
+						}
+					}
+				}
+				break;
+
+			case 3:
+				if(validSendConnections.size() > 0)
+				{
+					int dice2 = std::rand()%validSendConnections.size();
+					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"ess-a",1));
+					action --;
+				}
+
+			case 4:
+				if(validSendConnections.size() > 0)
+				{
+					int dice2 = std::rand()%validSendConnections.size();
+					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"ess-b",1));
+					action --;
+				}
+		}
+	}
 }
+
+void Roman::updateState()
+{
+	treatIncomingConnections();
+	consumeResources();
+	checkDeath();
+}
+
+
+
+
 
 void Roman::consumeResources()
 {
@@ -83,25 +137,13 @@ void Roman::checkDeath()
 	}
 }
 
-void Roman::proposeConnections()
-{
-	for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
-	{
-		std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
-		Roman* ptrRoman = romanAgent.get();
-		if(ptrRoman != this)
-		{
-			proposeConnectionTo(ptrRoman);
-		}
-	}
-}
 
 void Roman::treatIncomingConnections()
 {
 	std::vector<Roman*>::iterator it = receivedConnections.begin();
 	while(it != receivedConnections.end())
 	{
-		int dice = std::rand()%100;
+		int dice = std::rand()%70;
 		if (dice <= 0)
 		{
 			acceptConnectionFrom(*it);
@@ -114,14 +156,6 @@ void Roman::treatIncomingConnections()
 	++it;
 }
 
-void Roman::sendGoods()
-{
-	for(auto it = validSendConnections.begin() ; it != validSendConnections.end(); ++it)
-	{
-		sendGoodTo((*it),"ess-a",2);
-		sendGoodTo((*it),"ess-b",1);
-	}
-}
 
 
 
