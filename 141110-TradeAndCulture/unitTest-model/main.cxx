@@ -3,7 +3,7 @@
 #define BOOST_TEST_MODULE "Pandora Sequential Unit Tests"
 
 #include "Roman.hxx"
-#include "Province.hxx"
+#include "ProvinceTest.hxx"
 #include "ProvinceConfig.hxx"
 #include <Config.hxx>
 #include <World.hxx>
@@ -18,12 +18,11 @@
 namespace Epnet
 {
 
-/*
 BOOST_AUTO_TEST_SUITE( DeathTests )
 
 BOOST_AUTO_TEST_CASE( DeathHappens ) 
 {
-	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 3), Province::useSpacePartition(1, false));
+	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 3), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
 	Roman * myAgent0 = new Roman("agent_0");
@@ -33,29 +32,32 @@ BOOST_AUTO_TEST_CASE( DeathHappens )
 	myAgent0->setRandomPosition();
 	myAgent1->setRandomPosition();
 
-	myWorld.step();
-
 	int count = 0;
 	for(auto it = myWorld.beginAgents() ; it != myWorld.endAgents() ; it++)
 	{
 		count++;
 	}
+	BOOST_CHECK_EQUAL(count,2);
 
-	std::cout << count <<std::endl;
+	myWorld.stepTest();
 
-	BOOST_CHECK_EQUAL(1,1);
+	count = 0;
+	for(auto it = myWorld.beginAgents() ; it != myWorld.endAgents() ; it++)
+	{
+		count++;
+	}
+	BOOST_CHECK_EQUAL(count,0);
 
 	myWorld.run();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-*/
 
 BOOST_AUTO_TEST_SUITE( VisibleGoods )
 
 BOOST_AUTO_TEST_CASE( getGoods ) 
 {
-	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 3), Province::useSpacePartition(1, false));
+	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 3), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
 	Roman * myAgent0 = new Roman("agent_0");
