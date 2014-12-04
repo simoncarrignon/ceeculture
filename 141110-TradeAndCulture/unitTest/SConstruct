@@ -12,7 +12,7 @@ agents = ['Roman']
 world = 'Province'
 namespaceAgents = ['Epnet']
 
-srcFiles = Split('main.cxx HarvestAction.cxx ProvinceConfig.cxx Province.cxx Roman.cxx')
+srcFiles = Split('main.cxx ProvinceConfig.cxx Province.cxx Roman.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx')
 
 ###################################################
 ########## END OF CUSTOM INFORMATION  #############

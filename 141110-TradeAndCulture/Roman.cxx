@@ -3,6 +3,7 @@
 #include <HarvestAction.hxx>
 #include <ProposeConnectionAction.hxx>
 #include <SendGoodsAction.hxx>
+#include <FunAction.hxx>
 #include <Statistics.hxx>
 #include <World.hxx>
 #include <Logger.hxx>
@@ -20,14 +21,18 @@ Roman::~Roman()
 
 void Roman::registerAttributes()
 {
-	registerFloatAttribute("good-a");
-	registerFloatAttribute("good-b");
+	registerFloatAttribute("ess-a");
+	registerFloatAttribute("ess-b");
+	registerFloatAttribute("nonEss-a");
+	registerFloatAttribute("nonEss-b");
 }
 
 void Roman::serialize()
 {
-	serializeAttribute("good-a", (float)std::get<0>(getGood("ess-a")));
-	serializeAttribute("good-b", (float)std::get<0>(getGood("ess-b")));
+	serializeAttribute("ess-a", (float)std::get<0>(getGood("ess-a")));
+	serializeAttribute("ess-b", (float)std::get<0>(getGood("ess-b")));
+	serializeAttribute("nonEss-a", (float)std::get<0>(getGood("nonEss-a")));
+	serializeAttribute("nonEss-b", (float)std::get<0>(getGood("nonEss-b")));
 }
 
 
@@ -41,7 +46,7 @@ void Roman::selectActions()
 	int action = _maxActions;
 	while (action >=0)
 	{
-		int dice = std::rand()%5;
+		int dice = std::rand()%10;
 		switch (dice)
 		{
 			case 0:
@@ -55,6 +60,16 @@ void Roman::selectActions()
 				break;
 
 			case 2:
+				_actions.push_back(new HarvestAction("nonEss-a",1));
+				action--;
+				break;
+
+			case 3:
+				_actions.push_back(new HarvestAction("nonEss-b",1));
+				action--;
+				break;
+
+			case 4:
 				for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
 				{
 					std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
@@ -71,21 +86,48 @@ void Roman::selectActions()
 				}
 				break;
 
-			case 3:
+			case 5:
 				if(validSendConnections.size() > 0)
 				{
 					int dice2 = std::rand()%validSendConnections.size();
 					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"ess-a",1));
 					action --;
 				}
+				break;
 
-			case 4:
+			case 6:
 				if(validSendConnections.size() > 0)
 				{
 					int dice2 = std::rand()%validSendConnections.size();
 					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"ess-b",1));
 					action --;
 				}
+				break;
+
+			case 7:
+				if(validSendConnections.size() > 0)
+				{
+					int dice2 = std::rand()%validSendConnections.size();
+					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"nonEss-a",1));
+					action --;
+				}
+				break;
+
+			case 8:
+				if(validSendConnections.size() > 0)
+				{
+					int dice2 = std::rand()%validSendConnections.size();
+					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"nonEss-b",1));
+					action --;
+				}
+				break;
+
+			case 9:
+				log_INFO("check fun", _world->getWallTime() << " " << _id << " fun");
+				_actions.push_back(new FunAction("nonEss-a",1));
+				_actions.push_back(new FunAction("nonEss-b",2));
+				action --;
+				break;
 		}
 	}
 }
@@ -438,6 +480,31 @@ int Roman::receiveGoodFrom(Roman* source, std::string type, double value)
 	
 	//if arrive to that point, the agent was not a valid sender and we return an error
 	return 0;
+}
+
+
+void Roman::proposeTradeTo(Roman* target, std::string type, double valueGood, double valueCurrency)
+{
+}
+
+void Roman::acceptTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency)
+{
+}
+
+std::vector<std::tuple<Roman*,std::string,double,double> > Roman::getReceivedTrades()
+{
+}
+
+std::vector<std::tuple<std::string,double,double> > Roman::getReceivedTradesFrom(Roman* source)
+{
+}
+
+std::vector<std::tuple<Roman*,std::string,double,double> > Roman::getProposedTrades()
+{
+}
+
+std::vector<std::tuple<std::string,double,double> > Roman::getProposedTradesTo(Roman* source)
+{
 }
 
 } // namespace Roman

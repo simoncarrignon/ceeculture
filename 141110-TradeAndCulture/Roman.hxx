@@ -31,8 +31,11 @@ private:
 	std::vector<std::tuple<Roman*,std::string> > receivedMessages;
 
 	std::vector<std::tuple<std::string,double,double> > listGoods;
-
 	int receiveGoodFrom(Roman* source, std::string type, double value);
+
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades;
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades;
+	int receiveTradeFrom(Roman* source, std::string type, double value, double currency);
 
 	void consumeResources();
 	void treatIncomingConnections();
@@ -92,6 +95,14 @@ public:
 
 	//sending goods
 	void sendGoodTo(Roman* target, std::string type, double value);
+
+	//trading goods
+	void proposeTradeTo(Roman* target, std::string type, double valueGood, double valueCurrency);
+	void acceptTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency);
+	std::vector<std::tuple<Roman*,std::string,double,double> > getProposedTrades();
+	std::vector<std::tuple<std::string,double,double> > getProposedTradesTo(Roman* source);
+	std::vector<std::tuple<Roman*,std::string,double,double> > getReceivedTrades();
+	std::vector<std::tuple<std::string,double,double> > getReceivedTradesFrom(Roman* source);
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //
