@@ -482,29 +482,126 @@ int Roman::receiveGoodFrom(Roman* source, std::string type, double value)
 	return 0;
 }
 
+int Roman::receiveTradeFrom(Roman* source, std::string type, double value, double currency)
+{
+	auto it = listGoods.begin();
+	while( it != listGoods.end() )
+	{
+		if (std::get<0>(*it) == type) break;
+		it++;
+	}
+	//if arrived at the end of the list of goods without finding the specific good, quit the function now
+	if (it == listGoods.end()) return 0;
+
+	//if in the list of validated senders receive the trade offer
+	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) != validRcvConnections.end() )
+	{
+		listReceivedTrades.push_back(make_tuple(source,type,value,currency));
+		return 1;
+	}
+	
+	//if arrive to that point, the agent was not a valid sender and we return an error
+	return 0;
+}
 
 void Roman::proposeTradeTo(Roman* target, std::string type, double valueGood, double valueCurrency)
-{
+{ 
+	auto it = listGoods.begin();
+	while( it != listGoods.end() )
+	{
+		if (std::get<0>(*it) == type) break;
+		it++;
+	}
+	//if arrived at the end of the list of goods without finding the specific good, quit the function now
+	if (it == listGoods.end()) return;
+
+	// if the connection with the target has been validated
+	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
+	{
+		//if the offer is effectively received, add it
+		if (target->receiveTradeFrom(this,type,valueGood,valueCurrency))
+		{
+			listProposedTrades.push_back(make_tuple(target,type,valueGood,valueCurrency));
+		}
+	}
 }
 
 void Roman::acceptTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency)
 {
+	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) != validRcvConnections.end() )
+	{
+		for (auto it = listReceivedTrades.begin() ; it != listReceivedTrades.end() ; it ++)
+		{
+			if ((*it) == std::make_tuple(source,type,valueGood,valueCurrency))
+			{
+				if( (std::get<0>(getGood("currency")) >= valueCurrency) && (std::get<0>(source->getGood(type)) >= valueGood) )
+				{
+					source->sendGoodTo(this,type,valueGood);
+					source->addGood("currency", valueCurrency);
+					removeGood("currency",valueCurrency);
+				}
+				source->removeProposedTrade(this,type,valueGood,valueCurrency);
+				removeReceivedTrade(source,type,valueGood,valueCurrency);
+				break;
+			}
+		}
+	}
 }
 
-std::vector<std::tuple<Roman*,std::string,double,double> > Roman::getReceivedTrades()
+void Roman::refuseTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency)
 {
+	source->removeProposedTrade(this,type,valueGood,valueCurrency);
+	removeReceivedTrade(source,type,valueGood,valueCurrency);
 }
 
 std::vector<std::tuple<std::string,double,double> > Roman::getReceivedTradesFrom(Roman* source)
 {
+	std::vector<std::tuple<std::string,double,double> > tmp;
+	for (auto it = listReceivedTrades.begin() ; it != listReceivedTrades.end() ; it ++)
+	{
+		if (std::get<0>(*it) == source)
+		{
+			tmp.push_back(std::make_tuple(std::get<1>(*it),std::get<2>(*it),std::get<3>(*it)));
+		}
+	}
+	return tmp;
 }
 
-std::vector<std::tuple<Roman*,std::string,double,double> > Roman::getProposedTrades()
+std::vector<std::tuple<std::string,double,double> > Roman::getProposedTradesTo(Roman* target)
 {
+	std::vector<std::tuple<std::string,double,double> > tmp;
+	for (auto it = listProposedTrades.begin() ; it != listProposedTrades.end() ; it ++)
+	{
+		if (std::get<0>(*it) == target)
+		{
+			tmp.push_back(std::make_tuple(std::get<1>(*it),std::get<2>(*it),std::get<3>(*it)));
+		}
+	}
+	return tmp;
 }
 
-std::vector<std::tuple<std::string,double,double> > Roman::getProposedTradesTo(Roman* source)
+void Roman::removeReceivedTrade(Roman* source, std::string type, double value, double currency)
 {
+	for (auto it = listReceivedTrades.begin() ; it != listReceivedTrades.end() ; it ++)
+	{
+		if ((*it) == std::make_tuple(source,type,value,currency))
+		{
+			listReceivedTrades.erase(it);
+			break;
+		}
+	}
+}
+
+void Roman::removeProposedTrade(Roman* source, std::string type, double value, double currency)
+{
+	for (auto it = listProposedTrades.begin() ; it != listReceivedTrades.end() ; it ++)
+	{
+		if ((*it) == std::make_tuple(source,type,value,currency))
+		{
+			listProposedTrades.erase(it);
+			break;
+		}
+	}
 }
 
 } // namespace Roman

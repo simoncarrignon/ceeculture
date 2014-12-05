@@ -36,6 +36,8 @@ private:
 	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades;
 	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades;
 	int receiveTradeFrom(Roman* source, std::string type, double value, double currency);
+	void removeReceivedTrade(Roman* source, std::string type, double value, double currency);
+	void removeProposedTrade(Roman* source, std::string type, double value, double currency);
 
 	void consumeResources();
 	void treatIncomingConnections();
@@ -99,9 +101,10 @@ public:
 	//trading goods
 	void proposeTradeTo(Roman* target, std::string type, double valueGood, double valueCurrency);
 	void acceptTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency);
-	std::vector<std::tuple<Roman*,std::string,double,double> > getProposedTrades();
-	std::vector<std::tuple<std::string,double,double> > getProposedTradesTo(Roman* source);
-	std::vector<std::tuple<Roman*,std::string,double,double> > getReceivedTrades();
+	void refuseTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency);
+	std::vector<std::tuple<Roman*,std::string,double,double> > getProposedTrades() {return listProposedTrades;};
+	std::vector<std::tuple<std::string,double,double> > getProposedTradesTo(Roman* target);
+	std::vector<std::tuple<Roman*,std::string,double,double> > getReceivedTrades(){return listReceivedTrades;};
 	std::vector<std::tuple<std::string,double,double> > getReceivedTradesFrom(Roman* source);
 
 	////////////////////////////////////////////////

@@ -1361,7 +1361,6 @@ BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE( TradeGoods )
 
-
 BOOST_AUTO_TEST_CASE( GetListAllTrades ) 
 {
 	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
@@ -1473,6 +1472,11 @@ BOOST_AUTO_TEST_CASE( TradeGoods )
 	std::tuple<double,double> goods1 = myAgent1->getGood("A");
 	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
 	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 10.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1487,22 +1491,489 @@ BOOST_AUTO_TEST_CASE( TradeGoods )
 	myWorld.run();
 }
 
+BOOST_AUTO_TEST_CASE( RefuseTrade ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-//refuse a trade
-//trade good of unknown type to sender
-//trade good of unknown type to receiver
-//try to trade when no network link
-//try to trade when network link not in right direction
-//try to accept a non existing trade
-//not enough currency in the receiver
-//not enough storage space in the receiver (fill)
-//not enough currency space in the sender (fill)
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
 
-/*
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+	myAgent1->refuseTradeFrom(myAgent0,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 00.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToSender ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 00.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToReceiver ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( TradeGoodsWhenNoNetworkLink ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 00.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( TradeGoodsWithLinkInWrongDirection ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent1->proposeConnectionTo(myAgent0);
+	myAgent0->acceptConnectionFrom(myAgent1);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 00.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( AcceptNonExistingTrade ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent1->acceptTradeFrom(myAgent0,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 00.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( NotEnoughCurrencyInReceiver ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+	myAgent1->acceptTradeFrom(myAgent0,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
+}
+
+
 BOOST_AUTO_TEST_CASE( TradeGoodNotInStock ) 
 {
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+	myAgent1->acceptTradeFrom(myAgent0,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 0.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
 }
-*/
+
+BOOST_AUTO_TEST_CASE( NotEnoughStorageSpaceInReceiver ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGood("currency",50.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("A",95.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+	myAgent1->acceptTradeFrom(myAgent0,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 10.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 60.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 40.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( NotEnoughSpaceInSender ) 
+{
+	Province myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("A",20.0);
+	myAgent0->addGood("currency",95.0);
+
+	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGood("currency",50.0);
+
+	myAgent0->proposeTradeTo(myAgent1,"A",10,10);
+	myAgent1->acceptTradeFrom(myAgent0,"A",10,10);
+
+	std::tuple<double,double> goods0 = myAgent0->getGood("A");
+	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
+	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
+	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 10.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods1), 10.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency1), 40.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	myWorld.run();
+}
 
 
 BOOST_AUTO_TEST_SUITE_END()
