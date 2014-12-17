@@ -141,6 +141,7 @@ void Roman::checkDeath()
 			if(ptrRoman != this)
 			{
 				killConnections(ptrRoman);
+				ptrRoman->killTradeFrom(this);
 			}
 		}
 		remove();
@@ -155,6 +156,7 @@ void Roman::checkDeath()
 			if(ptrRoman != this)
 			{
 				killConnections(ptrRoman);
+				ptrRoman->killTradeFrom(this);
 			}
 		}
 		remove();
@@ -587,24 +589,48 @@ std::vector<std::tuple<std::string,double,double> > Roman::getProposedTradesTo(R
 
 void Roman::removeReceivedTrade(Roman* source, std::string type, double value, double currency)
 {
-	for (auto it = listReceivedTrades.begin() ; it != listReceivedTrades.end() ; it ++)
+	for (auto it = listReceivedTrades.begin() ; it != listReceivedTrades.end() ;)
 	{
 		if ((*it) == std::make_tuple(source,type,value,currency))
 		{
 			listReceivedTrades.erase(it);
 			break;
 		}
+		else
+		{
+			++it;
+		}
 	}
 }
 
 void Roman::removeProposedTrade(Roman* source, std::string type, double value, double currency)
 {
-	for (auto it = listProposedTrades.begin() ; it != listReceivedTrades.end() ; it ++)
+	for (auto it = listProposedTrades.begin() ; it != listReceivedTrades.end() ;)
 	{
 		if ((*it) == std::make_tuple(source,type,value,currency))
 		{
 			listProposedTrades.erase(it);
 			break;
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void Roman::killTradeFrom(Roman* source)
+{
+	//remove traces from the receivedTrades
+	for(auto it = listReceivedTrades.begin(); it != listReceivedTrades.end();)
+	{
+		if(std::get<0>(*it) == source)
+		{
+			it = listReceivedTrades.erase(it); 
+		}
+		else
+		{
+			++it;
 		}
 	}
 }

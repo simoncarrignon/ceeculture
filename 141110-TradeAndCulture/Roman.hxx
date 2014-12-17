@@ -103,10 +103,14 @@ public:
 	void proposeTradeTo(Roman* target, std::string type, double valueGood, double valueCurrency);
 	void acceptTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency);
 	void refuseTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency);
+	
 	std::vector<std::tuple<Roman*,std::string,double,double> > getProposedTrades() {return listProposedTrades;};
 	std::vector<std::tuple<std::string,double,double> > getProposedTradesTo(Roman* target);
+
 	std::vector<std::tuple<Roman*,std::string,double,double> > getReceivedTrades(){return listReceivedTrades;};
 	std::vector<std::tuple<std::string,double,double> > getReceivedTradesFrom(Roman* source);
+
+	void killTradeFrom(Roman* source);
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //
