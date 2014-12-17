@@ -94,14 +94,12 @@ void Roman::selectActions()
 					std::string type = types[std::rand()%4];
 					int quantity = std::rand()%10;
 					int currency = std::rand()%50;
-					std::cout << _id << " propose trade to " << validSendConnections[target]->getId() << std::endl;
 					_actions.push_back(new ProposeTradeAction(validSendConnections[target],type,quantity,currency));
 					action --;
 				}
 				break;
 
 			case 6:
-				log_INFO("check fun", _world->getWallTime() << " " << _id << " fun");
 				_actions.push_back(new FunAction("nonEss-a",1));
 				_actions.push_back(new FunAction("nonEss-b",2));
 				action --;
@@ -130,10 +128,8 @@ void Roman::consumeResources()
 
 void Roman::checkDeath()
 {
-	std::cout << "check kill " << _id << std::endl;
 	if(std::get<0>(getGood("ess-a")) < 1)
 	{
-		std::cout << "kill " << _id << std::endl;
 		for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
 		{
 			std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
@@ -148,7 +144,6 @@ void Roman::checkDeath()
 	}
 	else if(std::get<0>(getGood("ess-b")) < 1)
 	{
-		std::cout << "kill " << _id << std::endl;
 		for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
 		{
 			std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
@@ -165,10 +160,11 @@ void Roman::checkDeath()
 
 void Roman::treatIncomingConnections()
 {
-	std::cout << _id << " incoming begin" << std::endl;
 	std::vector<Roman*>::iterator it = receivedConnections.begin();
 	while(it != receivedConnections.end())
 	{
+		//accept and refuse remove the connection from receivedConnections
+		//as a consequence there is no use to increment it
 		int dice = std::rand()%70;
 		if (dice <= 0)
 		{
@@ -179,17 +175,15 @@ void Roman::treatIncomingConnections()
 			refuseConnectionFrom(*it);
 		}
 	}
-	std::cout << _id << " incoming end" << std::endl;
-	++it;
 }
 
 void Roman::treatIncomingTrades()
 {
-	std::cout << _id << " trade begin" << std::endl;
 	std::vector<std::tuple<Roman*, std::string, double, double> >::iterator it = listReceivedTrades.begin();
 	while(it != listReceivedTrades.end())
 	{
-		std::cout << _id << " trade from " << std::get<0>(*it)->getId()  << std::endl;
+		//accept and refuse remove the trade from listReceivedTrades
+		//as a consequence there is no use to increment it
 		int dice = std::rand()%70;
 		if (dice <= 0)
 		{
@@ -199,10 +193,7 @@ void Roman::treatIncomingTrades()
 		{
 			refuseTradeFrom(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
 		}
-		std::cout << _id << " trade done" << std::endl;
 	}
-	++it;
-	std::cout << _id << " trade end" << std::endl;
 }
 
 
