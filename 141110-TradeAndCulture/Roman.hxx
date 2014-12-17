@@ -45,6 +45,7 @@ private:
 	void checkDeath();
 
 	int _maxActions;
+	int _nbTrades;
 
 public:
 	// todo remove environment from here

@@ -11,7 +11,7 @@
 namespace Epnet
 {
 
-Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(10)
+Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 {
 }
 
@@ -25,6 +25,10 @@ void Roman::registerAttributes()
 	registerFloatAttribute("ess-b");
 	registerFloatAttribute("nonEss-a");
 	registerFloatAttribute("nonEss-b");
+	registerFloatAttribute("currency");
+	registerIntAttribute("nbConnectionsRcv");
+	registerIntAttribute("nbConnectionsSend");
+	registerIntAttribute("nbAchievedTrades");
 }
 
 void Roman::serialize()
@@ -33,6 +37,10 @@ void Roman::serialize()
 	serializeAttribute("ess-b", (float)std::get<0>(getGood("ess-b")));
 	serializeAttribute("nonEss-a", (float)std::get<0>(getGood("nonEss-a")));
 	serializeAttribute("nonEss-b", (float)std::get<0>(getGood("nonEss-b")));
+	serializeAttribute("currency", (float)std::get<0>(getGood("currency")));
+	serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
+	serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
+	serializeAttribute("nbAchievedTrades", _nbTrades);
 }
 
 
@@ -122,7 +130,7 @@ void Roman::updateState()
 
 void Roman::consumeResources()
 {
-	removeGood("ess-a",2);
+	removeGood("ess-a",1);
 	removeGood("ess-b",1);
 }
 
@@ -179,6 +187,7 @@ void Roman::treatIncomingConnections()
 
 void Roman::treatIncomingTrades()
 {
+	_nbTrades = 0;
 	std::vector<std::tuple<Roman*, std::string, double, double> >::iterator it = listReceivedTrades.begin();
 	while(it != listReceivedTrades.end())
 	{
@@ -188,6 +197,7 @@ void Roman::treatIncomingTrades()
 		if (dice <= 0)
 		{
 			acceptTradeFrom(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
+			_nbTrades ++;
 		}
 		else
 		{
