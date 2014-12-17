@@ -20,6 +20,7 @@ public:
 	virtual ~ProvinceTest();
 
 	void stepTest();
+	void removeAgents();
 
 };
 
