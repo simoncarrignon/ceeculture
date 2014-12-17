@@ -76,12 +76,18 @@ void Province::createAgents()
 			addAgent(agent);
 			agent->setRandomPosition();
 			agent->addGoodType("currency",1000);
+			agent->addGood("currency",500);
+
 			agent->addGoodType("ess-a",100);
 			agent->addGood("ess-a",50);
+
 			agent->addGoodType("ess-b",100);
 			agent->addGood("ess-b",50);
+
 			agent->addGoodType("nonEss-a",100);
+
 			agent->addGoodType("nonEss-b",100);
+
 			log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
 		}
 	}

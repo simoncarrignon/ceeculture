@@ -41,6 +41,7 @@ private:
 
 	void consumeResources();
 	void treatIncomingConnections();
+	void treatIncomingTrades();
 	void checkDeath();
 
 	int _maxActions;

@@ -51,6 +51,127 @@ BOOST_AUTO_TEST_CASE( DeathHappens )
 	myWorld.run();
 }
 
+BOOST_AUTO_TEST_CASE( DeathCleanProposition ) 
+{
+	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent1->addGoodType("ess-a",100.0);
+	myAgent1->addGood("ess-a",50.0);
+	myAgent1->addGoodType("ess-b",100.0);
+	myAgent1->addGood("ess-b",50.0);
+
+	myAgent0->proposeConnectionTo(myAgent1);
+
+	myWorld.stepTest();
+
+	int count = 0;
+	for(auto it = myWorld.beginAgents() ; it != myWorld.endAgents() ; it++)
+	{
+		count++;
+	}
+
+	std::vector<Roman*> receivedAgent1 = myAgent1->getReceivedConnections();
+
+	BOOST_CHECK_EQUAL(receivedAgent1.size(),0);
+	BOOST_CHECK_EQUAL(count,1);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( DeathCleanConnection ) 
+{
+	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent0);
+	myWorld.addAgent(myAgent1);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent1->addGoodType("ess-a",100.0);
+	myAgent1->addGood("ess-a",50.0);
+	myAgent1->addGoodType("ess-b",100.0);
+	myAgent1->addGood("ess-b",50.0);
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myWorld.stepTest();
+
+	int count = 0;
+	for(auto it = myWorld.beginAgents() ; it != myWorld.endAgents() ; it++)
+	{
+		count++;
+	}
+
+	std::vector<Roman*> receivedAgent1 = myAgent1->getReceivedConnections();
+	std::vector<Roman*> validRcvAgent1 = myAgent1->getValidRcvConnections();
+
+	BOOST_CHECK_EQUAL(receivedAgent1.size(),0);
+	BOOST_CHECK_EQUAL(validRcvAgent1.size(),0);
+	BOOST_CHECK_EQUAL(count,1);
+
+	myWorld.run();
+}
+
+BOOST_AUTO_TEST_CASE( DeathCleanTradeProposition ) 
+{
+	std::cout << "### yo" << std::endl;
+	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	Roman * myAgent0 = new Roman("agent_0");
+	Roman * myAgent1 = new Roman("agent_1");
+	myWorld.addAgent(myAgent1);
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+	myAgent1->setRandomPosition();
+
+	myAgent0->addGoodType("ess-a",100.0);
+	myAgent0->addGoodType("ess-b",100.0);
+	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGood("currency",1.0);
+
+	myAgent1->addGoodType("ess-a",100.0);
+	myAgent1->addGood("ess-a",1.0);
+	myAgent1->addGoodType("ess-b",100.0);
+	myAgent1->addGood("ess-b",1.0);
+
+	myAgent0->proposeConnectionTo(myAgent1);
+	myAgent1->acceptConnectionFrom(myAgent0);
+
+	myAgent0->proposeTradeTo(myAgent1,"ess-a",50,50);
+
+	std::vector<std::tuple<Roman*,std::string,double,double> > receivedTradesAgent1Before = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(receivedTradesAgent1Before.size(),1);
+
+	myWorld.stepTest();
+
+	int count = 0;
+	for(auto it = myWorld.beginAgents() ; it != myWorld.endAgents() ; it++)
+	{
+		count++;
+	}
+
+	std::vector<std::tuple<Roman*,std::string,double,double> > receivedTradesAgent1 = myAgent1->getReceivedTrades();
+
+	BOOST_CHECK_EQUAL(receivedTradesAgent1.size(),0);
+	BOOST_CHECK_EQUAL(count,1);
+
+	myWorld.run();
+}
+
 BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE( VisibleGoods )

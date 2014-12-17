@@ -1,8 +1,8 @@
-
 #include <Roman.hxx>
 #include <HarvestAction.hxx>
 #include <ProposeConnectionAction.hxx>
 #include <SendGoodsAction.hxx>
+#include <ProposeTradeAction.hxx>
 #include <FunAction.hxx>
 #include <Statistics.hxx>
 #include <World.hxx>
@@ -46,7 +46,7 @@ void Roman::selectActions()
 	int action = _maxActions;
 	while (action >=0)
 	{
-		int dice = std::rand()%10;
+		int dice = std::rand()%7;
 		switch (dice)
 		{
 			case 0:
@@ -89,40 +89,18 @@ void Roman::selectActions()
 			case 5:
 				if(validSendConnections.size() > 0)
 				{
-					int dice2 = std::rand()%validSendConnections.size();
-					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"ess-a",1));
+					int target = std::rand()%validSendConnections.size();
+					static const std::string types[] = {"ess-a","ess-b","nonEss-a","nonEss-b"};
+					std::string type = types[std::rand()%4];
+					int quantity = std::rand()%10;
+					int currency = std::rand()%50;
+					std::cout << _id << " propose trade to " << validSendConnections[target]->getId() << std::endl;
+					_actions.push_back(new ProposeTradeAction(validSendConnections[target],type,quantity,currency));
 					action --;
 				}
 				break;
 
 			case 6:
-				if(validSendConnections.size() > 0)
-				{
-					int dice2 = std::rand()%validSendConnections.size();
-					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"ess-b",1));
-					action --;
-				}
-				break;
-
-			case 7:
-				if(validSendConnections.size() > 0)
-				{
-					int dice2 = std::rand()%validSendConnections.size();
-					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"nonEss-a",1));
-					action --;
-				}
-				break;
-
-			case 8:
-				if(validSendConnections.size() > 0)
-				{
-					int dice2 = std::rand()%validSendConnections.size();
-					_actions.push_back(new SendGoodsAction(validSendConnections[dice2],"nonEss-b",1));
-					action --;
-				}
-				break;
-
-			case 9:
 				log_INFO("check fun", _world->getWallTime() << " " << _id << " fun");
 				_actions.push_back(new FunAction("nonEss-a",1));
 				_actions.push_back(new FunAction("nonEss-b",2));
@@ -135,6 +113,7 @@ void Roman::selectActions()
 void Roman::updateState()
 {
 	treatIncomingConnections();
+	treatIncomingTrades();
 	consumeResources();
 	checkDeath();
 }
@@ -151,8 +130,10 @@ void Roman::consumeResources()
 
 void Roman::checkDeath()
 {
+	std::cout << "check kill " << _id << std::endl;
 	if(std::get<0>(getGood("ess-a")) < 1)
 	{
+		std::cout << "kill " << _id << std::endl;
 		for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
 		{
 			std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
@@ -166,6 +147,7 @@ void Roman::checkDeath()
 	}
 	else if(std::get<0>(getGood("ess-b")) < 1)
 	{
+		std::cout << "kill " << _id << std::endl;
 		for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
 		{
 			std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
@@ -179,9 +161,9 @@ void Roman::checkDeath()
 	}
 }
 
-
 void Roman::treatIncomingConnections()
 {
+	std::cout << _id << " incoming begin" << std::endl;
 	std::vector<Roman*>::iterator it = receivedConnections.begin();
 	while(it != receivedConnections.end())
 	{
@@ -195,7 +177,30 @@ void Roman::treatIncomingConnections()
 			refuseConnectionFrom(*it);
 		}
 	}
+	std::cout << _id << " incoming end" << std::endl;
 	++it;
+}
+
+void Roman::treatIncomingTrades()
+{
+	std::cout << _id << " trade begin" << std::endl;
+	std::vector<std::tuple<Roman*, std::string, double, double> >::iterator it = listReceivedTrades.begin();
+	while(it != listReceivedTrades.end())
+	{
+		std::cout << _id << " trade from " << std::get<0>(*it)->getId()  << std::endl;
+		int dice = std::rand()%70;
+		if (dice <= 0)
+		{
+			acceptTradeFrom(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
+		}
+		else
+		{
+			refuseTradeFrom(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
+		}
+		std::cout << _id << " trade done" << std::endl;
+	}
+	++it;
+	std::cout << _id << " trade end" << std::endl;
 }
 
 
