@@ -122,7 +122,7 @@ void Roman::updateState()
 	treatIncomingConnections();
 	treatIncomingTrades();
 	consumeResources();
-	//checkDeath();
+	checkDeath();
 }
 
 
@@ -139,57 +139,40 @@ void Roman::checkDeath()
 {
 	if( (std::get<0>(getGood("ess-a")) < 1) or (std::get<0>(getGood("ess-b")) < 1) )
 	{
-		//clean the agents in unfinished connections
-		while (receivedConnections.size() > 0)
-		{
-			std::vector<std::string>::iterator it = receivedConnections.begin();
-			killConnections((*it));
-		}
-
-		while (proposedConnections.size() > 0)
-		{
-			std::vector<std::string>::iterator it = proposedConnections.begin();
-			killConnections((*it));
-		}
-
-		//clean the agents and possible trades in built connections
-		while(validRcvConnections.size() > 0)
-		{
-			std::vector<std::string>::iterator it = validRcvConnections.begin() ;
-			killConnectionFrom((*it));
-
-			/*
-			std::cout << "cast" << std::endl;
-			Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(*it));
-			if (sourcePtr == NULL)
-			{
-				std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
-				exit(1);
-			}
-			sourcePtr->killTradesTo(_id);
-			*/
-		}
-
 		while(validSendConnections.size() > 0)
 		{
 			std::vector<std::string>::iterator it = validSendConnections.begin();
-			killConnectionTo((*it));
 
-			/*
 			Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(*it));
 			if (targetPtr == NULL)
 			{
 				std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
 				exit(1);
 			}
+			//std::cout << "kill trades" << std::endl;
 			targetPtr->killTradesFrom(_id);
-			*/
+			killConnectionTo(*it);
+			//std::cout << "done" << std::endl;
 		}
 
-		//clean the trades that have been sent
-		while(listProposedTrades.size() > 0)
+		//clean the agents in unfinished connections
+		while (receivedConnections.size() > 0)
 		{
-			std::vector<std::tuple<std::string,std::string,double,double> >::iterator it = listProposedTrades.begin();
+			std::vector<std::string>::iterator it = receivedConnections.begin();
+			killConnectionFrom(*it);
+		}
+		
+		while (proposedConnections.size() > 0)
+		{
+			std::vector<std::string>::iterator it = proposedConnections.begin();
+			killConnectionTo(*it);
+		}
+
+		//clean the agents and possible trades in built connections
+		while(validRcvConnections.size() > 0)
+		{
+			std::vector<std::string>::iterator it = validRcvConnections.begin() ;
+			killConnectionFrom(*it);
 		}
 
 		remove();
