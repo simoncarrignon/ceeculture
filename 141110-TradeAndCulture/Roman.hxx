@@ -1,4 +1,3 @@
-
 #ifndef __Roman_hxx__
 #define __Roman_hxx__
 
@@ -16,28 +15,28 @@ class Roman : public Engine::Agent
 	int _resources; // MpiBasicAttribute
 
 private:
-	std::vector<Roman*> proposedConnections;
+	std::vector<std::string> proposedConnections;
 
-	void requestConnectionFrom(Roman* source);
-	std::vector<Roman*> receivedConnections;
+	void requestConnectionFrom(std::string source);
+	std::vector<std::string> receivedConnections;
 
-	std::vector<Roman*> validRcvConnections;
+	std::vector<std::string> validRcvConnections;
 
-	int ackConnectionFrom(Roman* target);
-	int nackConnectionFrom(Roman* target);
-	std::vector<Roman*> validSendConnections;
+	int ackConnectionFrom(std::string target);
+	int nackConnectionFrom(std::string target);
+	std::vector<std::string> validSendConnections;
 
-	void receiveMessageFrom(Roman* source, std::string msg);
-	std::vector<std::tuple<Roman*,std::string> > receivedMessages;
+	void receiveMessageFrom(std::string source, std::string msg);
+	std::vector<std::tuple<std::string,std::string> > receivedMessages;
 
 	std::vector<std::tuple<std::string,double,double> > listGoods;
-	int receiveGoodFrom(Roman* source, std::string type, double value);
+	int receiveGoodFrom(std::string source, std::string type, double value);
 
-	std::vector<std::tuple<Roman*,std::string,double,double> > listReceivedTrades;
-	std::vector<std::tuple<Roman*,std::string,double,double> > listProposedTrades;
-	int receiveTradeFrom(Roman* source, std::string type, double value, double currency);
-	void removeReceivedTrade(Roman* source, std::string type, double value, double currency);
-	void removeProposedTrade(Roman* source, std::string type, double value, double currency);
+	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
+	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades;
+	int receiveTradeFrom(std::string source, std::string type, double value, double currency);
+	void removeReceivedTrade(std::string source, std::string type, double value, double currency);
+	void removeProposedTrade(std::string source, std::string type, double value, double currency);
 
 	void consumeResources();
 	void treatIncomingConnections();
@@ -64,26 +63,26 @@ public:
 
 
 	// setup connections
-	void proposeConnectionTo(Roman* target);
-	void killConnectionTo(Roman* target);
-	std::vector<Roman*> getProposedConnections() {return proposedConnections;};
-	std::vector<Roman*> getValidSendConnections() {return validSendConnections;};
+	void proposeConnectionTo(std::string target);
+	void killConnectionTo(std::string target);
+	std::vector<std::string> getProposedConnections() {return proposedConnections;};
+	std::vector<std::string> getValidSendConnections() {return validSendConnections;};
 
 
-	void acceptConnectionFrom(Roman* source);
-	void refuseConnectionFrom(Roman* source);
-	void killConnectionFrom(Roman* source);
-	std::vector<Roman*> getReceivedConnections() {return receivedConnections;};
-	std::vector<Roman*> getValidRcvConnections() {return validRcvConnections;};
+	void acceptConnectionFrom(std::string source);
+	void refuseConnectionFrom(std::string source);
+	void killConnectionFrom(std::string source);
+	std::vector<std::string> getReceivedConnections() {return receivedConnections;};
+	std::vector<std::string> getValidRcvConnections() {return validRcvConnections;};
 
-	void killConnections(Roman *target);
+	void killConnections(std::string target);
 
-	void proposeConnectionBetween(Roman *source, Roman * target);
-	void killConnectionBetween(Roman *source, Roman * target);
+	void proposeConnectionBetween(std::string source, std::string target);
+	void killConnectionBetween(std::string source, std::string target);
 
 	//message system
-	void sendMessageTo(Roman *target, std::string msg);
-	std::vector<std::tuple<Roman*,std::string> > getReceivedMessages() {return receivedMessages;};
+	void sendMessageTo(std::string target, std::string msg);
+	std::vector<std::tuple<std::string,std::string> > getReceivedMessages() {return receivedMessages;};
 
 
 	//good system
@@ -95,23 +94,24 @@ public:
 	void addGood(std::string type,double value);
 	void removeGood(std::string type,double value);
 
-	std::vector<std::tuple<std::string,double,double> >  getListGoodsFrom(Roman* target);
+	std::vector<std::tuple<std::string,double,double> >  getListGoodsFrom(std::string target);
 
 	//sending goods
-	void sendGoodTo(Roman* target, std::string type, double value);
+	void sendGoodTo(std::string target, std::string type, double value);
 
 	//trading goods
-	void proposeTradeTo(Roman* target, std::string type, double valueGood, double valueCurrency);
-	void acceptTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency);
-	void refuseTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency);
+	void proposeTradeTo(std::string target, std::string type, double valueGood, double valueCurrency);
+	void acceptTradeFrom(std::string source, std::string type, double valueGood, double valueCurrency);
+	void refuseTradeFrom(std::string source, std::string type, double valueGood, double valueCurrency);
 	
-	std::vector<std::tuple<Roman*,std::string,double,double> > getProposedTrades() {return listProposedTrades;};
-	std::vector<std::tuple<std::string,double,double> > getProposedTradesTo(Roman* target);
+	std::vector<std::tuple<std::string,std::string,double,double> > getProposedTrades() {return listProposedTrades;};
+	std::vector<std::tuple<std::string,double,double> > getProposedTradesTo(std::string target);
 
-	std::vector<std::tuple<Roman*,std::string,double,double> > getReceivedTrades(){return listReceivedTrades;};
-	std::vector<std::tuple<std::string,double,double> > getReceivedTradesFrom(Roman* source);
+	std::vector<std::tuple<std::string,std::string,double,double> > getReceivedTrades(){return listReceivedTrades;};
+	std::vector<std::tuple<std::string,double,double> > getReceivedTradesFrom(std::string source);
 
-	void killTradeFrom(Roman* source);
+	void killTradesTo(std::string source);
+	void killTradesFrom(std::string source);
 
 	////////////////////////////////////////////////
 	// This code has been automatically generated //

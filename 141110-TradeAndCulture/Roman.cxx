@@ -51,6 +51,7 @@ void Roman::updateKnowledge()
 
 void Roman::selectActions()
 {
+	/*
 	int action = _maxActions;
 	while (action >=0)
 	{
@@ -80,14 +81,13 @@ void Roman::selectActions()
 			case 4:
 				for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
 				{
-					std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
-					Roman* ptrRoman = romanAgent.get();
-					if(ptrRoman != this)
+					std::string roman_id = (*it)->getId();;
+					if(roman_id != _id)
 					{
 						int dice2 = std::rand()%100;
 						if(dice2 < 80)
 						{
-							_actions.push_back(new ProposeConnectionAction(ptrRoman));
+							_actions.push_back(new ProposeConnectionAction(roman_id));
 							action--;
 						}
 					}
@@ -114,6 +114,7 @@ void Roman::selectActions()
 				break;
 		}
 	}
+	*/
 }
 
 void Roman::updateState()
@@ -121,7 +122,7 @@ void Roman::updateState()
 	treatIncomingConnections();
 	treatIncomingTrades();
 	consumeResources();
-	checkDeath();
+	//checkDeath();
 }
 
 
@@ -136,39 +137,68 @@ void Roman::consumeResources()
 
 void Roman::checkDeath()
 {
-	if(std::get<0>(getGood("ess-a")) < 1)
+	if( (std::get<0>(getGood("ess-a")) < 1) or (std::get<0>(getGood("ess-b")) < 1) )
 	{
-		for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
+		//clean the agents in unfinished connections
+		while (receivedConnections.size() > 0)
 		{
-			std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
-			Roman* ptrRoman = romanAgent.get();
-			if(ptrRoman != this)
-			{
-				killConnections(ptrRoman);
-				ptrRoman->killTradeFrom(this);
-			}
+			std::vector<std::string>::iterator it = receivedConnections.begin();
+			killConnections((*it));
 		}
-		remove();
-	}
-	else if(std::get<0>(getGood("ess-b")) < 1)
-	{
-		for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
+
+		while (proposedConnections.size() > 0)
 		{
-			std::shared_ptr<Roman> romanAgent = std::dynamic_pointer_cast<Roman> (*it);
-			Roman* ptrRoman = romanAgent.get();
-			if(ptrRoman != this)
-			{
-				killConnections(ptrRoman);
-				ptrRoman->killTradeFrom(this);
-			}
+			std::vector<std::string>::iterator it = proposedConnections.begin();
+			killConnections((*it));
 		}
+
+		//clean the agents and possible trades in built connections
+		while(validRcvConnections.size() > 0)
+		{
+			std::vector<std::string>::iterator it = validRcvConnections.begin() ;
+			killConnectionFrom((*it));
+
+			/*
+			std::cout << "cast" << std::endl;
+			Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(*it));
+			if (sourcePtr == NULL)
+			{
+				std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+				exit(1);
+			}
+			sourcePtr->killTradesTo(_id);
+			*/
+		}
+
+		while(validSendConnections.size() > 0)
+		{
+			std::vector<std::string>::iterator it = validSendConnections.begin();
+			killConnectionTo((*it));
+
+			/*
+			Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(*it));
+			if (targetPtr == NULL)
+			{
+				std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+				exit(1);
+			}
+			targetPtr->killTradesFrom(_id);
+			*/
+		}
+
+		//clean the trades that have been sent
+		while(listProposedTrades.size() > 0)
+		{
+			std::vector<std::tuple<std::string,std::string,double,double> >::iterator it = listProposedTrades.begin();
+		}
+
 		remove();
 	}
 }
 
 void Roman::treatIncomingConnections()
 {
-	std::vector<Roman*>::iterator it = receivedConnections.begin();
+	std::vector<std::string>::iterator it = receivedConnections.begin();
 	while(it != receivedConnections.end())
 	{
 		//accept and refuse remove the connection from receivedConnections
@@ -188,7 +218,7 @@ void Roman::treatIncomingConnections()
 void Roman::treatIncomingTrades()
 {
 	_nbTrades = 0;
-	std::vector<std::tuple<Roman*, std::string, double, double> >::iterator it = listReceivedTrades.begin();
+	std::vector<std::tuple<std::string, std::string, double, double> >::iterator it = listReceivedTrades.begin();
 	while(it != listReceivedTrades.end())
 	{
 		//accept and refuse remove the trade from listReceivedTrades
@@ -225,12 +255,18 @@ int Roman::getResources() const
 	return _resources;
 }
 
-void Roman::proposeConnectionTo(Roman* target)
+void Roman::proposeConnectionTo(std::string target)
 {
 	//if the connection is not already among the valid one, ask for it
 	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) == validSendConnections.end() )
 	{
-		target->requestConnectionFrom(this);
+		Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
+		if (targetPtr == NULL)
+		{
+			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+			exit(1);
+		}
+		targetPtr->requestConnectionFrom(_id);
 		//if the connection is not already in the proposed one, add it
 		if( std::find(proposedConnections.begin(), proposedConnections.end(), target) == proposedConnections.end() )
 		{
@@ -239,7 +275,7 @@ void Roman::proposeConnectionTo(Roman* target)
 	}
 }
 
-void Roman::killConnectionTo(Roman* target)
+void Roman::killConnectionTo(std::string target)
 {
 	bool wasPresent = false;
 	//remove traces from the proposedConnections
@@ -259,11 +295,17 @@ void Roman::killConnectionTo(Roman* target)
 	//if the target was present there is a chance that we are in its lists
 	if (wasPresent == true)
 	{
-		target->killConnectionFrom(this);
+		Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
+		if (targetPtr == NULL)
+		{
+			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+			exit(1);
+		}
+		targetPtr->killConnectionFrom(_id);
 	}
 }
 
-void Roman::killConnectionFrom(Roman* source)
+void Roman::killConnectionFrom(std::string source)
 {
 	bool wasPresent = false;
 	//remove traces from the receivedConnections
@@ -283,17 +325,23 @@ void Roman::killConnectionFrom(Roman* source)
 	//if the source was present there is a chance that we are in its lists
 	if (wasPresent == true)
 	{
-		source->killConnectionTo(this);
+		Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(source));
+		if (sourcePtr == NULL)
+		{
+			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+			exit(1);
+		}
+		sourcePtr->killConnectionTo(_id);
 	}
 }
 
-void Roman::killConnections(Roman* target)
+void Roman::killConnections(std::string target)
 {
 	killConnectionTo(target);
 	killConnectionFrom(target);
 }
 
-void Roman::requestConnectionFrom(Roman* source)
+void Roman::requestConnectionFrom(std::string source)
 {
 	//if the connection has not been received, put it among the received ones
 	if( std::find(receivedConnections.begin(), receivedConnections.end(), source) == receivedConnections.end() )
@@ -302,17 +350,24 @@ void Roman::requestConnectionFrom(Roman* source)
 	}
 }
 
-void Roman::acceptConnectionFrom(Roman* source)
+void Roman::acceptConnectionFrom(std::string source)
 {
 	//if the source has not been already validated
 	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) == validRcvConnections.end() )
 	{
+		Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(source));
+		if (sourcePtr == NULL)
+		{
+			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+			exit(1);
+		}
+
 		//if the source is effectively in the received connection
 		if( std::find(receivedConnections.begin(), receivedConnections.end(), source) != receivedConnections.end() )
 		{
 			receivedConnections.erase(std::remove(receivedConnections.begin(), receivedConnections.end(), source), receivedConnections.end());
 			//confirm the connection to source, and verify that source is aware of it
-			if (source->ackConnectionFrom(this))
+			if (sourcePtr->ackConnectionFrom(_id))
 			{
 				validRcvConnections.push_back(source);
 			}
@@ -320,30 +375,51 @@ void Roman::acceptConnectionFrom(Roman* source)
 		//if the source is not in the lit of received, something went wrong, kill things
 		else
 		{
-			source->killConnectionTo(this);
+			sourcePtr->killConnectionTo(_id);
 		}
 	}
 }
 
-void Roman::refuseConnectionFrom(Roman* source)
+void Roman::refuseConnectionFrom(std::string source)
 {
+	Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
 	//refuse connection from source
-	source->nackConnectionFrom(this);
+	sourcePtr->nackConnectionFrom(_id);
 	//remove source
 	receivedConnections.erase(std::remove(receivedConnections.begin(), receivedConnections.end(), source), receivedConnections.end());
 }
 
-void Roman::proposeConnectionBetween(Roman* source, Roman* target)
+void Roman::proposeConnectionBetween(std::string source, std::string target)
 {
-	source->proposeConnectionTo(target);
+	Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	sourcePtr->proposeConnectionTo(target);
 }
 
-void Roman::killConnectionBetween(Roman* source, Roman* target)
+void Roman::killConnectionBetween(std::string source, std::string target)
 {
-	source->killConnectionTo(target);
+	Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	sourcePtr->killConnectionTo(target);
 }
 
-int Roman::ackConnectionFrom(Roman* target)
+int Roman::ackConnectionFrom(std::string target)
 {
 	//if we had sent a connection we acknowledge it, otherwise we just return an error
 	if( std::find(proposedConnections.begin(), proposedConnections.end(), target) != proposedConnections.end() )
@@ -358,7 +434,7 @@ int Roman::ackConnectionFrom(Roman* target)
 	}
 }
 
-int Roman::nackConnectionFrom(Roman* target)
+int Roman::nackConnectionFrom(std::string target)
 {
 	//if we had sent a connection we kill it, otherwise we just return an error
 	if( std::find(proposedConnections.begin(), proposedConnections.end(), target) != proposedConnections.end() )
@@ -372,7 +448,7 @@ int Roman::nackConnectionFrom(Roman* target)
 	}
 }
 
-void Roman::receiveMessageFrom(Roman* source, std::string msg)
+void Roman::receiveMessageFrom(std::string source, std::string msg)
 {
 	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) != validRcvConnections.end() )
 	{
@@ -380,12 +456,18 @@ void Roman::receiveMessageFrom(Roman* source, std::string msg)
 	}
 }
 
-void Roman::sendMessageTo(Roman* target, std::string msg)
+void Roman::sendMessageTo(std::string target, std::string msg)
 {
 	// if the connection with the target has been valideted
 	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
 	{
-		target->receiveMessageFrom(this, msg);
+		Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
+		if (targetPtr == NULL)
+		{
+			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+			exit(1);
+		}
+		targetPtr->receiveMessageFrom(_id, msg);
 	}
 }
 
@@ -450,12 +532,18 @@ void Roman::removeGood(std::string type,double value)
 	}
 }
 
-std::vector<std::tuple<std::string,double,double> >  Roman::getListGoodsFrom(Roman* target)
+std::vector<std::tuple<std::string,double,double> >  Roman::getListGoodsFrom(std::string target)
 {
-	return target->getListGoods();
+	Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
+	if (targetPtr == NULL)
+	{
+		std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+	return targetPtr->getListGoods();
 }
 
-void Roman::sendGoodTo(Roman* target, std::string type, double value)
+void Roman::sendGoodTo(std::string target, std::string type, double value)
 {
 	// if the connection with the target has been valideted
 	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
@@ -467,7 +555,14 @@ void Roman::sendGoodTo(Roman* target, std::string type, double value)
 		{
 			if ( std::get<1>(*it) >= value)
 			{
-				if(target->receiveGoodFrom(this, type, value))
+				Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
+				if (targetPtr == NULL)
+				{
+					std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+					exit(1);
+				}
+
+				if(targetPtr->receiveGoodFrom(_id, type, value))
 				{
 					removeGood(type,value);
 				}
@@ -476,7 +571,7 @@ void Roman::sendGoodTo(Roman* target, std::string type, double value)
 	}
 }
 
-int Roman::receiveGoodFrom(Roman* source, std::string type, double value)
+int Roman::receiveGoodFrom(std::string source, std::string type, double value)
 {
 	//if in the list of validated senders receive the good
 	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) != validRcvConnections.end() )
@@ -490,7 +585,7 @@ int Roman::receiveGoodFrom(Roman* source, std::string type, double value)
 	return 0;
 }
 
-int Roman::receiveTradeFrom(Roman* source, std::string type, double value, double currency)
+int Roman::receiveTradeFrom(std::string source, std::string type, double value, double currency)
 {
 	auto it = listGoods.begin();
 	while( it != listGoods.end() )
@@ -512,7 +607,7 @@ int Roman::receiveTradeFrom(Roman* source, std::string type, double value, doubl
 	return 0;
 }
 
-void Roman::proposeTradeTo(Roman* target, std::string type, double valueGood, double valueCurrency)
+void Roman::proposeTradeTo(std::string target, std::string type, double valueGood, double valueCurrency)
 { 
 	auto it = listGoods.begin();
 	while( it != listGoods.end() )
@@ -526,15 +621,22 @@ void Roman::proposeTradeTo(Roman* target, std::string type, double valueGood, do
 	// if the connection with the target has been validated
 	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
 	{
+		Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
+		if (targetPtr == NULL)
+		{
+			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+			exit(1);
+		}
+
 		//if the offer is effectively received, add it
-		if (target->receiveTradeFrom(this,type,valueGood,valueCurrency))
+		if (targetPtr->receiveTradeFrom(_id,type,valueGood,valueCurrency))
 		{
 			listProposedTrades.push_back(make_tuple(target,type,valueGood,valueCurrency));
 		}
 	}
 }
 
-void Roman::acceptTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency)
+void Roman::acceptTradeFrom(std::string source, std::string type, double valueGood, double valueCurrency)
 {
 	if( std::find(validRcvConnections.begin(), validRcvConnections.end(), source) != validRcvConnections.end() )
 	{
@@ -542,13 +644,20 @@ void Roman::acceptTradeFrom(Roman* source, std::string type, double valueGood, d
 		{
 			if ((*it) == std::make_tuple(source,type,valueGood,valueCurrency))
 			{
-				if( (std::get<0>(getGood("currency")) >= valueCurrency) && (std::get<0>(source->getGood(type)) >= valueGood) )
+				Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(source));
+				if (sourcePtr == NULL)
 				{
-					source->sendGoodTo(this,type,valueGood);
-					source->addGood("currency", valueCurrency);
+					std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+					exit(1);
+				}
+
+				if( (std::get<0>(getGood("currency")) >= valueCurrency) && (std::get<0>(sourcePtr->getGood(type)) >= valueGood) )
+				{
+					sourcePtr->sendGoodTo(_id,type,valueGood);
+					sourcePtr->addGood("currency", valueCurrency);
 					removeGood("currency",valueCurrency);
 				}
-				source->removeProposedTrade(this,type,valueGood,valueCurrency);
+				sourcePtr->removeProposedTrade(_id,type,valueGood,valueCurrency);
 				removeReceivedTrade(source,type,valueGood,valueCurrency);
 				break;
 			}
@@ -556,13 +665,20 @@ void Roman::acceptTradeFrom(Roman* source, std::string type, double valueGood, d
 	}
 }
 
-void Roman::refuseTradeFrom(Roman* source, std::string type, double valueGood, double valueCurrency)
+void Roman::refuseTradeFrom(std::string source, std::string type, double valueGood, double valueCurrency)
 {
-	source->removeProposedTrade(this,type,valueGood,valueCurrency);
+	Roman* sourcePtr = dynamic_cast<Roman*> (_world->getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	sourcePtr->removeProposedTrade(_id,type,valueGood,valueCurrency);
 	removeReceivedTrade(source,type,valueGood,valueCurrency);
 }
 
-std::vector<std::tuple<std::string,double,double> > Roman::getReceivedTradesFrom(Roman* source)
+std::vector<std::tuple<std::string,double,double> > Roman::getReceivedTradesFrom(std::string source)
 {
 	std::vector<std::tuple<std::string,double,double> > tmp;
 	for (auto it = listReceivedTrades.begin() ; it != listReceivedTrades.end() ; it ++)
@@ -575,7 +691,7 @@ std::vector<std::tuple<std::string,double,double> > Roman::getReceivedTradesFrom
 	return tmp;
 }
 
-std::vector<std::tuple<std::string,double,double> > Roman::getProposedTradesTo(Roman* target)
+std::vector<std::tuple<std::string,double,double> > Roman::getProposedTradesTo(std::string target)
 {
 	std::vector<std::tuple<std::string,double,double> > tmp;
 	for (auto it = listProposedTrades.begin() ; it != listProposedTrades.end() ; it ++)
@@ -588,7 +704,7 @@ std::vector<std::tuple<std::string,double,double> > Roman::getProposedTradesTo(R
 	return tmp;
 }
 
-void Roman::removeReceivedTrade(Roman* source, std::string type, double value, double currency)
+void Roman::removeReceivedTrade(std::string source, std::string type, double value, double currency)
 {
 	for (auto it = listReceivedTrades.begin() ; it != listReceivedTrades.end() ;)
 	{
@@ -604,7 +720,7 @@ void Roman::removeReceivedTrade(Roman* source, std::string type, double value, d
 	}
 }
 
-void Roman::removeProposedTrade(Roman* source, std::string type, double value, double currency)
+void Roman::removeProposedTrade(std::string source, std::string type, double value, double currency)
 {
 	for (auto it = listProposedTrades.begin() ; it != listReceivedTrades.end() ;)
 	{
@@ -620,7 +736,7 @@ void Roman::removeProposedTrade(Roman* source, std::string type, double value, d
 	}
 }
 
-void Roman::killTradeFrom(Roman* source)
+void Roman::killTradesFrom(std::string source)
 {
 	//remove traces from the receivedTrades
 	for(auto it = listReceivedTrades.begin(); it != listReceivedTrades.end();)
@@ -628,6 +744,22 @@ void Roman::killTradeFrom(Roman* source)
 		if(std::get<0>(*it) == source)
 		{
 			it = listReceivedTrades.erase(it); 
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+void Roman::killTradesTo(std::string target)
+{
+	//remove traces from the proposedTrades
+	for(auto it = listProposedTrades.begin(); it != listProposedTrades.end();)
+	{
+		if(std::get<0>(*it) == target)
+		{
+			it = listProposedTrades.erase(it); 
 		}
 		else
 		{

@@ -16,13 +16,13 @@ namespace Epnet
 class SendGoodsAction : public Engine::Action
 {
 public:
-	SendGoodsAction(Roman* target,std::string type, int quantity);
+	SendGoodsAction(std::string target,std::string type, int quantity);
 	virtual ~SendGoodsAction();
 	void execute( Engine::Agent & agent );
 	std::string describe() const;
 
 private:
-	Roman* _target;
+	std::string _target;
 	std::string _type;
 	int _requested;
 };

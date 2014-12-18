@@ -7,7 +7,7 @@
 namespace Epnet
 {
 
-ProposeTradeAction::ProposeTradeAction(Roman* target, std::string type, int quantity, int currency): _target(target), _type(type), _quantity(quantity), _currency(currency)
+ProposeTradeAction::ProposeTradeAction(std::string target, std::string type, int quantity, int currency): _target(target), _type(type), _quantity(quantity), _currency(currency)
 {
 }
 

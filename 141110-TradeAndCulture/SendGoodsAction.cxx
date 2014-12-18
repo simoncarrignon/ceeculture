@@ -7,7 +7,7 @@
 namespace Epnet
 {
 
-SendGoodsAction::SendGoodsAction(Roman* target, std::string type, int requested): _target(target), _type(type), _requested(requested)
+SendGoodsAction::SendGoodsAction(std::string target, std::string type, int requested): _target(target), _type(type), _requested(requested)
 {
 }
 

@@ -7,7 +7,7 @@
 namespace Epnet
 {
 
-ProposeConnectionAction::ProposeConnectionAction(Roman* target): _target(target)
+ProposeConnectionAction::ProposeConnectionAction(std::string target): _target(target)
 {
 }
 

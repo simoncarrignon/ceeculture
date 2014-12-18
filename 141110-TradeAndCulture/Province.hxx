@@ -1,4 +1,3 @@
-
 #ifndef __Province_hxx
 #define __Province_hxx
 
@@ -19,13 +18,13 @@ public:
 	Province(Engine::Config * config, Engine::Scheduler * scheduler = 0);
 	virtual ~Province();
 
-	void proposeConnection(Roman* source, Roman* target);
-	void buildConnection(Roman* source, Roman* target);
-	void killConnection(Roman* source, Roman* target);
+	void proposeConnection(std::string source, std::string target);
+	void buildConnection(std::string source, std::string target);
+	void killConnection(std::string source, std::string target);
 
-	void proposeTwoWayConnection(Roman* source, Roman* target);
-	void buildTwoWayConnection(Roman* source, Roman* target);
-	void killTwoWayConnection(Roman* source, Roman* target);
+	void proposeTwoWayConnection(std::string source, std::string target);
+	void buildTwoWayConnection(std::string source, std::string target);
+	void killTwoWayConnection(std::string source, std::string target);
 };
 
 } // namespace Epnet

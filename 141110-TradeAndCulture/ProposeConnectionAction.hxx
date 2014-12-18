@@ -16,13 +16,13 @@ namespace Epnet
 class ProposeConnectionAction : public Engine::Action
 {
 public:
-	ProposeConnectionAction(Roman* target);
+	ProposeConnectionAction(std::string target);
 	virtual ~ProposeConnectionAction();
 	void execute( Engine::Agent & agent );
 	std::string describe() const;
 
 private:
-	Roman* _target;
+	std::string _target;
 };
 
 } // namespace Epnet

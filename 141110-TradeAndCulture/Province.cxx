@@ -1,4 +1,3 @@
-
 #include <Province.hxx>
 
 #include <ProvinceConfig.hxx>
@@ -93,38 +92,93 @@ void Province::createAgents()
 	}
 }
 
-void Province::proposeConnection(Roman* source, Roman* target)
+void Province::proposeConnection(std::string source, std::string target)
 {
-	source->proposeConnectionTo(target);
+	Roman* sourcePtr = dynamic_cast<Roman*> (getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+	sourcePtr->proposeConnectionTo(target);
 }
 
-void Province::buildConnection(Roman* source, Roman* target)
+void Province::buildConnection(std::string source, std::string target)
 {
-	source->proposeConnectionTo(target);
-	target->acceptConnectionFrom(source);
+	Roman* sourcePtr = dynamic_cast<Roman*> (getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	Roman* targetPtr = dynamic_cast<Roman*> (getAgent(target));
+	if (targetPtr == NULL)
+	{
+		std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	sourcePtr->proposeConnectionTo(target);
+	targetPtr->acceptConnectionFrom(source);
 }
 
-void Province::killConnection(Roman* source, Roman* target)
+void Province::killConnection(std::string source, std::string target)
 {
-	source->killConnectionTo(target);
+	Roman* sourcePtr = dynamic_cast<Roman*> (getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	sourcePtr->killConnectionTo(target);
 }
 
-void Province::proposeTwoWayConnection(Roman* source, Roman* target)
+void Province::proposeTwoWayConnection(std::string source, std::string target)
 {
-	source->proposeConnectionTo(target);
-	target->proposeConnectionTo(source);
+	Roman* sourcePtr = dynamic_cast<Roman*> (getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	Roman* targetPtr = dynamic_cast<Roman*> (getAgent(target));
+	if (targetPtr == NULL)
+	{
+		std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	sourcePtr->proposeConnectionTo(target);
+	targetPtr->proposeConnectionTo(source);
 }
 
-void Province::buildTwoWayConnection(Roman* source, Roman* target)
+void Province::buildTwoWayConnection(std::string source, std::string target)
 {
 	buildConnection(source,target);
 	buildConnection(target,source);
 }
 
-void Province::killTwoWayConnection(Roman* source, Roman* target)
+void Province::killTwoWayConnection(std::string source, std::string target)
 {
-	source->killConnectionTo(target);
-	target->killConnectionTo(source);
+	Roman* sourcePtr = dynamic_cast<Roman*> (getAgent(source));
+	if (sourcePtr == NULL)
+	{
+		std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	Roman* targetPtr = dynamic_cast<Roman*> (getAgent(target));
+	if (targetPtr == NULL)
+	{
+		std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+
+	sourcePtr->killConnectionTo(target);
+	targetPtr->killConnectionTo(source);
 }
 
 } // namespace Roman
