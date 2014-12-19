@@ -143,16 +143,8 @@ void Roman::checkDeath()
 		{
 			std::vector<std::string>::iterator it = validSendConnections.begin();
 
-			Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(*it));
-			if (targetPtr == NULL)
-			{
-				std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
-				exit(1);
-			}
-			//std::cout << "kill trades" << std::endl;
-			targetPtr->killTradesFrom(_id);
+			killTradesTo(*it);
 			killConnectionTo(*it);
-			//std::cout << "done" << std::endl;
 		}
 
 		//clean the agents in unfinished connections
@@ -753,6 +745,14 @@ void Roman::killTradesTo(std::string target)
 			++it;
 		}
 	}
+
+	Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
+	if (targetPtr == NULL)
+	{
+		std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+		exit(1);
+	}
+	targetPtr->killTradesFrom(_id);
 }
 
 } // namespace Roman
