@@ -240,20 +240,24 @@ int Roman::getResources() const
 
 void Roman::proposeConnectionTo(std::string target)
 {
-	//if the connection is not already among the valid one, ask for it
-	if( std::find(validSendConnections.begin(), validSendConnections.end(), target) == validSendConnections.end() )
+	//if do not ask to connect with self
+	if( target != _id )
 	{
-		Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
-		if (targetPtr == NULL)
+		//if the connection is not already among the valid one, ask for it
+		if( std::find(validSendConnections.begin(), validSendConnections.end(), target) == validSendConnections.end() )
 		{
-			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
-			exit(1);
-		}
-		targetPtr->requestConnectionFrom(_id);
-		//if the connection is not already in the proposed one, add it
-		if( std::find(proposedConnections.begin(), proposedConnections.end(), target) == proposedConnections.end() )
-		{
-			proposedConnections.push_back(target);
+			Roman* targetPtr = dynamic_cast<Roman*> (_world->getAgent(target));
+			if (targetPtr == NULL)
+			{
+				std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+				exit(1);
+			}
+			targetPtr->requestConnectionFrom(_id);
+			//if the connection is not already in the proposed one, add it
+			if( std::find(proposedConnections.begin(), proposedConnections.end(), target) == proposedConnections.end() )
+			{
+				proposedConnections.push_back(target);
+			}
 		}
 	}
 }
