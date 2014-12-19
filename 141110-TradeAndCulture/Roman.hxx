@@ -75,10 +75,10 @@ public:
 	std::vector<std::string> getReceivedConnections() {return receivedConnections;};
 	std::vector<std::string> getValidRcvConnections() {return validRcvConnections;};
 
-	void killConnections(std::string target);
-
 	void proposeConnectionBetween(std::string source, std::string target);
 	void killConnectionBetween(std::string source, std::string target);
+
+	void killConnections(std::string target);
 
 	//message system
 	void sendMessageTo(std::string target, std::string msg);
