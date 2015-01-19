@@ -2,7 +2,7 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE "Pandora Sequential Unit Tests"
 
-#include "Roman.hxx"
+#include "RomanTest.hxx"
 #include "ProvinceTest.hxx"
 #include "ProvinceConfig.hxx"
 #include <Config.hxx>
@@ -26,8 +26,8 @@ BOOST_AUTO_TEST_CASE( KillNonExistingTrade )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -56,8 +56,8 @@ BOOST_AUTO_TEST_CASE( KillProposedTrade )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -116,8 +116,8 @@ BOOST_AUTO_TEST_CASE( KillTwoProposedTrade )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -180,8 +180,8 @@ BOOST_AUTO_TEST_CASE( DeathHappens )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 3), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -211,8 +211,8 @@ BOOST_AUTO_TEST_CASE( DeathCleanProposition )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -249,8 +249,8 @@ BOOST_AUTO_TEST_CASE( DeathCleanConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -287,8 +287,8 @@ BOOST_AUTO_TEST_CASE( DeathCleanTradeProposition )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -337,8 +337,8 @@ BOOST_AUTO_TEST_CASE( DeathCleanTradeProposed )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -391,8 +391,8 @@ BOOST_AUTO_TEST_CASE( getGoods )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 3), Province::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	Roman* myAgent0 = new Roman("agent_0");
-	Roman* myAgent1 = new Roman("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent1 = new RomanTest("agent_1");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();

@@ -51,7 +51,6 @@ void Roman::updateKnowledge()
 
 void Roman::selectActions()
 {
-	/*
 	int action = _maxActions;
 	while (action >=0)
 	{
@@ -63,6 +62,7 @@ void Roman::selectActions()
 				action--;
 				break;
 
+	/*
 			case 1:
 				_actions.push_back(new HarvestAction("ess-b",1));
 				action--;
@@ -112,9 +112,9 @@ void Roman::selectActions()
 				_actions.push_back(new FunAction("nonEss-b",2));
 				action --;
 				break;
+			*/
 		}
 	}
-	*/
 }
 
 void Roman::updateState()
