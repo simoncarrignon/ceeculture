@@ -46,6 +46,8 @@ private:
 	int _maxActions;
 	int _nbTrades;
 
+	void randomActionSelection();
+
 public:
 	// todo remove environment from here
 	Roman( const std::string & id );
