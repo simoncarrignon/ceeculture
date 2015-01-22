@@ -68,6 +68,22 @@ BOOST_AUTO_TEST_CASE( AgentAsk2Times )
 	myWorld.run();
 }
 
+BOOST_AUTO_TEST_CASE( AgentProposeConnectionToNonExisting ) 
+{
+	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
+	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
+
+	RomanTest* myAgent0 = new RomanTest("agent_0");
+	myWorld.addAgent(myAgent0);
+	myAgent0->setRandomPosition();
+
+	myAgent0->proposeConnectionTo("agent_!");
+	std::vector<std::string> proposedAgent0 = myAgent0->getProposedConnections();
+	BOOST_CHECK_EQUAL(proposedAgent0.size(), 0);
+
+	myWorld.run();
+}
+
 BOOST_AUTO_TEST_CASE( AgentProposeConnectionToSelf ) 
 {
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
