@@ -11,7 +11,7 @@ agents = ['Roman']
 world = 'Province'
 namespaceAgents = ['Epnet']
 
-srcFiles = Split('main.cxx Roman.cxx Province.cxx ProvinceConfig.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx ProposeTradeAction.cxx')
+srcFiles = Split('main.cxx Roman.cxx Province.cxx ProvinceConfig.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx ProposeTradeAction.cxx MacmillanPlanner.cxx')
 
 ###################################################
 ########## END OF CUSTOM INFORMATION  #############
@@ -42,7 +42,8 @@ if env['debug'] == True:
     env.Append(CCFLAGS = '-g -O0 -Wall -DPANDORADEBUG'.split())
     if env['edebug']==True:
         env.Append(CCFLAGS = '-DPANDORAEDEBUG')
-    env.Append(LIBS = 'pandorad')
+    #env.Append(LIBS = 'pandorad')
+    env.Append(LIBS = 'pandora')
 else:
     env.Append(CCFLAGS = '-Ofast'.split())
     env.Append(LIBS = 'pandora')

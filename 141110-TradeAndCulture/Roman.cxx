@@ -4,6 +4,7 @@
 #include <SendGoodsAction.hxx>
 #include <ProposeTradeAction.hxx>
 #include <FunAction.hxx>
+
 #include <Statistics.hxx>
 #include <World.hxx>
 #include <Logger.hxx>
@@ -13,6 +14,7 @@ namespace Epnet
 
 	Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 	{
+		planner = new MacmillanPlanner();
 	}
 
 	Roman::~Roman()
@@ -51,7 +53,8 @@ namespace Epnet
 
 	void Roman::selectActions()
 	{
-		randomActionSelection();
+		//randomActionSelection();
+		planner->consumptionPlan();
 	}
 
 	void Roman::randomActionSelection()
