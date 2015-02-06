@@ -10,9 +10,9 @@ namespace Epnet
 	{
 		private:
 			int nbGoods;
-			int lastIdEssentialGood;
+			int nbEssentialGood;
 			std::vector<int> needEssential;
-			std::vector<int> utility;
+			std::vector<double> utility;
 			std::vector<double> subjectivePrice;
 
 			std::vector<double> computeGamma();

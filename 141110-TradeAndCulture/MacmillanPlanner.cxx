@@ -7,7 +7,7 @@ namespace Epnet
 
 	struct cmpStruct{
 		double subjectivePrice;
-		int utility;
+		double utility;
 		int id;
 	};
 
@@ -25,13 +25,14 @@ namespace Epnet
 
 	MacmillanPlanner::MacmillanPlanner(void)
 	{
-		nbGoods = 3;
-		lastIdEssentialGood = 1;
+		nbGoods = 5;
+		nbEssentialGood = 1;
 
-		for(int i = 0 ; i <= lastIdEssentialGood ; i++)
+		for(int i = 0 ; i < nbEssentialGood ; i++)
 		{
 			needEssential.push_back(1);
 		}
+		std::cout << needEssential.size() << std::endl;
 
 		/*
 		for(int i = 0 ; i <= nbGoods ; i++)
@@ -41,7 +42,9 @@ namespace Epnet
 		*/
 		utility.push_back(0.3);
 		utility.push_back(0.2);
-		utility.push_back(0.5);
+		utility.push_back(0.4);
+		utility.push_back(0.05);
+		utility.push_back(0.05);
 
 		/*
 		for(int i = 0 ; i <= nbGoods ; i++)
@@ -49,8 +52,10 @@ namespace Epnet
 			subjectivePrice.push_back(0.0);
 		}
 		*/
-		subjectivePrice.push_back(5.0);
+		subjectivePrice.push_back(3.9);
 		subjectivePrice.push_back(3.0);
+		subjectivePrice.push_back(5.0);
+		subjectivePrice.push_back(5.0);
 		subjectivePrice.push_back(5.0);
 	}
 
@@ -69,7 +74,7 @@ namespace Epnet
 
 		std::vector<double> gamma = computeGamma();
 
-		for(int i = 0 ; i <= lastIdEssentialGood ; i++ )
+		for(int i = 0 ; i < nbEssentialGood ; i++ )
 		{
 			goodWanted[i] = ( utility[i] / (subjectivePrice[i] * gamma[i])) + needEssential[i] ;
 		}
@@ -82,7 +87,7 @@ namespace Epnet
 	{
 		//rank goods
 		std::vector<cmpStruct> rankedGoods;
-		for (int i = lastIdEssentialGood ; i < nbGoods ; i++)
+		for (int i = nbEssentialGood ; i < nbGoods ; i++)
 		{
 			struct cmpStruct tmp;
 			tmp.subjectivePrice = subjectivePrice[i];
@@ -96,8 +101,12 @@ namespace Epnet
 		for(std::vector<cmpStruct>::iterator it = rankedGoods.begin() ; it != rankedGoods.end() ; it++)
 		{
 			sortedId.push_back((*it).id);
+			std::cout << (*it).id << " ";
 		}
+		std::cout << std::endl;
 		int r = computeR(sortedId);
+		std::cout << r << std::endl;
+		exit(1);
 
 		std::vector<double> gamma;
 		for(int i = 0 ; i < nbGoods ; i++)
@@ -111,29 +120,35 @@ namespace Epnet
 	{
 		int r = 0;
 		double threshold = 0.0;
-		for(int i = 0 ; i <= lastIdEssentialGood ; i++)
+		for(int i = 0 ; i < nbEssentialGood ; i++)
 		{
 			threshold += (subjectivePrice[i] * needEssential[i]);
 		}
+		std::cout << "threshold " << threshold << std::endl;
 
-		for(int i = 0 ; i < orderedId.size() ; i ++)
+		for(unsigned int i = 0 ; i < orderedId.size() ; i ++)
 		{
+			std::cout << i << " " << orderedId[i] << std::endl;
 			double sumUntilI = 0.0;
-			for (int j = 0 ; j < i ; j++)
+			for (unsigned int j = 0 ; j <= i ; j++)
 			{
-				sumUntilI += utility[j];
+				sumUntilI += utility[orderedId[j]];
 			}
+			std::cout << "sum until " << sumUntilI << std::endl;
 			double sumFromI = 0.0;
-			for (int j = i ; j < orderedId.size() ; j++)
+			for (unsigned int j = (i+1) ; j < orderedId.size() ; j++)
 			{
-				sumFromI += subjectivePrice[j];
+				sumFromI += subjectivePrice[orderedId[j]];
 			}
-			double value = ((subjectivePrice[i] / utility[i]) * (1 - sumUntilI) ) - sumFromI;
+			std::cout << "sum from " << sumFromI << std::endl;
+			double value = ((subjectivePrice[orderedId[i]] / utility[orderedId[i]]) * (1.0 - sumUntilI) ) - sumFromI;
+			std::cout << "value " << value << std::endl ;
 			if (value < threshold)
 			{
-				r = i;
+				r = orderedId[i];
 				break;
 			}
+			std::cout << "#####" << std::endl;
 		}
 
 		return r;
