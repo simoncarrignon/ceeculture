@@ -1,13 +1,12 @@
 #ifndef __RandomController_hxx__
 #define __RandomController_hxx__
 
-#include <string>
-#include <tuple>
+#include <AgentController.hxx>
 
 namespace Epnet
 {
 
-class RandomController
+class RandomController : public AgentController
 {
 public:
 	RandomController();
