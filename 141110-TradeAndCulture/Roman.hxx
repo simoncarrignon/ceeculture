@@ -3,7 +3,6 @@
 
 #include <Agent.hxx>
 #include <Action.hxx>
-#include <MacmillanPlanner.hxx>
 
 #include <string>
 #include <tuple>
@@ -48,7 +47,6 @@ private:
 	int _nbTrades;
 
 	void randomActionSelection();
-	MacmillanPlanner* planner;
 
 public:
 	// todo remove environment from here

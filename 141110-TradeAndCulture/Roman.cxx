@@ -14,7 +14,6 @@ namespace Epnet
 
 	Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 	{
-		planner = new MacmillanPlanner();
 	}
 
 	Roman::~Roman()
@@ -53,8 +52,7 @@ namespace Epnet
 
 	void Roman::selectActions()
 	{
-		//randomActionSelection();
-		planner->consumptionPlan();
+		randomActionSelection();
 	}
 
 	void Roman::randomActionSelection()
