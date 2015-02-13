@@ -1,0 +1,31 @@
+#ifndef __AgentController_hxx__
+#define __AgentController_hxx__
+
+#include <Roman.hxx>
+
+namespace Epnet
+{
+
+class AgentController
+{
+private:
+	Roman* _agent;
+	
+public:
+	AgentController(){};
+	virtual ~AgentController(){};
+	
+	virtual void updateState() = 0;
+	virtual void selectActions() = 0;
+	virtual void updateKnowledge() = 0;
+
+	virtual void treatIncomingConnections() = 0;
+	virtual void treatIncomingTrades() = 0;
+
+	virtual void setAgent(Roman* ptr){_agent = ptr;};
+};
+
+} // namespace Epnet
+
+#endif // __AgentController_hxx__
+
