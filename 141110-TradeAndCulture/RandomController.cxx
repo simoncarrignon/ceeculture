@@ -1,5 +1,7 @@
 #include <RandomController.hxx>
 
+#include <iostream>
+
 namespace Epnet
 {
 	RandomController::RandomController()
@@ -18,6 +20,7 @@ namespace Epnet
 
 	void RandomController::selectActions()
 	{
+		std::cout << "yo" << std::endl;
 		/*
 		int action = _maxActions;
 		while (action >=0)

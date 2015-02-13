@@ -4,6 +4,7 @@
 #include <SendGoodsAction.hxx>
 #include <ProposeTradeAction.hxx>
 #include <FunAction.hxx>
+#include <ControllerFactory.hxx>
 
 #include <Statistics.hxx>
 #include <World.hxx>
@@ -14,6 +15,7 @@ namespace Epnet
 
 	Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 	{
+		_controller = ControllerFactory::get().makeController("random");
 	}
 
 	Roman::~Roman()
@@ -52,6 +54,7 @@ namespace Epnet
 
 	void Roman::selectActions()
 	{
+		_controller->selectActions();
 		randomActionSelection();
 	}
 

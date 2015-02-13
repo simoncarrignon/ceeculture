@@ -6,6 +6,8 @@
 namespace Epnet
 {
 
+	class Roman;
+
 class AgentController
 {
 private:

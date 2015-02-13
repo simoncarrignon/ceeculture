@@ -3,12 +3,15 @@
 
 #include <Agent.hxx>
 #include <Action.hxx>
+#include <AgentController.hxx>
 
 #include <string>
 #include <tuple>
 
 namespace Epnet
 {
+
+	class AgentController;
 
 class Roman : public Engine::Agent
 {
@@ -47,6 +50,8 @@ private:
 	int _nbTrades;
 
 	void randomActionSelection();
+
+	AgentController* _controller;
 
 public:
 	// todo remove environment from here
