@@ -2,6 +2,7 @@
 #define __AgentController_hxx__
 
 #include <Roman.hxx>
+#include <Action.hxx>
 
 namespace Epnet
 {
@@ -10,7 +11,7 @@ namespace Epnet
 
 class AgentController
 {
-private:
+protected:
 	Roman* _agent;
 	
 public:
@@ -18,7 +19,7 @@ public:
 	virtual ~AgentController(){};
 	
 	virtual void updateState() = 0;
-	virtual void selectActions() = 0;
+	virtual std::list<Engine::Action*> selectActions() = 0;
 	virtual void updateKnowledge() = 0;
 
 	virtual void treatIncomingConnections() = 0;

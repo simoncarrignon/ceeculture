@@ -1,6 +1,11 @@
 #include <RandomController.hxx>
-
 #include <iostream>
+
+#include <HarvestAction.hxx>
+#include <ProposeConnectionAction.hxx>
+#include <SendGoodsAction.hxx>
+#include <ProposeTradeAction.hxx>
+#include <FunAction.hxx>
 
 namespace Epnet
 {
@@ -18,46 +23,45 @@ namespace Epnet
 		treatIncomingTrades();
 	}
 
-	void RandomController::selectActions()
+	std::list<Engine::Action*> RandomController::selectActions()
 	{
-		std::cout << "yo" << std::endl;
-		/*
-		int action = _maxActions;
+		int action = _agent->getMaxActions();
+		std::list<Engine::Action*> actions;
 		while (action >=0)
 		{
 			int dice = std::rand()%7;
 			switch (dice)
 			{
 				case 0:
-					_actions.push_back(new HarvestAction("ess-a",1));
+					actions.push_back(new HarvestAction("ess-a",1));
 					action--;
 					break;
 
 				case 1:
-					_actions.push_back(new HarvestAction("ess-b",1));
+					actions.push_back(new HarvestAction("ess-b",1));
 					action--;
 					break;
 
 				case 2:
-					_actions.push_back(new HarvestAction("nonEss-a",1));
+					actions.push_back(new HarvestAction("nonEss-a",1));
 					action--;
 					break;
 
 				case 3:
-					_actions.push_back(new HarvestAction("nonEss-b",1));
+					actions.push_back(new HarvestAction("nonEss-b",1));
 					action--;
 					break;
 
 				case 4:
-					for(auto it = _world->beginAgents() ; it != _world->endAgents() ; it++)
+					for(auto it = _agent->getWorld()->beginAgents() ; it != _agent->getWorld()->endAgents() ; it++)
 					{
 						std::string roman_id = (*it)->getId();;
-						if(roman_id != _id)
+						if(roman_id != _agent->getId())
 						{
 							int dice2 = std::rand()%100;
 							if(dice2 < 80)
 							{
-								_actions.push_back(new ProposeConnectionAction(roman_id));
+								actions.push_back(new ProposeConnectionAction(roman_id));
 								action--;
 							}
 						}
@@ -65,26 +69,26 @@ namespace Epnet
 					break;
 
 				case 5:
-					if(validSendConnections.size() > 0)
+					if(_agent->getValidSendConnections().size() > 0)
 					{
-						int target = std::rand()%validSendConnections.size();
+						int target = std::rand()%_agent->getValidSendConnections().size();
 						static const std::string types[] = {"ess-a","ess-b","nonEss-a","nonEss-b"};
 						std::string type = types[std::rand()%4];
 						int quantity = std::rand()%10;
 						int currency = std::rand()%50;
-						_actions.push_back(new ProposeTradeAction(validSendConnections[target],type,quantity,currency));
+						actions.push_back(new ProposeTradeAction(_agent->getValidSendConnections()[target],type,quantity,currency));
 						action --;
 					}
 					break;
 
 				case 6:
-					_actions.push_back(new FunAction("nonEss-a",1));
-					_actions.push_back(new FunAction("nonEss-b",2));
+					actions.push_back(new FunAction("nonEss-a",1));
+					actions.push_back(new FunAction("nonEss-b",2));
 					action --;
 					break;
 			}
 		}
-		*/
+		return actions;
 	}
 
 	void RandomController::updateKnowledge()
@@ -93,7 +97,7 @@ namespace Epnet
 
 	void RandomController::treatIncomingConnections()
 	{
-		/*
+		std::vector<std::string> receivedConnections = _agent->getReceivedConnections();
 		std::vector<std::string>::iterator it = receivedConnections.begin();
 		while(it != receivedConnections.end())
 		{
@@ -102,20 +106,21 @@ namespace Epnet
 			int dice = std::rand()%70;
 			if (dice <= 0)
 			{
-				acceptConnectionFrom(*it);
+				_agent->acceptConnectionFrom(*it);
 			}
 			else
 			{
-				refuseConnectionFrom(*it);
+				_agent->refuseConnectionFrom(*it);
 			}
+			receivedConnections = _agent->getReceivedConnections();
+			it = receivedConnections.begin();
 		}
-		*/
 	}
 
 	void RandomController::treatIncomingTrades()
 	{
-		/*
-		_nbTrades = 0;
+		_agent->resetNbTrades();
+		std::vector<std::tuple<std::string, std::string, double, double> > listReceivedTrades = _agent->getReceivedTrades();
 		std::vector<std::tuple<std::string, std::string, double, double> >::iterator it = listReceivedTrades.begin();
 		while(it != listReceivedTrades.end())
 		{
@@ -124,14 +129,15 @@ namespace Epnet
 			int dice = std::rand()%70;
 			if (dice <= 0)
 			{
-				acceptTradeFrom(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
-				_nbTrades ++;
+				_agent->acceptTradeFrom(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
+				_agent->increaseNbTrades(1);
 			}
 			else
 			{
-				refuseTradeFrom(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
+				_agent->refuseTradeFrom(std::get<0>(*it), std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
 			}
+			listReceivedTrades = _agent->getReceivedTrades();
+			it = listReceivedTrades.begin();
 		}
-		*/
 	}
 } // namespace Epnet

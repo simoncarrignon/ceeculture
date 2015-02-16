@@ -13,7 +13,7 @@ public:
 	virtual ~RandomController();
 	
 	virtual void updateState();
-	virtual void selectActions();
+	virtual std::list<Engine::Action*> selectActions();
 	virtual void updateKnowledge();
 
 	virtual void treatIncomingConnections();

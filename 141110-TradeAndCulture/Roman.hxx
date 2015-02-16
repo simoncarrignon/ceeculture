@@ -41,9 +41,7 @@ private:
 	void removeReceivedTrade(std::string source, std::string type, double value, double currency);
 	void removeProposedTrade(std::string source, std::string type, double value, double currency);
 
-	void consumeResources();
-	void treatIncomingConnections();
-	void treatIncomingTrades();
+	void consumeEssentialResources();
 	void checkDeath();
 
 	int _maxActions;
@@ -67,6 +65,11 @@ public:
 
 	void setResources( int resources );
 	int getResources() const;
+
+	void resetNbTrades();
+	void increaseNbTrades(int value);
+
+	int getMaxActions();
 
 
 	// setup connections
