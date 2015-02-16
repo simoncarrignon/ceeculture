@@ -1,5 +1,7 @@
 #include <ControllerFactory.hxx>
+
 #include <RandomController.hxx>
+#include <MacmillanController.hxx>
 
 namespace Epnet
 {
@@ -28,6 +30,11 @@ namespace Epnet
 		if (controllerName == "random")
 		{
 			return new RandomController();
+		}
+
+		if (controllerName == "macmillan")
+		{
+			return new MacmillanController();
 		}
 	}
 

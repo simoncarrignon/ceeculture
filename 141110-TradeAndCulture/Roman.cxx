@@ -10,7 +10,7 @@ namespace Epnet
 
 	Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 	{
-		_controller = ControllerFactory::get().makeController("random");
+		_controller = ControllerFactory::get().makeController("macmillan");
 		_controller->setAgent(this);
 	}
 
