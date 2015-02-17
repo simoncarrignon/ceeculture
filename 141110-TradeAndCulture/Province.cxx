@@ -74,18 +74,22 @@ void Province::createAgents()
 			Roman * agent = new Roman(oss.str());
 			addAgent(agent);
 			agent->setRandomPosition();
-			agent->addGoodType("currency",1000);
+			//currency is not interesting in itself. that may be changed
+			//currency has no price by itself
+			agent->addGoodType("currency",1000,0.0,0.0);
 			agent->addGood("currency",500);
 
-			agent->addGoodType("ess-a",100);
+			//essential goods have an interest of 1 (the max)
+			//price fixed to 1, just because
+			agent->addGoodType("ess-a",100,1.0,1.0);
 			agent->addGood("ess-a",50);
 
-			agent->addGoodType("ess-b",100);
+			agent->addGoodType("ess-b",100,1.0,1.0);
 			agent->addGood("ess-b",50);
 
-			agent->addGoodType("nonEss-a",100);
+			agent->addGoodType("nonEss-a",100,5.0,0.3);
 
-			agent->addGoodType("nonEss-b",100);
+			agent->addGoodType("nonEss-b",100,5.0,0.2);
 
 			log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
 		}

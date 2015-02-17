@@ -10,7 +10,7 @@ namespace Epnet
 
 	Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 	{
-		_controller = ControllerFactory::get().makeController("macmillan");
+		_controller = ControllerFactory::get().makeController("random");
 		_controller->setAgent(this);
 	}
 
@@ -71,8 +71,15 @@ namespace Epnet
 
 	void Roman::consumeEssentialResources()
 	{
-		removeGood("ess-a",1);
-		removeGood("ess-b",1);
+		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		{
+			//search for a good with interest equal to 1.0
+			if (std::get<4>(*it) == 1.0)
+			{
+				//if found, consume one unit of it
+				removeGood(std::get<0>(*it),1);
+			}
+		}
 	}
 
 	void Roman::checkDeath()
@@ -429,47 +436,47 @@ namespace Epnet
 		}
 	}
 
-	void Roman::addGoodType(std::string type,double max)
+	void Roman::addGoodType(std::string type,double max,double price,double interest)
 	{
 		//check if a good of that type is already in that list
-		if ( std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;}) == listGoods.end() )
+		if ( std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;}) == listGoods.end() )
 		{
 			//if not, add it
-			listGoods.push_back(std::make_tuple(type,0,max));
+			listGoods.push_back(std::make_tuple(type,0,max,price,interest));
 		}
 	}
 
 	void Roman::removeGoodType(std::string type)
 	{
 		//check if a good of that type exist in that list
-		std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		while ( it != listGoods.end() )
 		{
 			//if not, add it
 			listGoods.erase(it);
 			//update the presence of good of that type in the list
-			it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+			it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		}
 	}
 
-	std::tuple<double,double> Roman::getGood(std::string type)
+	std::tuple<double,double,double,double> Roman::getGood(std::string type)
 	{
 		//check if a good of that type exist in the list
-		std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		if ( it != listGoods.end() )
 		{
-			//return quantity and type of that good
-			return std::make_tuple(std::get<1>(*it),std::get<2>(*it));
+			//return quantity, maxquantity,price and interest of good
+			return std::make_tuple(std::get<1>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it));
 		}
 
 		//return something impossible as an error
-		return std::make_tuple(-1.0,-1.0);
+		return std::make_tuple(-1.0,-1.0,-1.0,-1.0);
 	}
 
 	void Roman::addGood(std::string type,double value)
 	{
 		//check if a good of that type exists in that list
-		std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		//if yes add the value to it within the bound
 		if ( it != listGoods.end() )
 		{
@@ -481,7 +488,7 @@ namespace Epnet
 	void Roman::removeGood(std::string type,double value)
 	{
 		//check if a good of that type exists in that list
-		std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		//if yes remove the value to it as long as it's superior to 0
 		if ( it != listGoods.end() )
 		{
@@ -490,7 +497,7 @@ namespace Epnet
 		}
 	}
 
-	std::vector<std::tuple<std::string,double,double> >  Roman::getListGoodsFrom(std::string target)
+	std::vector<std::tuple<std::string,double,double,double,double> >  Roman::getListGoodsFrom(std::string target)
 	{
 		Agent* uncastedPtr = _world->getAgent(target);
 		if (uncastedPtr == NULL)
@@ -515,7 +522,7 @@ namespace Epnet
 		if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
 		{
 			//check if a good of that type exists in that list
-			std::vector<std::tuple<std::string,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double>& good) {return std::get<0>(good) == type;});
+			std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
 			//if yes remove the value to it as long as it's superior to 0
 			if ( it != listGoods.end() )
 			{

@@ -32,7 +32,8 @@ private:
 	void receiveMessageFrom(std::string source, std::string msg);
 	std::vector<std::tuple<std::string,std::string> > receivedMessages;
 
-	std::vector<std::tuple<std::string,double,double> > listGoods;
+	//type, quantity, maxQuantity, price, interest
+	std::vector<std::tuple<std::string,double,double,double,double> > listGoods;
 	int receiveGoodFrom(std::string source, std::string type, double value);
 
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
@@ -96,15 +97,15 @@ public:
 
 
 	//good system
-	void addGoodType(std::string type,double max);
+	void addGoodType(std::string type,double max,double price,double interest);
 	void removeGoodType(std::string type);
-	std::vector<std::tuple<std::string,double,double> > getListGoods() { return listGoods;};
-	std::tuple<double,double> getGood(std::string type);
+	std::vector<std::tuple<std::string,double,double,double,double> > getListGoods() { return listGoods;};
+	std::tuple<double,double,double,double> getGood(std::string type);
 
 	void addGood(std::string type,double value);
 	void removeGood(std::string type,double value);
 
-	std::vector<std::tuple<std::string,double,double> >  getListGoodsFrom(std::string target);
+	std::vector<std::tuple<std::string,double,double,double,double> >  getListGoodsFrom(std::string target);
 
 	//sending goods
 	void sendGoodTo(std::string target, std::string type, double value);
