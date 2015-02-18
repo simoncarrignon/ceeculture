@@ -84,7 +84,23 @@ namespace Epnet
 
 	void Roman::checkDeath()
 	{
-		if( (std::get<0>(getGood("ess-a")) < 1) or (std::get<0>(getGood("ess-b")) < 1) )
+		bool death = false;
+		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		{
+			//search for a good with interest equal to 1.0
+			if (std::get<4>(*it) == 1.0)
+			{
+				//if the quantity is less or equal to 0, triger the death
+				if (std::get<1>(*it) <= 0.0)
+				{
+					death = true;
+					break;
+				}
+			}
+		}
+
+		//if death detected, perform all the death actions
+		if( death == true )
 		{
 			while(validSendConnections.size() > 0)
 			{
