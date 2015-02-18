@@ -20,11 +20,11 @@ namespace Epnet
 
 	void Roman::registerAttributes()
 	{
-		registerFloatAttribute("ess-a");
-		registerFloatAttribute("ess-b");
-		registerFloatAttribute("nonEss-a");
-		registerFloatAttribute("nonEss-b");
-		registerFloatAttribute("currency");
+		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		{
+			registerFloatAttribute(std::get<0>(*it));
+		}
+
 		registerIntAttribute("nbConnectionsRcv");
 		registerIntAttribute("nbConnectionsSend");
 		registerIntAttribute("nbAchievedTrades");
@@ -32,11 +32,11 @@ namespace Epnet
 
 	void Roman::serialize()
 	{
-		serializeAttribute("ess-a", (float)std::get<0>(getGood("ess-a")));
-		serializeAttribute("ess-b", (float)std::get<0>(getGood("ess-b")));
-		serializeAttribute("nonEss-a", (float)std::get<0>(getGood("nonEss-a")));
-		serializeAttribute("nonEss-b", (float)std::get<0>(getGood("nonEss-b")));
-		serializeAttribute("currency", (float)std::get<0>(getGood("currency")));
+		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		{
+			serializeAttribute(std::get<0>(*it), (float)std::get<0>(getGood(std::get<0>(*it))));
+		}
+
 		serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
 		serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
 		serializeAttribute("nbAchievedTrades", _nbTrades);
