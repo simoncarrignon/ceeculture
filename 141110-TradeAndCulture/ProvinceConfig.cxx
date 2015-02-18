@@ -20,6 +20,7 @@ ProvinceConfig::~ProvinceConfig()
 void ProvinceConfig::loadParams()
 {
 	_numAgents = getParamInt( "numAgents", "value");
+	_controllerType = getParamStr( "controller", "type");
 
 	_numGoods = getParamInt( "goods", "num");
 	for(int i=0; i < _numGoods ; i++)

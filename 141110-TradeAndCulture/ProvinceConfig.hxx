@@ -11,11 +11,14 @@ namespace Epnet
 class ProvinceConfig : public Engine::Config
 {	
 	int _numAgents;
+
 	int _numGoods;
 	std::vector<std::tuple<std::string,double,double,double,double> > _paramGoods;
 
 	int _numRasters;
 	std::vector<std::tuple<std::string,double,double,double> > _paramRasters;
+
+	std::string _controllerType;
 
 public:
 	ProvinceConfig( const std::string & xmlFile );

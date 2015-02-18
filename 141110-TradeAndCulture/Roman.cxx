@@ -1,16 +1,18 @@
 #include <Roman.hxx>
-#include <ControllerFactory.hxx>
 
 #include <Statistics.hxx>
 #include <World.hxx>
 #include <Logger.hxx>
 
+#include <ProvinceConfig.hxx>
+#include <ControllerFactory.hxx>
+
 namespace Epnet
 {
 
-	Roman::Roman( const std::string & id ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
+	Roman::Roman( const std::string & id, std::string controllerType ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 	{
-		_controller = ControllerFactory::get().makeController("random");
+		_controller = ControllerFactory::get().makeController(controllerType);
 		_controller->setAgent(this);
 	}
 

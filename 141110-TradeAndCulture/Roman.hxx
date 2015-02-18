@@ -53,8 +53,7 @@ private:
 	AgentController* _controller;
 
 public:
-	// todo remove environment from here
-	Roman( const std::string & id );
+	Roman( const std::string & id, std::string controllerType );
 	virtual ~Roman();
 	
 	void updateState();

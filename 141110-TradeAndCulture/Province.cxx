@@ -48,7 +48,7 @@ void Province::createAgents()
 		{
 			std::ostringstream oss;
 			oss << "Roman_" << i;
-			Roman * agent = new Roman(oss.str());
+			Roman * agent = new Roman(oss.str(),provinceConfig._controllerType);
 			addAgent(agent);
 			agent->setRandomPosition();
 			//currency is not interesting in itself. that may be changed
