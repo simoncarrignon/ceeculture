@@ -21,42 +21,19 @@ Province::~Province()
 void Province::createRasters()
 {
 	//registerStaticRaster("resources", false);
-	//
-	registerDynamicRaster("ess-a", true);
-	getDynamicRaster("ess-a").setInitValues(0, 20, 20);
-	for(auto index:getBoundaries())
+	
+	const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+	for (auto it = provinceConfig._paramRasters.begin(); it != provinceConfig._paramRasters.end() ; it++)
 	{
-		int value = Engine::GeneralState::statistics().getUniformDistValue(0,20);
-        setMaxValue("ess-a", index, value);
+		registerDynamicRaster(std::get<0>(*it), true);
+		getDynamicRaster(std::get<0>(*it)).setInitValues(std::get<1>(*it), std::get<2>(*it), std::get<3>(*it));
+		for(auto index:getBoundaries())
+		{
+			int value = Engine::GeneralState::statistics().getUniformDistValue(std::get<1>(*it), std::get<2>(*it));
+			setMaxValue(std::get<0>(*it), index, value);
+		}
+		updateRasterToMaxValues(std::get<0>(*it));
 	}
-	updateRasterToMaxValues("ess-a");
-
-	registerDynamicRaster("ess-b", true);
-	getDynamicRaster("ess-b").setInitValues(0, 20, 20);
-	for(auto index:getBoundaries())
-	{
-		int value = Engine::GeneralState::statistics().getUniformDistValue(0,20);
-        setMaxValue("ess-b", index, value);
-	}
-	updateRasterToMaxValues("ess-b");
-
-	registerDynamicRaster("nonEss-a", true);
-	getDynamicRaster("nonEss-a").setInitValues(0, 20, 20);
-	for(auto index:getBoundaries())
-	{
-		int value = Engine::GeneralState::statistics().getUniformDistValue(0,20);
-        setMaxValue("nonEss-a", index, value);
-	}
-	updateRasterToMaxValues("nonEss-a");
-
-	registerDynamicRaster("nonEss-b", true);
-	getDynamicRaster("nonEss-b").setInitValues(0, 20, 20);
-	for(auto index:getBoundaries())
-	{
-		int value = Engine::GeneralState::statistics().getUniformDistValue(0,20);
-        setMaxValue("nonEss-b", index, value);
-	}
-	updateRasterToMaxValues("nonEss-b");
 }
 
 void Province::createAgents()
@@ -76,20 +53,14 @@ void Province::createAgents()
 			agent->setRandomPosition();
 			//currency is not interesting in itself. that may be changed
 			//currency has no price by itself
-			agent->addGoodType("currency",1000,0.0,0.0);
-			agent->addGood("currency",500);
 
-			//essential goods have an interest of 1 (the max)
-			//price fixed to 1, just because
-			agent->addGoodType("ess-a",100,1.0,1.0);
-			agent->addGood("ess-a",50);
-
-			agent->addGoodType("ess-b",100,1.0,1.0);
-			agent->addGood("ess-b",50);
-
-			agent->addGoodType("nonEss-a",100,5.0,0.3);
-
-			agent->addGoodType("nonEss-b",100,5.0,0.2);
+			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
+			{
+				//id, maxQuantity, price and need of the good
+				agent->addGoodType(std::get<0>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it));
+				//add init quantity to new good
+				agent->addGood(std::get<0>(*it),std::get<1>(*it));
+			}
 
 			log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
 		}
