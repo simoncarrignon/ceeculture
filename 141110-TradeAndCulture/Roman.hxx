@@ -32,7 +32,7 @@ private:
 	void receiveMessageFrom(std::string source, std::string msg);
 	std::vector<std::tuple<std::string,std::string> > receivedMessages;
 
-	//type, quantity, maxQuantity, price, interest
+	//type, quantity, maxQuantity, price, need
 	std::vector<std::tuple<std::string,double,double,double,double> > listGoods;
 	int receiveGoodFrom(std::string source, std::string type, double value);
 
@@ -96,7 +96,7 @@ public:
 
 
 	//good system
-	void addGoodType(std::string type,double max,double price,double interest);
+	void addGoodType(std::string type,double max,double price,double need);
 	void removeGoodType(std::string type);
 	std::vector<std::tuple<std::string,double,double,double,double> > getListGoods() { return listGoods;};
 	std::tuple<double,double,double,double> getGood(std::string type);

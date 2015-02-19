@@ -75,7 +75,7 @@ namespace Epnet
 	{
 		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-			//search for a good with interest equal to 1.0
+			//search for a good with need equal to 1.0
 			if (std::get<4>(*it) == 1.0)
 			{
 				//if found, consume one unit of it
@@ -89,7 +89,7 @@ namespace Epnet
 		bool death = false;
 		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-			//search for a good with interest equal to 1.0
+			//search for a good with need equal to 1.0
 			if (std::get<4>(*it) == 1.0)
 			{
 				//if the quantity is less or equal to 0, triger the death
@@ -454,13 +454,13 @@ namespace Epnet
 		}
 	}
 
-	void Roman::addGoodType(std::string type,double max,double price,double interest)
+	void Roman::addGoodType(std::string type,double max,double price,double need)
 	{
 		//check if a good of that type is already in that list
 		if ( std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;}) == listGoods.end() )
 		{
 			//if not, add it
-			listGoods.push_back(std::make_tuple(type,0,max,price,interest));
+			listGoods.push_back(std::make_tuple(type,0,max,price,need));
 		}
 	}
 
@@ -483,7 +483,7 @@ namespace Epnet
 		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		if ( it != listGoods.end() )
 		{
-			//return quantity, maxquantity,price and interest of good
+			//return quantity, maxquantity,price and need of good
 			return std::make_tuple(std::get<1>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it));
 		}
 
