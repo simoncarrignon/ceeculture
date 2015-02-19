@@ -12,7 +12,7 @@ agents = ['Roman']
 world = 'Province'
 namespaceAgents = ['Epnet']
 
-srcFiles = Split('main.cxx ProvinceConfig.cxx Roman.cxx RomanTest.cxx Province.cxx ProvinceTest.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx ProposeTradeAction.cxx')
+srcFiles = Split('main.cxx ProvinceConfig.cxx Roman.cxx RomanTest.cxx Province.cxx ProvinceTest.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx ProposeTradeAction.cxx ControllerFactory.cxx RandomController.cxx MacmillanController.cxx')
 
 ###################################################
 ########## END OF CUSTOM INFORMATION  #############

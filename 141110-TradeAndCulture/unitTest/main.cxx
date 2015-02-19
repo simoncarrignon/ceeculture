@@ -24,8 +24,8 @@ BOOST_AUTO_TEST_CASE( AgentAskConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -48,8 +48,8 @@ BOOST_AUTO_TEST_CASE( AgentAsk2Times )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( AgentProposeConnectionToNonExisting )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
 
@@ -89,8 +89,8 @@ BOOST_AUTO_TEST_CASE( AgentProposeConnectionToSelf )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -111,9 +111,9 @@ BOOST_AUTO_TEST_CASE( AgentAcceptConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -143,9 +143,9 @@ BOOST_AUTO_TEST_CASE( AgentsBuildTwoWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -189,9 +189,9 @@ BOOST_AUTO_TEST_CASE( DuplicateConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -225,9 +225,9 @@ BOOST_AUTO_TEST_CASE( AgentRefuseConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -255,9 +255,9 @@ BOOST_AUTO_TEST_CASE( FailAcceptIfNotSent )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -280,9 +280,9 @@ BOOST_AUTO_TEST_CASE( RefuseConnectionNotSent )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -309,9 +309,9 @@ BOOST_AUTO_TEST_CASE( SourceKillOneWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -340,9 +340,9 @@ BOOST_AUTO_TEST_CASE( TargetKillOneWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -371,9 +371,9 @@ BOOST_AUTO_TEST_CASE( killTwoWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -406,9 +406,9 @@ BOOST_AUTO_TEST_CASE( killHalfOfTwoWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -456,8 +456,8 @@ BOOST_AUTO_TEST_CASE( KillNonExistingConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -483,8 +483,8 @@ BOOST_AUTO_TEST_CASE( KillConnectionProposedOneWay )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -530,8 +530,8 @@ BOOST_AUTO_TEST_CASE( KillConnectionProposedTwoWays )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -598,8 +598,8 @@ BOOST_AUTO_TEST_CASE( KillConnectionValidOneWay )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -638,8 +638,8 @@ BOOST_AUTO_TEST_CASE( KillConnectionValidTwoWays )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 2), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
@@ -697,8 +697,8 @@ BOOST_AUTO_TEST_CASE( WorldProposeConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -721,8 +721,8 @@ BOOST_AUTO_TEST_CASE( WorldBuildConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -749,8 +749,8 @@ BOOST_AUTO_TEST_CASE( WorldKillConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -777,8 +777,8 @@ BOOST_AUTO_TEST_CASE( WorldBuildSameConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -806,9 +806,9 @@ BOOST_AUTO_TEST_CASE( ProposeTwoWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -848,9 +848,9 @@ BOOST_AUTO_TEST_CASE( WorldBuildTwoWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -890,9 +890,9 @@ BOOST_AUTO_TEST_CASE( WorldBuildKillHalfOfTwoWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -931,9 +931,9 @@ BOOST_AUTO_TEST_CASE( WorldBuildKillTwoWayConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -977,9 +977,9 @@ BOOST_AUTO_TEST_CASE( AgentProposeOtherConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -1004,9 +1004,9 @@ BOOST_AUTO_TEST_CASE( AgentKillOtherConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
-	RomanTest* myAgent2 = new RomanTest("agent_2");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
+	RomanTest* myAgent2 = new RomanTest("agent_2","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myWorld.addAgent(myAgent2);
@@ -1049,8 +1049,8 @@ BOOST_AUTO_TEST_CASE( SourceSendMsg )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1073,8 +1073,8 @@ BOOST_AUTO_TEST_CASE( SendMsgToProposed )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1094,8 +1094,8 @@ BOOST_AUTO_TEST_CASE( SendMsgToUnconnected )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1114,8 +1114,8 @@ BOOST_AUTO_TEST_CASE( SendMsgAfterConnectionKilled )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1142,12 +1142,12 @@ BOOST_AUTO_TEST_CASE( AddTypeGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 
-	std::vector<std::tuple<std::string, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1161,13 +1161,13 @@ BOOST_AUTO_TEST_CASE( AddTwoTimesTypeGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("A",99.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",99.0,0.0,0.0);
 
-	std::vector<std::tuple<std::string, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1181,13 +1181,13 @@ BOOST_AUTO_TEST_CASE( AddTwoDifferentTypeGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("B",50.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("B",50.0,0.0,0.0);
 
-	std::vector<std::tuple<std::string, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 2);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1204,14 +1204,14 @@ BOOST_AUTO_TEST_CASE( RemoveTypeGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("B",50.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("B",50.0,0.0,0.0);
 	myAgent0->removeGoodType("A");
 
-	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "B");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1225,13 +1225,13 @@ BOOST_AUTO_TEST_CASE( RemoveNoneExistingGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->removeGoodType("B");
 
-	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1246,13 +1246,13 @@ BOOST_AUTO_TEST_CASE( AddGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
-	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 2.0);
@@ -1266,14 +1266,14 @@ BOOST_AUTO_TEST_CASE( AddTooMuchGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 	myAgent0->addGood("A",98.1);
 
-	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 100.0);
@@ -1287,13 +1287,13 @@ BOOST_AUTO_TEST_CASE( AddGoodToNotKnownType )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("B",2.0);
 
-	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1307,14 +1307,14 @@ BOOST_AUTO_TEST_CASE( RemoveGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",50.0);
 	myAgent0->removeGood("A",2.0);
 
-	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 48.0);
@@ -1328,14 +1328,14 @@ BOOST_AUTO_TEST_CASE( RemoveTooMuchGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",10.0);
 	myAgent0->removeGood("A",20.0);
 
-	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1349,14 +1349,14 @@ BOOST_AUTO_TEST_CASE( RemoveGoodNotKnown )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",10.0);
 	myAgent0->removeGood("B",20.0);
 
-	std::vector<std::tuple<std::string, double,double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 10.0);
@@ -1370,13 +1370,13 @@ BOOST_AUTO_TEST_CASE( GetGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
-	std::tuple<double,double> goods = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods = myAgent0->getGood("A");
 	BOOST_CHECK_EQUAL(std::get<0>(goods), 2.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods), 100.0);
 
@@ -1388,13 +1388,13 @@ BOOST_AUTO_TEST_CASE( GetGoodUnknwon )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
-	std::tuple<double,double> goods = myAgent0->getGood("B");
+	std::tuple<double, double, double, double> goods = myAgent0->getGood("B");
 	BOOST_CHECK_EQUAL(std::get<0>(goods), -1.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods), -1.0);
 
@@ -1412,8 +1412,8 @@ BOOST_AUTO_TEST_CASE( SendGoodToReceiver )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1422,14 +1422,14 @@ BOOST_AUTO_TEST_CASE( SendGoodToReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","A",15);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 5.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1444,8 +1444,8 @@ BOOST_AUTO_TEST_CASE( SendUnknownGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1454,14 +1454,14 @@ BOOST_AUTO_TEST_CASE( SendUnknownGood )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","B",15);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1476,8 +1476,8 @@ BOOST_AUTO_TEST_CASE( SendGoodUnknownToReceiver )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1486,17 +1486,17 @@ BOOST_AUTO_TEST_CASE( SendGoodUnknownToReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent0->addGoodType("B",100.0);
+	myAgent0->addGoodType("B",100.0,0.0,0.0);
 	myAgent0->addGood("B",20.0);
-	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","B",15);
 
-	std::tuple<double,double> goodsA0 = myAgent0->getGood("A");
-	std::tuple<double,double> goodsB0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> goodsA0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goodsB0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goodsA0), 20.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goodsA0), 100.0);
@@ -1513,21 +1513,21 @@ BOOST_AUTO_TEST_CASE( SendGoodWithoutConnection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
 	myAgent1->setRandomPosition();
 
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","A",15);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1542,8 +1542,8 @@ BOOST_AUTO_TEST_CASE( SendGoodToSender )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1552,14 +1552,14 @@ BOOST_AUTO_TEST_CASE( SendGoodToSender )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent1->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
 	myAgent1->addGood("A",20.0);
 
 	myAgent1->sendGoodTo("agent_0","A",15);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 0.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1574,8 +1574,8 @@ BOOST_AUTO_TEST_CASE( SendSaturatingGood )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1584,15 +1584,15 @@ BOOST_AUTO_TEST_CASE( SendSaturatingGood )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",100.0);
-	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
 	myAgent1->addGood("A",20.0);
 
 	myAgent0->sendGoodTo("agent_1","A",90);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 10.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1607,8 +1607,8 @@ BOOST_AUTO_TEST_CASE( SendGoodNotInStock )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1617,14 +1617,14 @@ BOOST_AUTO_TEST_CASE( SendGoodNotInStock )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent1->addGoodType("A",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","A",30);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1643,8 +1643,8 @@ BOOST_AUTO_TEST_CASE( GetListAllTrades )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1653,11 +1653,11 @@ BOOST_AUTO_TEST_CASE( GetListAllTrades )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
@@ -1684,8 +1684,8 @@ BOOST_AUTO_TEST_CASE( GetListProposedTradesFromSource )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1694,11 +1694,11 @@ BOOST_AUTO_TEST_CASE( GetListProposedTradesFromSource )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
@@ -1723,8 +1723,8 @@ BOOST_AUTO_TEST_CASE( TradeGoods )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1733,22 +1733,22 @@ BOOST_AUTO_TEST_CASE( TradeGoods )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -1773,8 +1773,8 @@ BOOST_AUTO_TEST_CASE( RefuseTrade )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1783,22 +1783,22 @@ BOOST_AUTO_TEST_CASE( RefuseTrade )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->refuseTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -1823,41 +1823,41 @@ BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToSender )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
 	myAgent1->setRandomPosition();
 
-	myAgent0->proposeConnectionTo("agent_1");
-	myAgent1->acceptConnectionFrom("agent_0");
-
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
-	myAgent0->proposeTradeTo("agent_1","A",10,10);
+	myAgent1->proposeConnectionTo("agent_0");
+	myAgent0->acceptConnectionFrom("agent_1");
 
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
-	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
-	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
+	myAgent1->proposeTradeTo("agent_0","A",10,10);
+
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent1->getProposedTrades();
+	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent0->getReceivedTrades();
 
 	BOOST_CHECK_EQUAL(listProposedTrades.size(), 0);
 	BOOST_CHECK_EQUAL(listReceivedTrades.size(), 0);
 
-	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
-	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
-
-	BOOST_CHECK_EQUAL(std::get<0>(goods1), 00.0);
-	BOOST_CHECK_EQUAL(std::get<1>(goods1), 100.0);
 	BOOST_CHECK_EQUAL(std::get<0>(currency1), 50.0);
 	BOOST_CHECK_EQUAL(std::get<1>(currency1), 100.0);
+
+	BOOST_CHECK_EQUAL(std::get<0>(goods0), 00.0);
+	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
+	BOOST_CHECK_EQUAL(std::get<0>(currency0), 50.0);
+	BOOST_CHECK_EQUAL(std::get<1>(currency0), 100.0);
 
 	myWorld.run();
 }
@@ -1867,8 +1867,8 @@ BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToReceiver )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1877,19 +1877,19 @@ BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -1912,28 +1912,28 @@ BOOST_AUTO_TEST_CASE( TradeGoodsWhenNoNetworkLink )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
 	myAgent1->setRandomPosition();
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -1958,8 +1958,8 @@ BOOST_AUTO_TEST_CASE( TradeGoodsWithLinkInWrongDirection )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -1968,21 +1968,21 @@ BOOST_AUTO_TEST_CASE( TradeGoodsWithLinkInWrongDirection )
 	myAgent1->proposeConnectionTo("agent_0");
 	myAgent0->acceptConnectionFrom("agent_1");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2008,8 +2008,8 @@ BOOST_AUTO_TEST_CASE( AcceptNonExistingTrade )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -2018,21 +2018,21 @@ BOOST_AUTO_TEST_CASE( AcceptNonExistingTrade )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2057,8 +2057,8 @@ BOOST_AUTO_TEST_CASE( NotEnoughCurrencyInReceiver )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -2067,21 +2067,21 @@ BOOST_AUTO_TEST_CASE( NotEnoughCurrencyInReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2107,8 +2107,8 @@ BOOST_AUTO_TEST_CASE( TradeGoodNotInStock )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -2117,21 +2117,21 @@ BOOST_AUTO_TEST_CASE( TradeGoodNotInStock )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2156,8 +2156,8 @@ BOOST_AUTO_TEST_CASE( NotEnoughStorageSpaceInReceiver )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -2166,23 +2166,23 @@ BOOST_AUTO_TEST_CASE( NotEnoughStorageSpaceInReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("A",95.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2207,8 +2207,8 @@ BOOST_AUTO_TEST_CASE( NotEnoughSpaceInSender )
 	ProvinceTest myWorld(new ProvinceConfig(Engine::Size<int>(10,10), 1), ProvinceTest::useSpacePartition(1, false));
 	myWorld.initialize(boost::unit_test::framework::master_test_suite().argc, boost::unit_test::framework::master_test_suite().argv);
 
-	RomanTest* myAgent0 = new RomanTest("agent_0");
-	RomanTest* myAgent1 = new RomanTest("agent_1");
+	RomanTest* myAgent0 = new RomanTest("agent_0","random");
+	RomanTest* myAgent1 = new RomanTest("agent_1","random");
 	myWorld.addAgent(myAgent0);
 	myWorld.addAgent(myAgent1);
 	myAgent0->setRandomPosition();
@@ -2217,22 +2217,22 @@ BOOST_AUTO_TEST_CASE( NotEnoughSpaceInSender )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0);
-	myAgent0->addGoodType("currency",100.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",95.0);
 
-	myAgent1->addGoodType("A",100.0);
-	myAgent1->addGoodType("currency",100.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double,double> goods0 = myAgent0->getGood("A");
-	std::tuple<double,double> goods1 = myAgent1->getGood("A");
-	std::tuple<double,double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double,double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
