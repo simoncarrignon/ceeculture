@@ -3,7 +3,7 @@
 namespace Epnet
 {
 
-RomanTest::RomanTest( const std::string & id ) : Roman(id)
+RomanTest::RomanTest( const std::string & id, std::string controllerType ) : Roman(id,controllerType)
 {
 }
 

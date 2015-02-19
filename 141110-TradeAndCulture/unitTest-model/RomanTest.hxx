@@ -10,8 +10,7 @@ class RomanTest : public Roman
 {
 
 public:
-	// todo remove environment from here
-	RomanTest( const std::string & id );
+	RomanTest( const std::string & id , std::string controllerType);
 	virtual ~RomanTest();
 	
 	void selectActions();
