@@ -48,8 +48,6 @@ private:
 	int _maxActions;
 	int _nbTrades;
 
-	void randomActionSelection();
-
 	AgentController* _controller;
 
 public:
