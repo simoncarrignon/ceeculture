@@ -77,6 +77,8 @@ public:
 	int getMaxActions();
 
 	double getScore() {return _score;};
+	void setScore(double value) {_score = value ;};
+
 
 	
 	

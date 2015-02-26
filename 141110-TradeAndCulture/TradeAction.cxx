@@ -29,6 +29,7 @@ void TradeAction::execute(Engine::Agent& agent)
 	 
 	 std::vector<std::string>::iterator  it = gto.begin();
 
+//	 romanAgent.printInventory();
 	 
 	 //For all type of ressource
 	 while(it != gto.end()){
@@ -46,7 +47,7 @@ void TradeAction::execute(Engine::Agent& agent)
 		    while(itO != mara.end() && 1==1) //TODO:number of max test <nbmax (maybe gintis use it only because of computational limitiation)
 		    {
 		      romanAgent.sendGoodTo(*itO,*it,qt);
-		      
+//		      std::cout<<"agent:"<<romanAgent.getId()<<" send "<<qt<<" of "<<std::get<0>(goodProduced)<<" to "<<*itO<<std::endl;
 		      itO++;
 		    }
 	  }
@@ -56,6 +57,7 @@ void TradeAction::execute(Engine::Agent& agent)
 	
 
 	
+//	romanAgent.printInventory();
 
 }
 
