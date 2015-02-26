@@ -14,15 +14,17 @@ namespace Epnet
 	{
 		_controller = ControllerFactory::get().makeController(controllerType);
 		_controller->setAgent(this);
+		_score=0;
 	}
-
+	
+	
 	Roman::~Roman()
 	{
 	}
 
 	void Roman::registerAttributes()
 	{
-		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
 			registerFloatAttribute(std::get<0>(*it));
 		}
@@ -34,7 +36,7 @@ namespace Epnet
 
 	void Roman::serialize()
 	{
-		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
 			serializeAttribute(std::get<0>(*it), (float)std::get<0>(getGood(std::get<0>(*it))));
 		}
@@ -63,8 +65,9 @@ namespace Epnet
 
 		//Roman Agent is responsible of the consumption of essential resources
 		//and potenetial death
-		consumeEssentialResources();
-		checkDeath();
+		//As we don't have "essential" food yet there is no consumption of them nor death.
+		//consumeEssentialResources();
+		//checkDeath();
 	}
 
 
@@ -73,7 +76,7 @@ namespace Epnet
 
 	void Roman::consumeEssentialResources()
 	{
-		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
 			//search for a good with need equal to 1.0
 			if (std::get<4>(*it) == 1.0)
@@ -87,7 +90,7 @@ namespace Epnet
 	void Roman::checkDeath()
 	{
 		bool death = false;
-		for( std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
 			//search for a good with need equal to 1.0
 			if (std::get<4>(*it) == 1.0)
@@ -142,7 +145,7 @@ namespace Epnet
 
 
 
-
+  
 
 
 	void Roman::setResources( int resources )
@@ -454,47 +457,56 @@ namespace Epnet
 		}
 	}
 
-	void Roman::addGoodType(std::string type,double max,double price,double need)
+	void Roman::addGoodType(std::string type,double max,double price,double need,double productionRate)
 	{
 		//check if a good of that type is already in that list
-		if ( std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;}) == listGoods.end() )
+		if ( std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;}) == listGoods.end() )
 		{
 			//if not, add it
-			listGoods.push_back(std::make_tuple(type,0,max,price,need));
+			listGoods.push_back(std::make_tuple(type,0,max,price,need,productionRate));
 		}
 	}
 
 	void Roman::removeGoodType(std::string type)
 	{
 		//check if a good of that type exist in that list
-		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		while ( it != listGoods.end() )
 		{
 			//if not, add it
 			listGoods.erase(it);
 			//update the presence of good of that type in the list
-			it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
+			it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		}
 	}
 
-	std::tuple<double,double,double,double> Roman::getGood(std::string type)
+	std::tuple<double,double,double,double,double> Roman::getGood(std::string type)
 	{
 		//check if a good of that type exist in the list
-		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		if ( it != listGoods.end() )
 		{
-			//return quantity, maxquantity,price and need of good
-			return std::make_tuple(std::get<1>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it));
+			//return quantity, maxquantity,price, need and productionRate good
+			return std::make_tuple(std::get<1>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it),std::get<5>(*it));
 		}
 
 		//return something impossible as an error
-		return std::make_tuple(-1.0,-1.0,-1.0,-1.0);
+		return std::make_tuple(-1.0,-1.0,-1.0,-1.0,-1.0);
 	}
 
+	
+	//TODO: actually this function return the good that is produced. But should return a vector of goods if there are more than one good produced
+	std::tuple<std::string,double,double,double,double,double>  Roman::getProducedGood()
+	{
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<5>(good) > 0 ;});
+
+		return *it;
+	}
+	
 	void Roman::addGood(std::string type,double value)
 	{
 		//check if a good of that type exists in that list
-		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		//if yes add the value to it within the bound
 		if ( it != listGoods.end() )
 		{
@@ -502,11 +514,57 @@ namespace Epnet
 			std::get<1>(*it) = toSet;
 		}
 	}
+	
+	void Roman::setPrice(std::string type,double value)
+	{
+		//check if a good of that type exists in that list
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
+		//if yes add the value to it within the bound
+		if ( it != listGoods.end() )
+		{
+			std::get<3>(*it) = value;
+		}
+	}
+	
+	void Roman::setQuantity(std::string type,double value)
+	{
+		//check if a good of that type exists in that list
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
+		//if yes add the value to it within the bound
+		if ( it != listGoods.end() )
+		{
+			std::get<1>(*it) = value;
+		}
+	}
 
+	void Roman::setNeed(std::string type,double value)
+	{
+		//check if a good of that type exists in that list
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
+		//if yes add the value to it within the bound
+		if ( it != listGoods.end() )
+		{
+			std::get<4>(*it) = value;
+		}
+	}
+
+	void Roman::setProductionRate(std::string type,double value)
+	{
+		//check if a good of that type exists in that list
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
+		//if yes add the value to it within the bound
+		if ( it != listGoods.end() )
+		{
+			std::get<5>(*it) = value;
+		}
+		
+	}
+
+	
 	void Roman::removeGood(std::string type,double value)
 	{
 		//check if a good of that type exists in that list
-		std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
+		std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
 		//if yes remove the value to it as long as it's superior to 0
 		if ( it != listGoods.end() )
 		{
@@ -515,7 +573,7 @@ namespace Epnet
 		}
 	}
 
-	std::vector<std::tuple<std::string,double,double,double,double> >  Roman::getListGoodsFrom(std::string target)
+	std::vector<std::tuple<std::string,double,double,double,double,double> >  Roman::getListGoodsFrom(std::string target)
 	{
 		Agent* uncastedPtr = _world->getAgent(target);
 		if (uncastedPtr == NULL)
@@ -533,14 +591,28 @@ namespace Epnet
 		}
 		return targetPtr->getListGoods();
 	}
+	
+	void Roman::printInventory()
+	{
+	  std::cout<<"-------------------------------"<<std::endl;
+	  std::cout<<"Inventory of :"<<_id<<std::endl;
+
+	  for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = this->listGoods.begin() ; it != this->listGoods.end() ; it++)
+		{
+		  std::cout<<std::get<0>(*it)<<"\t"<<std::get<1>(*it)<<"\t"<<std::get<2>(*it)<<"\t"<<std::get<3>(*it)<<"\t"<<std::get<4>(*it)<<"\t"<<std::get<5>(*it)<<std::endl;
+		}
+	  std::cout<<"-------------------------------"<<std::endl;
+
+	  
+	}
 
 	void Roman::sendGoodTo(std::string target, std::string type, double value)
 	{
-		// if the connection with the target has been valideted
+		// if the connection with the target has been validated
 		if( std::find(validSendConnections.begin(), validSendConnections.end(), target) != validSendConnections.end() )
 		{
 			//check if a good of that type exists in that list
-			std::vector<std::tuple<std::string,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double>& good) {return std::get<0>(good) == type;});
+			std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
 			//if yes remove the value to it as long as it's superior to 0
 			if ( it != listGoods.end() )
 			{

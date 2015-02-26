@@ -1,6 +1,7 @@
 #include <ControllerFactory.hxx>
 
 #include <RandomController.hxx>
+#include <BasicController.hxx>
 #include <MacmillanController.hxx>
 
 namespace Epnet
@@ -35,6 +36,10 @@ namespace Epnet
 		if (controllerName == "macmillan")
 		{
 			return new MacmillanController();
+		}
+		if (controllerName == "basic")
+		{
+			return new BasicController();
 		}
 	}
 

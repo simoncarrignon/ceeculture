@@ -16,7 +16,7 @@ namespace Epnet
 class Roman : public Engine::Agent
 {
 	int _resources; // MpiBasicAttribute
-
+	
 private:
 	std::vector<std::string> proposedConnections;
 
@@ -32,10 +32,15 @@ private:
 	void receiveMessageFrom(std::string source, std::string msg);
 	std::vector<std::tuple<std::string,std::string> > receivedMessages;
 
-	//type, quantity, maxQuantity, price, need
-	std::vector<std::tuple<std::string,double,double,double,double> > listGoods;
+	//type, quantity, maxQuantity, price, need, productionRate
+	std::vector<std::tuple<std::string,double,double,double,double,double> > listGoods;
 	int receiveGoodFrom(std::string source, std::string type, double value);
 
+	
+	std::vector<std::string> listProducedGoods;
+
+	
+	
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades;
 	int receiveTradeFrom(std::string source, std::string type, double value, double currency);
@@ -47,7 +52,9 @@ private:
 
 	int _maxActions;
 	int _nbTrades;
-
+	double _score;
+	
+	
 	AgentController* _controller;
 
 public:
@@ -69,7 +76,10 @@ public:
 
 	int getMaxActions();
 
+	double getScore() {return _score;};
 
+	
+	
 	// setup connections
 	void proposeConnectionTo(std::string target);
 	void killConnectionTo(std::string target);
@@ -94,16 +104,32 @@ public:
 
 
 	//good system
-	void addGoodType(std::string type,double max,double price,double need);
+	void addGoodType(std::string type,double max,double price,double need,double productionRate);
 	void removeGoodType(std::string type);
-	std::vector<std::tuple<std::string,double,double,double,double> > getListGoods() { return listGoods;};
-	std::tuple<double,double,double,double> getGood(std::string type);
+	std::vector<std::tuple<std::string,double,double,double,double,double> > getListGoods() { return listGoods;};
+	std::tuple<double,double,double,double,double> getGood(std::string type);
 
 	void addGood(std::string type,double value);
 	void removeGood(std::string type,double value);
 
-	std::vector<std::tuple<std::string,double,double,double,double> >  getListGoodsFrom(std::string target);
 
+	std::tuple<std::string,double,double,double,double,double>  getProducedGood();
+
+	//acess differents values of one ressource
+
+	double getQuantity(std::string type){ return std::get<0>(getGood(type));};
+	double getPrice(std::string type){ return std::get<1>(getGood(type));};
+	double getNeed(std::string type){ return std::get<3>(getGood(type));};
+	double getProductionRate(std::string type){ return std::get<4>(getGood(type));};
+	
+	void setPrice(std::string type,double value);
+	void setQuantity(std::string type, double value);
+	void setNeed(std::string type, double value);
+	void setProductionRate(std::string type, double value);
+	
+	std::vector<std::tuple<std::string,double,double,double,double,double> >  getListGoodsFrom(std::string target);
+	void printInventory();
+	
 	//sending goods
 	void sendGoodTo(std::string target, std::string type, double value);
 
@@ -129,7 +155,7 @@ public:
 	void * fillPackage();
 	void sendVectorAttributes(int);
 	void receiveVectorAttributes(int);
-	////////////////////////////////////////////////
+  	////////////////////////////////////////////////
 	//////// End of generated code /////////////////
 	////////////////////////////////////////////////
 

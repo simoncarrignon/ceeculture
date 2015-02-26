@@ -5,22 +5,22 @@
 	<numSteps value="1000" serializeResolution="1"/>
 	<size width="100" height="100"/>
 	<numAgents value="100"/>
-	<controller type="random"/>
+	<controller type="basic"/>
 
 	<goods num="5">
-		<good0 id="currency" initialQuantity="500.0" maxQuantity="1000" price="0.0" need="0.0"/>
-		<good1 id="ess-a" initialQuantity="50.0" maxQuantity="100" price="1.0" need="1.0"/>
-		<good2 id="ess-b" initialQuantity="50.0" maxQuantity="100" price="1.0" need="1.0"/>
-		<good3 id="nonEss-a" initialQuantity="0.0" maxQuantity="100" price="5.0" need="0.3"/>
-		<good4 id="nonEss-b" initialQuantity="0.0" maxQuantity="100" price="5.0" need="0.2"/>
+		<good0	id="currency"	initialQuantity="0.0"	maxQuantity="1000"	price="0.0"	need="0.0"	productionRate="0.0"/>
+		<good1	id="ess-a"	initialQuantity="0.0"	maxQuantity="100"	price="8.0"	need="6.0"	productionRate="0.0"/>
+		<good2	id="ess-b"	initialQuantity=".0"	maxQuantity="100"	price="1.0"	need="1.0"	productionRate="0.0"/>
+		<good3	id="nonEss-a"	initialQuantity="0.0"	maxQuantity="100"	price="5.0"	need="0.3"	productionRate="0.0"/>
+		<good4	id="nonEss-b"	initialQuantity="0.0"	maxQuantity="100"	price="5.0"	need="0.2"	productionRate="0.0"/>
 	</goods>
 
 	<rasters num="5">
-		<raster0 id="currency" min="0.0" max="20.0" init="20.0"/>
-		<raster1 id="ess-a" min="0.0" max="20.0" init="20.0"/>
-		<raster2 id="ess-b" min="0.0" max="20.0" init="20.0"/>
-		<raster3 id="nonEss-a" min="0.0" max="20.0" init="20.0"/>
-		<raster4 id="nonEss-b" min="0.0" max="20.0" init="20.0"/>
+		<raster0	id="currency"	min="0.0"	max="20.0"	init="20.0"/>
+		<raster1	id="ess-a"	min="0.0"	max="20.0"	init="20.0"/>
+		<raster2	id="ess-b"	min="0.0"	max="20.0"	init="20.0"/>
+		<raster3	id="nonEss-a"	min="0.0"	max="20.0"	init="20.0"/>
+		<raster4	id="nonEss-b"	min="0.0"	max="20.0"	init="20.0"/>
 	</rasters>
 </config>
 

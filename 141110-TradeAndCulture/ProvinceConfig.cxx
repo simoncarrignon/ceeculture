@@ -32,7 +32,8 @@ void ProvinceConfig::loadParams()
 		double maxQuantity = getParamFloat(name.str(),"maxQuantity");
 		double price = getParamFloat(name.str(),"price");
 		double need = getParamFloat(name.str(),"need");
-		_paramGoods.push_back(std::make_tuple(id,initQuantity,maxQuantity,price,need));
+		double productionRate = getParamFloat(name.str(),"productionRate");
+		_paramGoods.push_back(std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate));
 	}
 
 	_numRasters = getParamInt( "rasters", "num");
