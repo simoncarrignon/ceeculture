@@ -120,7 +120,7 @@ public:
 	//acess differents values of one ressource
 
 	double getQuantity(std::string type){ return std::get<0>(getGood(type));};
-	double getPrice(std::string type){ return std::get<1>(getGood(type));};
+	double getPrice(std::string type){ return std::get<2>(getGood(type));};
 	double getNeed(std::string type){ return std::get<3>(getGood(type));};
 	double getProductionRate(std::string type){ return std::get<4>(getGood(type));};
 	

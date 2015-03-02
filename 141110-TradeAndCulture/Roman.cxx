@@ -27,11 +27,16 @@ namespace Epnet
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
 			registerFloatAttribute(std::get<0>(*it));
+			std::ostringstream oss;
+			oss <<std::get<0>(*it) << "_price";
+			registerFloatAttribute(oss.str());
 		}
 
 		registerIntAttribute("nbConnectionsRcv");
 		registerIntAttribute("nbConnectionsSend");
-		registerIntAttribute("nbAchievedTrades");
+		registerIntAttribute("nbAchievedTrades");		
+		registerFloatAttribute("scores");
+
 	}
 
 	void Roman::serialize()
@@ -39,11 +44,17 @@ namespace Epnet
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
 			serializeAttribute(std::get<0>(*it), (float)std::get<0>(getGood(std::get<0>(*it))));
+			std::ostringstream oss;
+			oss <<std::get<0>(*it) << "_price";
+			serializeAttribute(oss.str(), (float)getPrice(std::get<0>(*it)));
+			
 		}
 
 		serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
 		serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
-		serializeAttribute("nbAchievedTrades", _nbTrades);
+		serializeAttribute("nbAchievedTrades", _nbTrades);		
+		serializeAttribute("scores", (float)_score);
+	
 	}
 
 
@@ -595,7 +606,7 @@ namespace Epnet
 	void Roman::printInventory()
 	{
 	  std::cout<<"-------------------------------"<<std::endl;
-	  std::cout<<"Inventory of :"<<_id<<std::endl;
+	  std::cout<<"Inventory of :"<<_id<<" with score "<<_score<<std::endl;
 
 	  for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = this->listGoods.begin() ; it != this->listGoods.end() ; it++)
 		{

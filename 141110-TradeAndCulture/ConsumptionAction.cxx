@@ -26,12 +26,17 @@ void ConsumptionAction::execute(Engine::Agent& agent)
 	std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= romanAgent.getListGoods();
 	std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = allGood.begin();
 	int utilityFunction=1;
+	it++;//skip money
 	while(it!=allGood.end())
 	{
-	  
-	  if(utilityFunction> romanAgent.getQuantity(std::get<0>(*it))/romanAgent.getNeed(std::get<0>(*it)))
-			utilityFunction=romanAgent.getQuantity(std::get<0>(*it))/romanAgent.getNeed(std::get<0>(*it));
+	    std::string good=std::get<0>(*it);
+	  if(good == std::get<0>(romanAgent.getProducedGood()) && romanAgent.getQuantity(good) == 0)
+	    romanAgent.setQuantity(good,1);
+	  if(utilityFunction> romanAgent.getQuantity(good)/romanAgent.getNeed(good))
+			utilityFunction=romanAgent.getQuantity(good)/romanAgent.getNeed(good);
 	  it++;
+	  romanAgent.setQuantity(good,0.0);
+	  
 	}
 	
 	double score=romanAgent.getScore();

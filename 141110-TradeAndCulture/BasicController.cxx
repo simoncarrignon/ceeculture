@@ -9,11 +9,10 @@
 #include <ProposeTradeAction.hxx>
 #include <FunAction.hxx>
 #include <TradeAction.hxx>
+#include <CulturalAction.hxx>
 
 
-/*-----------------------------------------------------------------------------
- *  This Controler ensure that all agents meet all agents
- *-----------------------------------------------------------------------------*/
+
 namespace Epnet
 {
 	BasicController::BasicController()
@@ -34,11 +33,12 @@ namespace Epnet
 	{
 		int action = _agent->getMaxActions();
 		std::list<Engine::Action*> actions;
-		
-		actions.push_back(new ProductionAction());
-		actions.push_back(new TradeAction());
-		actions.push_back(new ConsumptionAction());
-	
+		int timestep = _agent->getWorld()->getCurrentStep();
+		if(timestep%3 == 0)actions.push_back(new ProductionAction());
+		if(timestep%3 == 1)actions.push_back(new TradeAction());
+		if(timestep%3 == 2)actions.push_back(new ConsumptionAction());
+		if(timestep%10 == 0)actions.push_back(new CulturalAction());
+
 		return actions;
 	}
 
