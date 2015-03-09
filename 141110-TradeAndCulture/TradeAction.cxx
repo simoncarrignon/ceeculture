@@ -33,7 +33,7 @@ void TradeAction::execute(Engine::Agent& agent)
 	  std::string offererProducedGood= std::get<0>(offerer.getProducedGood()); 
 	 //For all type of ressource
 	 while(it != gto.end()){	
-		    offerer.printInventory();
+		   // offerer.printInventory();
 
 	   
 		    std::string goodWanted = *it;
@@ -75,7 +75,7 @@ void TradeAction::execute(Engine::Agent& agent)
 		    //The usage of a best trade tuple have sense only if users could exchange less than Requested quantity. 
 		    //This would imply that an offerer will check each person in the market and trade with each one of them and keep the best offerer
 		    //but on better things is to actually DO the trade EVERY time till the offerer had all he want.
-		    std::cout<<"best trade w/"<< std::get<0>(bestTrade)<< " de "<<offererProducedGood<<" get :"<< std::get<1>(bestTrade)<<" give :"<<std::get<2>(bestTrade)<<std::endl;; 
+		//    std::cout<<"best trade w/"<< std::get<0>(bestTrade)<< " de "<<offererProducedGood<<" get :"<< std::get<1>(bestTrade)<<" give :"<<std::get<2>(bestTrade)<<std::endl;; 
 		    
 		    offerer.setQuantity(goodWanted,std::get<1>(bestTrade));		    
 		    offerer.setQuantity(offererProducedGood,offerer.getQuantity(offererProducedGood)-std::get<2>(bestTrade));
@@ -84,11 +84,11 @@ void TradeAction::execute(Engine::Agent& agent)
 		    responder.setQuantity(offererProducedGood,std::get<2>(bestTrade));
     		    responder.setQuantity(goodWanted,responder.getQuantity(goodWanted)-std::get<1>(bestTrade));
 
-		    offerer.printInventory();
+		//    offerer.printInventory();
 
 		  }
 		  else{
-		    std::cout<<"nop"<< std::endl;
+		//    std::cout<<"nop"<< std::endl;
 		    
 		  }
 

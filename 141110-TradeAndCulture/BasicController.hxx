@@ -11,9 +11,16 @@ namespace Epnet
 	 *-----------------------------------------------------------------------------*/
 class BasicController : public AgentController
 {
+
+private:
+  
+double _mutationRate;  
+std::string _selectionProcess;  
+
   
 public:
 	BasicController();
+	BasicController(double mR,std::string sP);
 	virtual ~BasicController();
 	
 	virtual void updateState();

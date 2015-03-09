@@ -2,17 +2,16 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="5000" serializeResolution="1"/>
-	<size width="100" height="100"/>
-	<numAgents value="100"/>
-	<controller type="basic"/>
+	<numSteps value="1000" serializeResolution="1"/>
+	<size width="300" height="1"/>
+	<numAgents value="250"/>
+	<controller type="basic" >
+		<good type="random"/>
+		<culture selection="random" mutation=".008"/>
+	</controller>
 
-	<goods num="5">
-		<good0	id="currency"	initialQuantity="0.0"	maxQuantity="1000"	price="0.0"	need="0.0"	productionRate="0.0"/>
-		<good1	id="ess-a"	initialQuantity="0.0"	maxQuantity="100"	price="8.0"	need="6.0"	productionRate="0.0"/>
-		<good2	id="ess-b"	initialQuantity="0.0"	maxQuantity="100"	price="1.0"	need="1.0"	productionRate="0.0"/>
-		<good3	id="nonEss-a"	initialQuantity="0.0"	maxQuantity="100"	price="5.0"	need="0.3"	productionRate="0.0"/>
-		<good4	id="nonEss-b"	initialQuantity="0.0"	maxQuantity="100"	price="5.0"	need="0.2"	productionRate="0.0"/>
+	<goods num="1">
+		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1"	productionRate="0"/>
 	</goods>
 
 	<rasters num="5">

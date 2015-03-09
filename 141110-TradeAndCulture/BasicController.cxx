@@ -1,4 +1,5 @@
 #include <BasicController.hxx>
+
 #include <iostream>
 
 #include <HarvestAction.hxx>
@@ -19,6 +20,13 @@ namespace Epnet
 	{
 	}
 
+	BasicController::BasicController(double mutationRate,std::string selectionProcess)
+	{  
+	  _mutationRate = mutationRate;
+	  _selectionProcess = selectionProcess;
+	}
+
+	
 	BasicController::~BasicController()
 	{
 	}
@@ -37,7 +45,7 @@ namespace Epnet
 		if(timestep%3 == 0)actions.push_back(new ProductionAction());
 		if(timestep%3 == 1)actions.push_back(new TradeAction());
 		if(timestep%3 == 2)actions.push_back(new ConsumptionAction());
-		if(timestep%10 == 0)actions.push_back(new CulturalAction());
+		if(timestep%10 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess));
 
 		return actions;
 	}

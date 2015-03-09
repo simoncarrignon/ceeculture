@@ -21,8 +21,25 @@ void ProvinceConfig::loadParams()
 {
 	_numAgents = getParamInt( "numAgents", "value");
 	_controllerType = getParamStr( "controller", "type");
+	_selectionProcess= getParamStr( "controller/culture", "selection");	
+	_mutationRate= getParamFloat( "controller/culture", "mutation");
+	_goodsParam= getParamStr( "controller/good", "type");
 
 	_numGoods = getParamInt( "goods", "num");
+	
+	if(_goodsParam== "random"){
+		std::ostringstream name;
+		name << "goods/good";
+		std::string id = getParamStr(name.str(),"id");
+		double initQuantity = getParamFloat(name.str(),"initialQuantity");
+		double maxQuantity = getParamFloat(name.str(),"maxQuantity");
+		double price = getParamFloat(name.str(),"price");
+		double need = getParamFloat(name.str(),"need");
+		double productionRate = getParamFloat(name.str(),"productionRate");
+		_protoGood = std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate);  
+	  
+	}
+	  else{
 	for(int i=0; i < _numGoods ; i++)
 	{
 		std::ostringstream name;
@@ -46,6 +63,7 @@ void ProvinceConfig::loadParams()
 		double max = getParamFloat(name.str(),"max");
 		double init = getParamFloat(name.str(),"init");
 		_paramRasters.push_back(std::make_tuple(id,min,max,init));
+	}
 	}
 }
 	

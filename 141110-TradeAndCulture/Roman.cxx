@@ -16,6 +16,14 @@ namespace Epnet
 		_controller->setAgent(this);
 		_score=0;
 	}
+
+	Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
+	{
+		_controller = ControllerFactory::get().makeController(controllerType,mutationRate,selectionProcess);
+		_controller->setAgent(this);
+		_score=0;
+	}
+
 	
 	
 	Roman::~Roman()
@@ -26,33 +34,72 @@ namespace Epnet
 	{
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-			registerFloatAttribute(std::get<0>(*it));
 			std::ostringstream oss;
-			oss <<std::get<0>(*it) << "_price";
-			registerFloatAttribute(oss.str());
+			oss <<std::get<0>(*it) << "_q";
+			std::string name=oss.str();
+			registerFloatAttribute(name);
+			std::ostringstream ossb;
+			ossb <<std::get<0>(*it) << "_p";
+			name=ossb.str();
+			registerFloatAttribute(name);
+			std::ostringstream ossc;
+			ossc <<std::get<0>(*it) << "_n";
+			name=ossc.str();
+			registerFloatAttribute(name);
+		
+			
+			
+			/*std::ostringstream ossb;
+			oss <<std::get<0>(*it) << "_q";
+			 registerFloatAttribute(ossb.str());
+			std::ostringstream ossc;
+			oss <<std::get<0>(*it) << "_n";
+			registerFloatAttribute(ossc.str());
+*/
 		}
-
-		registerIntAttribute("nbConnectionsRcv");
-		registerIntAttribute("nbConnectionsSend");
-		registerIntAttribute("nbAchievedTrades");		
+		
+	//	registerIntAttribute("nbConnectionsRcv");
+	//	registerIntAttribute("nbConnectionsSend");
+	//	registerIntAttribute("nbAchievedTrades");		
 		registerFloatAttribute("scores");
 
 	}
 
 	void Roman::serialize()
 	{
+
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-			serializeAttribute(std::get<0>(*it), (float)std::get<0>(getGood(std::get<0>(*it))));
 			std::ostringstream oss;
-			oss <<std::get<0>(*it) << "_price";
-			serializeAttribute(oss.str(), (float)getPrice(std::get<0>(*it)));
+			oss <<std::get<0>(*it) << "_q";
+			std::string name=oss.str();
+			float value =(float)getQuantity(std::get<0>(*it));
+
+			serializeAttribute(name,value);
+			std::ostringstream ossb;
+			ossb <<std::get<0>(*it) << "_p";
+			name=ossb.str();
+			value =(float)getPrice(std::get<0>(*it));
 			
+			serializeAttribute(name,value );
+			std::ostringstream ossc;
+			ossc <<std::get<0>(*it) << "_n";
+			name=ossc.str();
+			value =(float)getNeed(std::get<0>(*it));
+			
+			serializeAttribute(name,value);
+			/*			std::ostringstream ossb;
+			oss <<std::get<0>(*it) << "_q";
+			serializeAttribute(ossb.str(), (float)getQuantity(std::get<0>(*it)));
+			std::ostringstream ossc;
+			oss <<std::get<0>(*it) << "_n";
+			serializeAttribute(ossc.str(), (float)getNeed(std::get<0>(*it)));
+*/			
 		}
 
-		serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
-		serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
-		serializeAttribute("nbAchievedTrades", _nbTrades);		
+		//serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
+		//serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
+		//serializeAttribute("nbAchievedTrades", _nbTrades);		
 		serializeAttribute("scores", (float)_score);
 	
 	}

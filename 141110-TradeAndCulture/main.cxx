@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <time.h>       /* time */
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +23,7 @@ int main(int argc, char *argv[])
 		}
 		Epnet::Province tradeWorld(new Epnet::ProvinceConfig(fileName));
 	
+		 std::srand (time(NULL));
 		tradeWorld.initialize(argc, argv);
 		tradeWorld.run();
 	}

@@ -26,7 +26,7 @@ void ConsumptionAction::execute(Engine::Agent& agent)
 	std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= romanAgent.getListGoods();
 	std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = allGood.begin();
 	int utilityFunction=1;
-	it++;//skip money
+//	it++;//skip money ou plus
 	while(it!=allGood.end())
 	{
 	    std::string good=std::get<0>(*it);

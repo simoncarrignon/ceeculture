@@ -59,6 +59,8 @@ private:
 
 public:
 	Roman( const std::string & id, std::string controllerType );
+	Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess );
+
 	virtual ~Roman();
 	
 	void updateState();
