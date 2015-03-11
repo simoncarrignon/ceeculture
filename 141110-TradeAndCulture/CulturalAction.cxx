@@ -78,7 +78,7 @@ namespace Epnet
 				}
 				std::vector< std::string >::iterator it = allAgents.begin();
 
-				while(it!= allAgents.end() && !reproductionDone)
+				while(it!= allAgents.end())
 				{
 					Roman & r= (Roman&)(*world->getAgent(*it));
 
