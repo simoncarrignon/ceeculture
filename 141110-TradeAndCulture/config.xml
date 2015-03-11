@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="1000" serializeResolution="1"/>
+	<numSteps value="10000" serializeResolution="10"/>
 	<size width="300" height="1"/>
 	<numAgents value="250"/>
 	<controller type="basic" >
@@ -10,7 +10,7 @@
 		<culture selection="random" mutation=".008"/>
 	</controller>
 
-	<goods num="1">
+	<goods num="10">
 		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1"	productionRate="0"/>
 	</goods>
 

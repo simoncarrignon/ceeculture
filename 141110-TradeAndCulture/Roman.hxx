@@ -39,7 +39,7 @@ private:
 	
 	std::vector<std::string> listProducedGoods;
 
-	
+
 	
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades;
@@ -56,6 +56,7 @@ private:
 	
 	
 	AgentController* _controller;
+    double _mutationRate;
 
 public:
 	Roman( const std::string & id, std::string controllerType );

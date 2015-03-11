@@ -22,6 +22,7 @@ namespace Epnet
 		_controller = ControllerFactory::get().makeController(controllerType,mutationRate,selectionProcess);
 		_controller->setAgent(this);
 		_score=0;
+		_mutationRate=mutationRate;
 	}
 
 	
@@ -34,19 +35,19 @@ namespace Epnet
 	{
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-			std::ostringstream oss;
-			oss <<std::get<0>(*it) << "_q";
-			std::string name=oss.str();
-			registerFloatAttribute(name);
+// 			std::ostringstream oss;
+// 			oss <<std::get<0>(*it) << "_q";
+// 			std::string name=oss.str();
+// 			registerFloatAttribute(name);
 			std::ostringstream ossb;
 			ossb <<std::get<0>(*it) << "_p";
-			name=ossb.str();
+			std::string name=ossb.str();
 			registerFloatAttribute(name);
-			std::ostringstream ossc;
+	/*		std::ostringstream ossc;
 			ossc <<std::get<0>(*it) << "_n";
 			name=ossc.str();
 			registerFloatAttribute(name);
-		
+	*/	
 			
 			
 			/*std::ostringstream ossb;
@@ -61,7 +62,8 @@ namespace Epnet
 	//	registerIntAttribute("nbConnectionsRcv");
 	//	registerIntAttribute("nbConnectionsSend");
 	//	registerIntAttribute("nbAchievedTrades");		
-		registerFloatAttribute("scores");
+// 		registerFloatAttribute("scores");
+		registerFloatAttribute("mu");
 
 	}
 
@@ -70,24 +72,26 @@ namespace Epnet
 
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-			std::ostringstream oss;
+/*			std::ostringstream oss;
 			oss <<std::get<0>(*it) << "_q";
 			std::string name=oss.str();
 			float value =(float)getQuantity(std::get<0>(*it));
 
-			serializeAttribute(name,value);
+			serializeAttribute(name,value); */
 			std::ostringstream ossb;
-			ossb <<std::get<0>(*it) << "_p";
-			name=ossb.str();
-			value =(float)getPrice(std::get<0>(*it));
+			 ossb <<std::get<0>(*it) << "_p";
+			std::string name=ossb.str();
+			float value =(float)getPrice(std::get<0>(*it));
 			
 			serializeAttribute(name,value );
-			std::ostringstream ossc;
+
+			/*		std::ostringstream ossc;
 			ossc <<std::get<0>(*it) << "_n";
 			name=ossc.str();
 			value =(float)getNeed(std::get<0>(*it));
 			
-			serializeAttribute(name,value);
+			serializeAttribute(name,value); */
+	
 			/*			std::ostringstream ossb;
 			oss <<std::get<0>(*it) << "_q";
 			serializeAttribute(ossb.str(), (float)getQuantity(std::get<0>(*it)));
@@ -100,7 +104,9 @@ namespace Epnet
 		//serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
 		//serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
 		//serializeAttribute("nbAchievedTrades", _nbTrades);		
-		serializeAttribute("scores", (float)_score);
+// 		serializeAttribute("scores", (float)_score);
+		serializeAttribute("mu", (float)_mutationRate);
+
 	
 	}
 

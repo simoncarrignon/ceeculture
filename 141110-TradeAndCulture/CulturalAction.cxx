@@ -59,7 +59,7 @@ namespace Epnet
 				{
 					std::string ressource= std::get<0>(*ot);
 					double oldPrice = romanAgent.getPrice(ressource);
-					romanAgent.setPrice(ressource,(double)(std::rand()%100)/100.0);//*.95
+					romanAgent.setPrice(ressource,(double)(std::rand()%RAND_MAX)/RAND_MAX);//*.95
 				}
 			}  
 
