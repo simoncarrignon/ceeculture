@@ -60,7 +60,7 @@ private:
 
 public:
 	Roman( const std::string & id, std::string controllerType );
-	Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess );
+	Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess,std::string innovationProcess);
 
 	virtual ~Roman();
 	
@@ -156,7 +156,7 @@ public:
 	// This code has been automatically generated //
 	/////// Please do not modify it ////////////////
 	////////////////////////////////////////////////
-	Roman( void * );
+	 Roman( void * );
 	void * fillPackage();
 	void sendVectorAttributes(int);
 	void receiveVectorAttributes(int);

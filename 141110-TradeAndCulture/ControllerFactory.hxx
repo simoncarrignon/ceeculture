@@ -19,7 +19,7 @@ public:
 
 	static ControllerFactory& get();
 	AgentController* makeController(const std::string &controllerName);
-	AgentController* makeController(const std::string &controllerName,double mutationRate,std::string selectionProcess);
+	AgentController* makeController(const std::string& controllerName, double mutationRate, std::string selectionProcess, std::string innovationProcess);
 };
 
 } // namespace Epnet

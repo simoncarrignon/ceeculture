@@ -43,7 +43,7 @@ namespace Epnet
 		}
 	}
 	
-	AgentController* ControllerFactory::makeController(const std::string &controllerName,double mutationRate,std::string selectionProcess)
+	AgentController* ControllerFactory::makeController(const std::string &controllerName,double mutationRate,std::string selectionProcess,std::string  innovationProcess)
 	{
 		if (controllerName == "random")
 		{
@@ -56,7 +56,7 @@ namespace Epnet
 		}
 		if (controllerName == "basic")
 		{
-			return new BasicController(mutationRate,selectionProcess);
+			return new BasicController(mutationRate,selectionProcess,innovationProcess);
 		}
 	}
 

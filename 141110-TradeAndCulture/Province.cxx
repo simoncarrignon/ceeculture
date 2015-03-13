@@ -73,7 +73,7 @@ namespace Epnet
 			{
 				std::ostringstream oss;
 				oss << "Roman_" << i;
-				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess);
+				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess);
 				addAgent(agent);
 				//position is actually not interesting
 				agent->setRandomPosition();

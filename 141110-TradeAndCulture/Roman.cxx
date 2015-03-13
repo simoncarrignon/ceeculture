@@ -17,9 +17,9 @@ namespace Epnet
 		_score=0;
 	}
 
-	Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess ) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
+	Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess, std::string innovationProcess) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 	{
-		_controller = ControllerFactory::get().makeController(controllerType,mutationRate,selectionProcess);
+		_controller = ControllerFactory::get().makeController(controllerType,mutationRate,selectionProcess,innovationProcess);
 		_controller->setAgent(this);
 		_score=0;
 		_mutationRate=mutationRate;
@@ -33,7 +33,10 @@ namespace Epnet
 
 	void Roman::registerAttributes()
 	{
-		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+ 		registerFloatAttribute("scores");
+		registerFloatAttribute("mu");
+
+	  for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
 // 			std::ostringstream oss;
 // 			oss <<std::get<0>(*it) << "_q";
@@ -43,11 +46,11 @@ namespace Epnet
 			ossb <<std::get<0>(*it) << "_p";
 			std::string name=ossb.str();
 			registerFloatAttribute(name);
-	/*		std::ostringstream ossc;
+			std::ostringstream ossc;
 			ossc <<std::get<0>(*it) << "_n";
 			name=ossc.str();
 			registerFloatAttribute(name);
-	*/	
+		
 			
 			
 			/*std::ostringstream ossb;
@@ -62,14 +65,13 @@ namespace Epnet
 	//	registerIntAttribute("nbConnectionsRcv");
 	//	registerIntAttribute("nbConnectionsSend");
 	//	registerIntAttribute("nbAchievedTrades");		
-// 		registerFloatAttribute("scores");
-		registerFloatAttribute("mu");
 
 	}
 
 	void Roman::serialize()
 	{
-
+		serializeAttribute("scores", (float)_score);
+		serializeAttribute("mu", (float)_mutationRate);
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
 /*			std::ostringstream oss;
@@ -85,12 +87,12 @@ namespace Epnet
 			
 			serializeAttribute(name,value );
 
-			/*		std::ostringstream ossc;
+			std::ostringstream ossc;
 			ossc <<std::get<0>(*it) << "_n";
 			name=ossc.str();
 			value =(float)getNeed(std::get<0>(*it));
 			
-			serializeAttribute(name,value); */
+			serializeAttribute(name,value); 
 	
 			/*			std::ostringstream ossb;
 			oss <<std::get<0>(*it) << "_q";
@@ -104,8 +106,7 @@ namespace Epnet
 		//serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
 		//serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
 		//serializeAttribute("nbAchievedTrades", _nbTrades);		
-// 		serializeAttribute("scores", (float)_score);
-		serializeAttribute("mu", (float)_mutationRate);
+		
 
 	
 	}

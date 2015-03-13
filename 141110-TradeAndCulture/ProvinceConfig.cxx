@@ -21,7 +21,9 @@ void ProvinceConfig::loadParams()
 {
 	_numAgents = getParamInt( "numAgents", "value");
 	_controllerType = getParamStr( "controller", "type");
-	_selectionProcess= getParamStr( "controller/culture", "selection");	
+	_selectionProcess= getParamStr( "controller/culture", "transmission");	
+	_innovationProcess= getParamStr( "controller/culture", "innovation");	
+
 	_mutationRate= getParamFloat( "controller/culture", "mutation");
 	_goodsParam= getParamStr( "controller/good", "type");
 

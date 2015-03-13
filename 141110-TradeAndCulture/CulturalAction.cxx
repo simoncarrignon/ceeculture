@@ -13,11 +13,13 @@ namespace Epnet
 	}
 
 	
-	CulturalAction::CulturalAction(double mutationRate,std::string selectionProcess)
+	CulturalAction::CulturalAction(double mutationRate,std::string selectionProcess,std::string innovationProcess)
 	{
 	  
 	  _mutationRate = mutationRate;
 	  _selectionProcess = selectionProcess;
+	  _innovationProcess = innovationProcess;
+	  
 	}
 
 	CulturalAction::~CulturalAction()
@@ -33,9 +35,9 @@ namespace Epnet
 		std::vector< std::string > allAgents = romanAgent.getValidRcvConnections();
 
 
-		bool culture=(_selectionProcess == "random");
-		if(culture){
-			if( (std::rand()%1000)/1000.0 > _mutationRate){
+		if(_selectionProcess == "random"){
+
+		if( (std::rand()%1000)/1000.0 > _mutationRate){
 
 				int wsize = allAgents.size();
 				int agId=std::rand()%wsize ;
@@ -52,33 +54,23 @@ namespace Epnet
 					romanAgent.setPrice(ressource,r.getPrice(ressource));
 				}
 			}
-
-			std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
-			for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
-				if((std::rand()%1000)/1000.0 < _mutationRate)
-				{
-					std::string ressource= std::get<0>(*ot);
-					double oldPrice = romanAgent.getPrice(ressource);
-					romanAgent.setPrice(ressource,(double)(std::rand()%RAND_MAX)/RAND_MAX);//*.95
-				}
-			}  
-
+			
 		}
 		else{
-
 			std::vector< std::string >::iterator it = allAgents.begin();
 			bool reproductionDone = 0;
 			if(std::rand()%100 < 20){
 				double max_score=0.0;	
-				while(it!= allAgents.end() && !reproductionDone)
+				while(it!= allAgents.end())
 				{
 					Roman & r= (Roman&)(*world->getAgent(*it));
 					if(r.getScore()>max_score)max_score=r.getScore();
 					it++;
 				}
 				std::vector< std::string >::iterator it = allAgents.begin();
-
-				while(it!= allAgents.end())
+// 
+				
+				while(it!= allAgents.end() && !reproductionDone )
 				{
 					Roman & r= (Roman&)(*world->getAgent(*it));
 
@@ -103,27 +95,27 @@ namespace Epnet
 					it++;
 				}
 			}
+		}
+		
+		  
+			std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
+			for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
+				if((std::rand()%1000)/1000.0 < _mutationRate)
+				{
+				  
+				std::string ressource= std::get<0>(*ot);
+				double oldPrice = romanAgent.getPrice(ressource);
+				 if(_innovationProcess == "random")
+					romanAgent.setPrice(ressource,(double)(std::rand()%RAND_MAX)/RAND_MAX);//*.95
+				  else{
 
-			if(std::rand()%100 < 1){
-
-				std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
-				for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
-
-					std::string ressource= std::get<0>(*ot);
-					double oldPrice = romanAgent.getPrice(ressource);
-
-					if(std::rand()%2 < 1){
-						// 	      std::cout<<"op"<<oldPrice<<" np:"<<oldPrice*.95<<std::endl;
+				    if(std::rand()%2 < 1)
 						romanAgent.setPrice(ressource,oldPrice*.95);//
-					}
 					else
-					{
-						// 	      std::cout<<"op"<<oldPrice<<" np:"<<oldPrice/.95<<std::endl;
 						romanAgent.setPrice(ressource,oldPrice/.95);//
-					} 	    
+				 }				   
 				}
 			}  
-		}
 
 
 

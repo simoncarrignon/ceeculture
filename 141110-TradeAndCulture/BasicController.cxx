@@ -20,10 +20,11 @@ namespace Epnet
 	{
 	}
 
-	BasicController::BasicController(double mutationRate,std::string selectionProcess)
+	BasicController::BasicController(double mutationRate,std::string selectionProcess,std::string innovationProcess)
 	{  
 	  _mutationRate = mutationRate;
 	  _selectionProcess = selectionProcess;
+	  _innovationProcess = innovationProcess;
 	}
 
 	
@@ -42,10 +43,10 @@ namespace Epnet
 		int action = _agent->getMaxActions();
 		std::list<Engine::Action*> actions;
 		int timestep = _agent->getWorld()->getCurrentStep();
-		if(timestep%3 == 0)actions.push_back(new ProductionAction());
-		if(timestep%3 == 1)actions.push_back(new TradeAction());
-		if(timestep%3 == 2)actions.push_back(new ConsumptionAction());
-		if(timestep%10 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess));
+		if(timestep%3 == 0 && _selectionProcess == "trade" )actions.push_back(new ProductionAction());
+		if(timestep%3 == 1 && _selectionProcess == "trade" )actions.push_back(new TradeAction());
+		if(timestep%3 == 2 && _selectionProcess == "trade" )actions.push_back(new ConsumptionAction());
+		if(timestep%30 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess));
 
 		return actions;
 	}

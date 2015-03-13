@@ -24,6 +24,7 @@ class ProvinceConfig : public Engine::Config
 	std::string _selectionProcess;
 	std::string _goodsParam;
 	float _mutationRate;
+	std::string _innovationProcess;
 
 public:
 	ProvinceConfig( const std::string & xmlFile );
