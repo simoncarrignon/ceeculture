@@ -47,6 +47,7 @@ namespace Epnet
 		if(timestep%3 == 1 && _selectionProcess == "trade" )actions.push_back(new TradeAction());
 		if(timestep%3 == 2 && _selectionProcess == "trade" )actions.push_back(new ConsumptionAction());
 		if(timestep%30 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess));
+		if(timestep%31 == 0)_agent->setScore(0.0);
 
 		return actions;
 	}

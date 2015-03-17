@@ -15,13 +15,18 @@ class Province : public Engine::World
 	void createAgents();
 	std::vector<std::string> _typesOfGood;
 	std::vector<std::tuple<std::string,double>> _needs;
+	double _maxscore;
+	
 		
 public:
 	Province(Engine::Config * config, Engine::Scheduler * scheduler = 0);
 	virtual ~Province();
 	
 	std::vector<std::string> getTypesOfGood(){return _typesOfGood;};
-
+	double getMaxScore(){return _maxscore;};
+	void setMaxScore(double score){_maxscore = score;};
+	
+	
 	void proposeConnection(std::string source, std::string target);
 	void buildConnection(std::string source, std::string target);
 	void killConnection(std::string source, std::string target);

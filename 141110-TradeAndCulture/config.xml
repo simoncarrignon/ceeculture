@@ -2,15 +2,15 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="30000" serializeResolution="30"/>
-	<size width="200" height="1"/>
-	<numAgents value="100"/>
+	<numSteps value="9000" serializeResolution="31"/>
+	<size width="1000" height="1"/>
+	<numAgents value="600"/>
 	<controller type="basic" >
 		<good type="random"/>
-		<culture transmission="random" innovation="random" mutation=".01"/>
+		<culture transmission="trade" innovation="trade" mutation=".01"/>
 	</controller>
 
-	<goods num="1">
+	<goods num="3">
 		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1"	productionRate="0"/>
 	</goods>
 

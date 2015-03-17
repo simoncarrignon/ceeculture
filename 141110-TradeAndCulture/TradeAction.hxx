@@ -21,6 +21,7 @@ public:
 	std::string describe() const;
 
 private:
+    double getRequestedQuantity(Engine::Agent& r, std::string goodWanted);
 	std::string type;
 	int requested;
 };

@@ -37,7 +37,7 @@ namespace Epnet
 
 		if(_selectionProcess == "random"){
 
-		if( (std::rand()%1000)/1000.0 > _mutationRate){
+			if( (std::rand()%1000)/1000.0 > _mutationRate){
 
 				int wsize = allAgents.size();
 				int agId=std::rand()%wsize ;
@@ -59,29 +59,27 @@ namespace Epnet
 		else{
 			std::vector< std::string >::iterator it = allAgents.begin();
 			bool reproductionDone = 0;
-			if(std::rand()%100 < 20){
-				double max_score=0.0;	
-				while(it!= allAgents.end())
-				{
-					Roman & r= (Roman&)(*world->getAgent(*it));
-					if(r.getScore()>max_score)max_score=r.getScore();
-					it++;
-				}
-				std::vector< std::string >::iterator it = allAgents.begin();
-// 
-				
-				while(it!= allAgents.end() && !reproductionDone )
+			
+			double max_score=provinceWorld.getMaxScore();	
+			if(max_score == 0) max_score = 1; //first it;
+			int toGet= provinceWorld.getNumberOfAgents()/(provinceWorld.getTypesOfGood().size())*10;
+			
+// 			std::cout<<"tg:"<<toGet<<"maxS:"<<max_score<<std::endl;
+			
+			while(it!= allAgents.end() && !reproductionDone )
 				{
 					Roman & r= (Roman&)(*world->getAgent(*it));
 
 
-					//std::cout<<"testscore: "<< r.getScore()/max_score<< ", agent score:" <<(1-romanAgent.getScore()/max_score)<<std::endl;
+			if(std::rand()%100 < toGet  &&  std::get<0>(r.getProducedGood()) == std::get<0>(romanAgent.getProducedGood())){
+					
+// 			      std::cout<<"max:"<<max_score<< ","<<r.getScore()/max_score<< "," <<(1-romanAgent.getScore()/max_score)<<std::endl;
 					//std::cout<<"good"<<std::get<0>(r.getProducedGood())<<" good "<<std::get<0>(romanAgent.getProducedGood())<<std::endl;
-					if(std::get<0>(r.getProducedGood()) == std::get<0>(romanAgent.getProducedGood()) && romanAgent.getScore()<r.getScore() && (std::rand()%100)/100.0<r.getScore()/max_score && (std::rand()%100)/100.0 <(1-romanAgent.getScore()/max_score) ){
+					if((std::rand()%RAND_MAX)/RAND_MAX < r.getScore()/max_score && (std::rand()%RAND_MAX)/RAND_MAX <(1-romanAgent.getScore()/max_score) ){
 						reproductionDone = 1;
 						std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
 
-						// 						std::cout<<" done"<<std::endl;
+// 						std::cout<<" done"<<std::endl;
 
 						for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 							std::string ressource= std::get<0>(*ot);
@@ -89,14 +87,14 @@ namespace Epnet
 							romanAgent.setPrice(ressource,r.getPrice(ressource));
 
 						}  
-
-
+					  
+					}
 					}
 					it++;
-				}
+				
 			}
+					
 		}
-		
 		  
 			std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
 			for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){

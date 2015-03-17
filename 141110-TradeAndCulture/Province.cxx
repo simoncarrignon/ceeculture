@@ -12,6 +12,7 @@ namespace Epnet
 
 	Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, false)
 	{
+	  _maxscore=0.0;
 	}
 
 	Province::~Province()
@@ -36,6 +37,7 @@ namespace Epnet
 		}
 	}
 
+	
 	void Province::createAgents()
 	{
 

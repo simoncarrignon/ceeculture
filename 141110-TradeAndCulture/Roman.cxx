@@ -14,14 +14,14 @@ namespace Epnet
 	{
 		_controller = ControllerFactory::get().makeController(controllerType);
 		_controller->setAgent(this);
-		_score=0;
+		_score=0.0;
 	}
 
 	Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess, std::string innovationProcess) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
 	{
 		_controller = ControllerFactory::get().makeController(controllerType,mutationRate,selectionProcess,innovationProcess);
 		_controller->setAgent(this);
-		_score=0;
+		_score=0.0;
 		_mutationRate=mutationRate;
 	}
 
