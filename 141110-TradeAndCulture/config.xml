@@ -10,7 +10,7 @@
 		<culture transmission="trade" innovation="trade" mutation=".01"/>
 	</controller>
 
-	<goods num="3">
+	<goods num="6">
 		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1"	productionRate="0"/>
 	</goods>
 

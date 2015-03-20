@@ -62,7 +62,7 @@ namespace Epnet
 			
 			double max_score=provinceWorld.getMaxScore();	
 			if(max_score == 0) max_score = 1; //first it;
-			int toGet= provinceWorld.getNumberOfAgents()/(provinceWorld.getTypesOfGood().size())*10;
+			int toGet= provinceWorld.getNumberOfAgents()/(provinceWorld.getTypesOfGood().size())*5;
 			
 // 			std::cout<<"tg:"<<toGet<<"maxS:"<<max_score<<std::endl;
 			

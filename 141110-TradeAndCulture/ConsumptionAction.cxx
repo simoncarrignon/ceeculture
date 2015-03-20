@@ -34,11 +34,11 @@ void ConsumptionAction::execute(Engine::Agent& agent)
 	 
 	  if(utilityFunction> romanAgent.getQuantity(good)/romanAgent.getNeed(good))
 			utilityFunction=romanAgent.getQuantity(good)/romanAgent.getNeed(good);
-	  it++;
-	  if(good == std::get<0>(romanAgent.getProducedGood()) && romanAgent.getQuantity(good) < 1)
+	  if(good == std::get<0>(romanAgent.getProducedGood()))
 	    romanAgent.setQuantity(good,1); 
 	  else
 	    romanAgent.setQuantity(good,0.0);
+	  it++;
 	}
 	
 	double score=romanAgent.getScore()+utilityFunction;

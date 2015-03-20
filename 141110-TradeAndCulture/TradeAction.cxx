@@ -58,7 +58,7 @@ void TradeAction::execute(Engine::Agent& agent)
 		    int noffer=0;
 		    bool tradeDone = 0;
 
-		    while(itO != exchangeNetwork.end() && !tradeDone && noffer<5) //TODO:number of max test <nbmax (maybe gintis use it only because of computational limitiation)
+		    while(itO != exchangeNetwork.end() && !tradeDone && noffer<=5) //TODO:number of max test <nbmax (maybe gintis use it only because of computational limitiation)
 		    {
 		      noffer++;
 		      Roman & responder = (Roman&)(*world->getAgent(*itO));
@@ -100,8 +100,8 @@ void TradeAction::execute(Engine::Agent& agent)
 		    
 		    //output every  thing:
 // 		    std::cout<<"best trade w/"<< std::get<0>(bestTrade)<< " de "<<offererProducedGood<<" get :"<< std::get<1>(bestTrade)<<" give :"<<std::get<2>(bestTrade)<<std::endl;; 
-// 		    std::cout<<"Before offerer-------------------"<<std::endl;
-// 		  offerer.printInventory();
+		    std::cout<<"Before offerer-------------------"<<std::endl;
+		  offerer.printInventory();
 		    
 		    offerer.setQuantity(goodWanted,std::get<1>(bestTrade));		    
 		    offerer.setQuantity(offererProducedGood,offerer.getQuantity(offererProducedGood)-std::get<2>(bestTrade));
@@ -109,17 +109,17 @@ void TradeAction::execute(Engine::Agent& agent)
 		    
 		    Roman & responder = (Roman&)(*world->getAgent(std::get<0>(bestTrade)));
 		    
-// 		  std::cout<<"Before receiver-------------------"<<std::endl;
-// 		  responder.printInventory();
+		  std::cout<<"Before receiver-------------------"<<std::endl;
+		  responder.printInventory();
 		 
 		    
 		    
 		    responder.setQuantity(offererProducedGood,std::get<2>(bestTrade));
     		    responder.setQuantity(goodWanted,responder.getQuantity(goodWanted)-std::get<1>(bestTrade));
-// 		  std::cout<<"After offerer-------------------"<<std::endl;
-// 		  offerer.printInventory();
-// 		  std::cout<<"After receiver-------------------"<<std::endl;
-// 		  responder.printInventory();
+		  std::cout<<"After offerer-------------------"<<std::endl;
+		  offerer.printInventory();
+		  std::cout<<"After receiver-------------------"<<std::endl;
+		  responder.printInventory();
 		
 		  }
 		  else{
@@ -143,14 +143,15 @@ double TradeAction::getRequestedQuantity(Engine::Agent & agent, std::string good
   
 	  Roman & r = (Roman&)agent;
 	  std::string producedGood= std::get<0>(r.getProducedGood()); 
-	  double Mo = r.getPrice(producedGood)*r.getListGoods().size();
+	  double Mo = r.getPrice(producedGood)*r.getQuantity(producedGood);
 	  double SumOj=0;
 	  std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods = r.getListGoods();
 	  for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 							std::string ressource= std::get<0>(*ot);
-							SumOj+=r.getPrice(ressource)*r.getNeed(ressource);	    
+							SumOj+=r.getPrice(ressource)*r.getNeed(ressource);
+	    
 	  }  
-	  return (((r.getNeed(goodWanted)*Mo/SumOj))-r.getQuantity(goodWanted));
+	  return ((r.getNeed(goodWanted)*Mo/SumOj)-r.getQuantity(goodWanted));
 	
 }
 
