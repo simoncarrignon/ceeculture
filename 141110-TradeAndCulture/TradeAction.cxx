@@ -100,7 +100,7 @@ void TradeAction::execute(Engine::Agent& agent)
 		    
 		    //output every  thing:
 // 		    std::cout<<"best trade w/"<< std::get<0>(bestTrade)<< " de "<<offererProducedGood<<" get :"<< std::get<1>(bestTrade)<<" give :"<<std::get<2>(bestTrade)<<std::endl;; 
-		    std::cout<<"Before offerer-------------------"<<std::endl;
+// 		    std::cout<<"Before offerer-------------------"<<std::endl;
 		  offerer.printInventory();
 		    
 		    offerer.setQuantity(goodWanted,std::get<1>(bestTrade));		    
@@ -109,17 +109,17 @@ void TradeAction::execute(Engine::Agent& agent)
 		    
 		    Roman & responder = (Roman&)(*world->getAgent(std::get<0>(bestTrade)));
 		    
-		  std::cout<<"Before receiver-------------------"<<std::endl;
-		  responder.printInventory();
+// 		  std::cout<<"Before receiver-------------------"<<std::endl;
+// 		  responder.printInventory();
 		 
 		    
 		    
 		    responder.setQuantity(offererProducedGood,std::get<2>(bestTrade));
     		    responder.setQuantity(goodWanted,responder.getQuantity(goodWanted)-std::get<1>(bestTrade));
-		  std::cout<<"After offerer-------------------"<<std::endl;
-		  offerer.printInventory();
-		  std::cout<<"After receiver-------------------"<<std::endl;
-		  responder.printInventory();
+// 		  std::cout<<"After offerer-------------------"<<std::endl;
+// 		  offerer.printInventory();
+// 		  std::cout<<"After receiver-------------------"<<std::endl;
+// 		  responder.printInventory();
 		
 		  }
 		  else{
