@@ -6,6 +6,7 @@
 #include <Point2D.hxx>
 #include <GeneralState.hxx>
 #include <Logger.hxx>
+#include <Scheduler.hxx>
 
 namespace Epnet
 {
@@ -216,6 +217,40 @@ namespace Epnet
 		targetPtr->proposeConnectionTo(source);
 	}
 
+	void Province::step(){
+	          std::stringstream logName;
+        logName << "simulation_" << getId();
+        log_INFO(logName.str(), getWallTime() << " executing step: " << _step );
+
+        if(_step%_config->getSerializeResolution()==0)
+        {
+                _scheduler->serializeRasters(_step);
+                _scheduler->serializeAgents(_step);
+                log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " serialization done");
+        }
+        stepEnvironment();
+        log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
+	for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
+	  Engine::AgentPtr oneA = *ag;
+	  Roman * r = (Roman *) (oneA.get());
+	  r->printInventory();
+	}
+// 		int action = _agent->getMaxActions();
+// 		std::list<Engine::Action*> actions;
+// 		int timestep = _agent->getWorld()->getCurrentStep();
+// 		if(timestep%3 == 0 && _selectionProcess == "trade" )actions.push_back(new ProductionAction());
+// 		if(timestep%3 == 1 && _selectionProcess == "trade" )actions.push_back(new TradeAction());
+// 		if(timestep%3 == 2 && _selectionProcess == "trade" )actions.push_back(new ConsumptionAction());
+// 		if(timestep%30 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess));
+// 		if(timestep%31 == 0)_agent->setScore(0.0);
+
+	
+	
+	_scheduler->executeAgents();
+        _scheduler->removeAgents();
+        log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
+	}
+	
 	void Province::buildTwoWayConnection(std::string source, std::string target)
 	{
 		buildConnection(source,target);

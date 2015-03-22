@@ -30,7 +30,7 @@ public:
 	void proposeConnection(std::string source, std::string target);
 	void buildConnection(std::string source, std::string target);
 	void killConnection(std::string source, std::string target);
-
+	virtual void step();
 	void proposeTwoWayConnection(std::string source, std::string target);
 	void buildTwoWayConnection(std::string source, std::string target);
 	void killTwoWayConnection(std::string source, std::string target);

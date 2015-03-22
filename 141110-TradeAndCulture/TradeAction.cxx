@@ -101,7 +101,7 @@ void TradeAction::execute(Engine::Agent& agent)
 		    //output every  thing:
 // 		    std::cout<<"best trade w/"<< std::get<0>(bestTrade)<< " de "<<offererProducedGood<<" get :"<< std::get<1>(bestTrade)<<" give :"<<std::get<2>(bestTrade)<<std::endl;; 
 // 		    std::cout<<"Before offerer-------------------"<<std::endl;
-		  offerer.printInventory();
+// 		  offerer.printInventory();
 		    
 		    offerer.setQuantity(goodWanted,std::get<1>(bestTrade));		    
 		    offerer.setQuantity(offererProducedGood,offerer.getQuantity(offererProducedGood)-std::get<2>(bestTrade));
