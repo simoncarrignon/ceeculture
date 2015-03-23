@@ -13,6 +13,7 @@ class Province : public Engine::World
 {
 	void createRasters();
 	void createAgents();
+	void executeTrade(Roman* r);
 	std::vector<std::string> _typesOfGood;
 	std::vector<std::tuple<std::string,double>> _needs;
 	double _maxscore;

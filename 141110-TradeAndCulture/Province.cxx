@@ -240,109 +240,32 @@ namespace Epnet
 	  Engine::AgentPtr oneA = *ag;
 	  Roman * r = (Roman *) (oneA.get());
 		 ProductionAction * PA = new ProductionAction();
-	}
-	
-	
 		 PA->execute(*r);
-		 	 while(it != gto.end()){	
-		   // offerer.printInventory();
+		 std::cout<<r->getId()<<std::endl;
+	}
+	
 
-	   
-		    std::string goodWanted = *it;
-		    if(goodWanted != offererProducedGood){
-		    std::vector< std::string > exchangeNetwork =offerer.getValidRcvConnections();
+	 std::random_shuffle(_agents.begin(),_agents.end());
+	
+	for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
+	  Engine::AgentPtr oneA = *ag;
+	  Roman * r = (Roman *) (oneA.get());
+		 TradeAction * TA = new TradeAction();
+		 TA->execute(*r);
+		 std::cout<<r->getId()<<std::endl;
 
-		    std::random_shuffle(exchangeNetwork.begin(),exchangeNetwork.end());
-
-		    std::vector< std::string >::iterator itO=exchangeNetwork.begin();
-		   
-		    
-		    std::tuple< std::string, double, double> bestTrade=std::make_tuple<std::string,double,double>(std::string(""),0,0);
-
-		    //qt is the quantity that of is own produced good the agent is willing to exchange
-		    
-		    
-    		    double requestedQuantity= getRequestedQuantity(offerer,goodWanted);
-		    			
-		    double proposedQuantity = (offerer.getPrice(offererProducedGood)/offerer.getPrice(goodWanted))*requestedQuantity;
-		   
-		    int noffer=0;
-		    bool tradeDone = 0;
-
-		    while(itO != exchangeNetwork.end() && !tradeDone && noffer<=5) //TODO:number of max test <nbmax (maybe gintis use it only because of computational limitiation)
-		    {
-		      noffer++;
-		      Roman & responder = (Roman&)(*world->getAgent(*itO));
-		      
-		      std::string responderProducedGood = std::get<0>(responder.getProducedGood());
-		      
-		      
-		      if(responderProducedGood == goodWanted ){ 
-
-			
-			      
-			      double responderTradeWill = getRequestedQuantity(responder,offererProducedGood); 
-      			      double responderTradCounter= responderTradeWill*(offerer.getPrice(offererProducedGood)/offerer.getPrice(goodWanted)); 
-
-			      if( responderTradeWill <= proposedQuantity && responder.getQuantity(offererProducedGood) <= responderTradeWill &&
-				( proposedQuantity*responder.getPrice(offererProducedGood) <= requestedQuantity*responder.getPrice(goodWanted)) &&
-				responder.getQuantity(goodWanted) >= requestedQuantity && offerer.getQuantity(offererProducedGood) > proposedQuantity )
-			      {
-				if(responderTradCounter<requestedQuantity)requestedQuantity=responderTradCounter;
-// 				std::cout<<"responderWill:"<<responderTradeWill<<"Proposed:"<<proposedQuantity<<std::endl;
-// 			   	std::cout<<"responderCounterOffer:"<<responderTradCounter<<"offrequest:"<<requestedQuantity<<std::endl;
-			   
-				if(std::get<2>(bestTrade) < requestedQuantity){ 
-
-				  bestTrade=std::make_tuple(*itO,requestedQuantity,proposedQuantity);
-				  tradeDone=1;
-				}
-			      }
-			
-		      }
-		      itO++;		    
-		  }
-		  
-		  if(std::get<0>(bestTrade) != ""){
-		    
-		    //The usage of a best trade tuple have sense only if users could exchange less than Requested quantity. 
-		    //This would imply that an offerer will check each person in the market and trade with each one of them and keep the best offerer
-		    //But in the Gintis version people leave the market when they did a trade so not useful now.
-		    
-		    //output every  thing:
-// 		    std::cout<<"best trade w/"<< std::get<0>(bestTrade)<< " de "<<offererProducedGood<<" get :"<< std::get<1>(bestTrade)<<" give :"<<std::get<2>(bestTrade)<<std::endl;; 
-// 		    std::cout<<"Before offerer-------------------"<<std::endl;
-// 		  offerer.printInventory();
-		    
-		    offerer.setQuantity(goodWanted,std::get<1>(bestTrade));		    
-		    offerer.setQuantity(offererProducedGood,offerer.getQuantity(offererProducedGood)-std::get<2>(bestTrade));
-
-		    
-		    Roman & responder = (Roman&)(*world->getAgent(std::get<0>(bestTrade)));
-		    
-// 		  std::cout<<"Before receiver-------------------"<<std::endl;
-// 		  responder.printInventory();
-		 
-		    
-		    
-		    responder.setQuantity(offererProducedGood,std::get<2>(bestTrade));
-    		    responder.setQuantity(goodWanted,responder.getQuantity(goodWanted)-std::get<1>(bestTrade));
-// 		  std::cout<<"After offerer-------------------"<<std::endl;
-// 		  offerer.printInventory();
-// 		  std::cout<<"After receiver-------------------"<<std::endl;
-// 		  responder.printInventory();
-		
-		  }
-		  else{
-		    //the agent has leaved the market without doing any trade
-		  }
-		  
-		    }
-
-
-	  
 	  
 	}
+	  
+	  
+	  
+	for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
+	  Engine::AgentPtr oneA = *ag;
+	  Roman * r = (Roman *) (oneA.get());
+		 ConsumptionAction * CA = new ConsumptionAction();
+		 CA->execute(*r);
+	}
+	
 // 		int action = _agent->getMaxActions();
 // 		std::list<Engine::Action*> actions;
 // 		int timestep = _agent->getWorld()->getCurrentStep();
@@ -350,10 +273,10 @@ namespace Epnet
 // 		if(timestep%3 == 2 && _selectionProcess == "trade" )actions.push_back(new ConsumptionAction());
 // 		if(timestep%30 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess));
 // 		if(timestep%31 == 0)_agent->setScore(0.0);
-
+if(_step%10 == 0)
 	
 	
-	_scheduler->executeAgents();
+// 	_scheduler->executeAgents();
         _scheduler->removeAgents();
         log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
 	}

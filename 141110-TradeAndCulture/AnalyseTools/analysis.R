@@ -76,7 +76,7 @@ readDir<-function(expeDir,nrun){
 
 
 loadSource=function(){
-	source("../analtest/analysis.R")
+	source("./analysis.R")
 }
 
 plotAllRessource<-function(expeDir,ressoureN,nstep,nrun,...){
