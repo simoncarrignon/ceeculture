@@ -50,7 +50,7 @@ void TradeAction::execute(Engine::Agent& agent)
 		    //qt is the quantity that of is own produced good the agent is willing to exchange
 		    
 		    
-    		    double requestedQuantity= getRequestedQuantity(offerer,goodWanted);
+    		    double requestedQuantity= offerer.getPrice(offererProducedGood);
 		    			
 		    double proposedQuantity = (offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood))*requestedQuantity;
 		   
@@ -69,8 +69,8 @@ void TradeAction::execute(Engine::Agent& agent)
 
 			
 			      
-			      double responderTradeWill = getRequestedQuantity(responder,offererProducedGood); 
-      			      double responderTradCounter= responderTradeWill*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood)); 
+			      double responderTradeWill =  responder.getPrice(offererProducedGood);; 
+      			      double responderTradCounter= responderTradeWill*(responder.getPrice(goodWanted)/responder.getPrice(offererProducedGood)); 
 				std::cout<<"responderWill:"<<responderTradeWill<<"Proposed:"<<proposedQuantity<<std::endl;
 			   	std::cout<<"responderCounterOffer:"<<responderTradCounter<<"offrequest:"<<requestedQuantity<<std::endl;
 
