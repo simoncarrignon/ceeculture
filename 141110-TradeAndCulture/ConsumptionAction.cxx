@@ -32,6 +32,9 @@ void ConsumptionAction::execute(Engine::Agent& agent)
 	{
 	    std::string good=std::get<0>(*it);
 	 
+	  if(good == std::get<0>(romanAgent.getProducedGood()))
+	    romanAgent.setQuantity(good,romanAgent.getNeed(good)); 
+	  
 	  if(utilityFunction> romanAgent.getQuantity(good)/romanAgent.getNeed(good))
 			utilityFunction=romanAgent.getQuantity(good)/romanAgent.getNeed(good);
 	  if(good == std::get<0>(romanAgent.getProducedGood()))
@@ -44,7 +47,9 @@ void ConsumptionAction::execute(Engine::Agent& agent)
 	double score=romanAgent.getScore()+utilityFunction;
 	romanAgent.setScore(score);
 
-	if(score >= provinceWorld.getMaxScore())provinceWorld.setMaxScore(score);
+	if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
+	if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
+
 
 }
 

@@ -60,8 +60,6 @@ namespace Epnet
 			std::vector< std::string >::iterator it = allAgents.begin();
 			bool reproductionDone = 0;
 			
-			double max_score=provinceWorld.getMaxScore();	
-			if(max_score == 0) max_score = 1; //first it;
 			int toGet= provinceWorld.getNumberOfAgents()/(provinceWorld.getTypesOfGood().size())*5;
 			
 // 			std::cout<<"tg:"<<toGet<<"maxS:"<<max_score<<std::endl;
@@ -69,6 +67,9 @@ namespace Epnet
 			while(it!= allAgents.end() && !reproductionDone )
 				{
 					Roman & r= (Roman&)(*world->getAgent(*it));
+					double max_score=provinceWorld.getMaxScore(std::get<0>(r.getProducedGood()));	
+					if(max_score == 0) max_score = 1; //first it;
+
 
 
 			if(std::rand()%100 < toGet  &&  std::get<0>(r.getProducedGood()) == std::get<0>(romanAgent.getProducedGood())){

@@ -1,5 +1,9 @@
 library(plyr)
 
+
+ab[ ab$agent == "Roman_0" | ab$agent == "Roman_3"|ab$agent == "Roman_6" | ab$agent == "Roman_9"|ab$agent == "Roman_12" | ab$agent == "Roman_15"|ab$agent == "Roman_18" | ab$agent == "Roman_21",]
+
+
 computeVariantFrequency<-function(allData){
 	propOfEach=table(allData)/sum(table(allData)) #this compute for each ressource type the proportion of them we have during all the simulation
 	table(propOfEach) #count for all proportion the number of price we will find in those proportion

@@ -14,9 +14,12 @@ class Province : public Engine::World
 	void createRasters();
 	void createAgents();
 	void executeTrade(Roman* r);
+    void copyPrice(const std::string replaced, std::string replacer);
 	std::vector<std::string> _typesOfGood;
 	std::vector<std::tuple<std::string,double>> _needs;
-	double _maxscore;
+	std::vector<std::tuple<std::string,double>> _maxscore;
+	std::vector<std::tuple<std::string,double>> _minscore;
+	
 	
 		
 public:
@@ -24,8 +27,10 @@ public:
 	virtual ~Province();
 	
 	std::vector<std::string> getTypesOfGood(){return _typesOfGood;};
-	double getMaxScore(){return _maxscore;};
-	void setMaxScore(double score){_maxscore = score;};
+	double getMaxScore(std::string good);
+	void setMaxScore(std::string good,double score);
+	double getMinScore(std::string good);
+	void setMinScore(std::string good,double score);
 	
 	
 	void proposeConnection(std::string source, std::string target);

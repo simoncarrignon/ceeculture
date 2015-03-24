@@ -10,13 +10,14 @@
 #include <GeneralState.hxx>
 #include <Logger.hxx>
 #include <Scheduler.hxx>
+#include <../../../usr/include/c++/4.9/list>
 
 namespace Epnet
 {
 
 	Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, false)
 	{
-	  _maxscore=0.0;
+		// _maxscore=0.0;
 	}
 
 	Province::~Province()
@@ -41,7 +42,7 @@ namespace Epnet
 		}
 	}
 
-	
+
 	void Province::createAgents()
 	{
 
@@ -59,7 +60,9 @@ namespace Epnet
 				std::ostringstream sgoodType;
 				sgoodType << "g"<< i;				
 				std::string goodType = sgoodType.str();
-				_needs.push_back(std::make_tuple(goodType,(double)(std::rand()%100)/100.0));  
+				_needs.push_back(std::make_tuple(goodType,(double)(i+1)));  
+				_maxscore.push_back(std::make_tuple(goodType,0.0));
+				_minscore.push_back(std::make_tuple(goodType,0.0));
 				_typesOfGood.push_back(goodType);
 			}	  
 		}
@@ -68,7 +71,10 @@ namespace Epnet
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 			{
 				_needs.push_back(std::make_tuple(std::get<0>(*it),(double)(std::rand()%100)/100.0));  
+				_maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
+				_minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
 				_typesOfGood.push_back(std::get<0>(*it));
+
 			}
 		}	
 
@@ -102,7 +108,7 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)(std::rand()%1000)/1000.0);
+						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)(std::rand()%1000)/1000.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)(std::rand()%1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)(std::rand()%1000)/1000.0);
 						//---------------/*
@@ -143,8 +149,8 @@ namespace Epnet
 
 				}
 				log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
-				
-				
+
+
 				//loop for initialize the connection of the current agent with all previously created agents.
 				for(int j=(i-1); j>=0; j--)
 				{
@@ -156,6 +162,64 @@ namespace Epnet
 		}
 
 	}
+
+	double Province::getMaxScore(std::string good)
+	{
+		std::vector< std::tuple< std::string, double > >::iterator it = _maxscore.begin();
+
+		while(it!= _maxscore.end()){
+			if(std::get<0>(*it)== good)
+				return std::get<1>(*it);
+			it++;
+
+		}
+		return -1; //error good not found
+	}
+
+
+	void Province::setMaxScore(std::string good, double score)
+	{
+		std::vector< std::tuple< std::string, double > >::iterator it = _maxscore.begin();
+
+		while(it!= _maxscore.end()){
+			if(std::get<0>(*it)== good){
+				std::get<1>(*it) = score ;
+				return;
+			}
+			it++;
+		}
+
+	}
+
+	double Province::getMinScore(std::string good)
+	{
+		std::vector< std::tuple< std::string, double > >::iterator it = _minscore.begin();
+
+		while(it!= _minscore.end()){
+			if(std::get<0>(*it)== good)
+				return std::get<1>(*it);
+			it++;
+
+		}
+		return -1; //error good not found
+	}
+
+
+	void Province::setMinScore(std::string good, double score)
+	{
+		std::vector< std::tuple< std::string, double > >::iterator it = _minscore.begin();
+
+		while(it!= _minscore.end()){
+			if(std::get<0>(*it)== good){
+				std::get<1>(*it) = score ;
+				return;
+			}
+			it++;
+		}
+
+	}
+
+
 
 	void Province::proposeConnection(std::string source, std::string target)
 	{
@@ -221,71 +285,223 @@ namespace Epnet
 	}
 
 	void Province::step(){
-	          std::stringstream logName;
-        logName << "simulation_" << getId();
-        log_INFO(logName.str(), getWallTime() << " executing step: " << _step );
 
-        if(_step%_config->getSerializeResolution()==0)
-        {
-                _scheduler->serializeRasters(_step);
-                _scheduler->serializeAgents(_step);
-                log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " serialization done");
-        }
-        stepEnvironment();
-        log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
+		std::stringstream logName;
+		logName << "simulation_" << getId();
+		log_INFO(logName.str(), getWallTime() << " executing step: " << _step );
+
+		if(_step%_config->getSerializeResolution()==0)
+		{
+			_scheduler->serializeRasters(_step);
+			_scheduler->serializeAgents(_step);
+			log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " serialization done");
+		}
+		stepEnvironment();
+		log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
+
+
+		std::vector<int>randomizer;
+		int i =0;
+		
+		//Good's Production
+		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
+			Engine::AgentPtr oneA = *ag;
+			Roman * r = (Roman *) (oneA.get());
+			ProductionAction * PA = new ProductionAction();
+			PA->execute(*r);
+			randomizer.push_back(i);
+			i++;
+		}
 
 
 
-	for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
-	  Engine::AgentPtr oneA = *ag;
-	  Roman * r = (Roman *) (oneA.get());
-		 ProductionAction * PA = new ProductionAction();
-		 PA->execute(*r);
-		 std::cout<<r->getId()<<std::endl;
+		std::random_shuffle(randomizer.begin(),randomizer.end());
+		
+		
+		std::cout<<"step : "<<_step<<"========================="<<std::endl;
+		
+		//Trade Action
+		for( std::vector< int >::iterator it = randomizer.begin();it != randomizer.end();it++){
+			std::ostringstream oss;
+			oss << "Roman_" << *it;
+			Roman * r= (Roman *) getAgent(oss.str());
+			std::cout<<"Trader : "<<r->getId()<<std::endl;
+			TradeAction * TA = new TradeAction();
+			TA->execute(*r);
+
+		}
+
+		
+		//Good's consumption
+		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
+			Engine::AgentPtr oneA = *ag;
+			Roman * r = (Roman *) (oneA.get());
+			ConsumptionAction * CA = new ConsumptionAction();
+			CA->execute(*r);
+		}
+
+		
+
+		//Cultural innovation and transmission
+		if(_step%10 == 0 && _step > 0){
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		
+
+			if( provinceConfig._selectionProcess== "random"){
+
+				for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
+					Engine::AgentPtr oneA = *ag;
+					Roman * r1 = (Roman *) (oneA.get());
+
+					if( (std::rand()%1000)/1000.0 > provinceConfig._mutationRate){
+
+						int wsize = _agents.size();
+						int agId=std::rand()%wsize ;
+						std::vector< std::string > allAgents = r1->getValidRcvConnections();
+
+						std::string rId = allAgents[agId];
+
+						Roman & r2= (Roman&)(*getAgent(rId));
+
+						std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= r1->getListGoods();
+
+
+						for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
+							std::string ressource= std::get<0>(*ot);
+
+							r1->setPrice(ressource,r2.getPrice(ressource));
+						}
+					}
+				}
+
+
+			}
+
+			else{
+
+				std::random_shuffle(_typesOfGood.begin(),_typesOfGood.end());
+				for(std::vector<std::string>::iterator good = _typesOfGood.begin(); good != _typesOfGood.end();good++){
+					int toGet= getNumberOfAgents()/(getTypesOfGood().size()) * .02;
+					std::vector<std::string> toChange;
+				
+
+
+					while(toChange.size() < toGet){
+
+						std::ostringstream oss;
+						int rint = (std::rand()%(_agents.size()));
+						oss << "Roman_" << rint;
+						Roman * r= (Roman *) getAgent(oss.str());
+						if(std::get<0>(r->getProducedGood()) == *good){
+						double relScore = (r->getScore()-getMinScore(*good))/getMaxScore(*good);
+
+						if(getMaxScore(*good)==0)relScore=.5;
+
+// 						std::cout<<"Id:"<<r->getId()<<" score rel"<< 1-relScore<< " max "<<getMaxScore(*good)<<std::endl;
+
+						if((std::rand()%RAND_MAX/(double)RAND_MAX) <= (1-relScore) )
+							toChange.push_back(r->getId());
+// 						std::cout<<"TailleB :"<<toChange.size()<<std::endl;
+						}
+
+					}
+
+					while(toChange.size() > 0){
+				
+						std::ostringstream oss;
+						int rint = (std::rand()%(_agents.size()));
+						oss << "Roman_" << rint;
+						
+						Roman * r= (Roman *) getAgent(oss.str());
+						if(std::get<0>(r->getProducedGood()) == *good){
+
+						double relScore = (r->getScore()-getMinScore(*good))/getMaxScore(*good);
+						
+						if(getMaxScore(*good)==0.0)relScore=.5;
+
+// 						std::cout<<"Id:"<<r->getId()<<" score rel"<< r->getScore()<< " max "<<getMaxScore(*good)<<" min "<<getMinScore(*good)<<std::endl;
+
+						if(std::rand()%RAND_MAX/(double)RAND_MAX <= relScore){
+
+							std::string replaced= toChange.back();
+
+							toChange.pop_back();
+							copyPrice(replaced,r->getId()); 
+						}
+						}
+
+// 							 					std::cout<<"TailleA :"<<toChange.size()<<std::endl;
+
+					}
+					// 			std::cout<<toChange[1]<<std::endl;
+				}
+			}
+
+			for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
+				Engine::AgentPtr oneA = *ag;
+				Roman * r = (Roman *) (oneA.get());
+
+				std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= r->getListGoods();
+				for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
+					std::string ressource= std::get<0>(*ot);
+					if((std::rand()%1000)/1000.0 < provinceConfig._mutationRate)
+					{
+
+						double oldPrice = r->getPrice(ressource);
+						if(provinceConfig._innovationProcess == "random")
+							r->setPrice(ressource,(double)(std::rand()%RAND_MAX)/RAND_MAX);//*.95
+						else{
+
+							if(std::rand()%2 < 1)
+								r->setPrice(ressource,oldPrice*.95);//
+							else
+								r->setPrice(ressource,oldPrice/.95);//
+						}				   
+					}
+					setMaxScore(ressource,0.0);
+					setMinScore(ressource,0.0);
+
+				}  
+				r->setScore(0.0);
+
+			}
+		}
+
+
+		// 	_scheduler->executeAgents();
+		_scheduler->removeAgents();
+		log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
 	}
-	
 
-	 std::random_shuffle(_agents.begin(),_agents.end());
-	
-	for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
-	  Engine::AgentPtr oneA = *ag;
-	  Roman * r = (Roman *) (oneA.get());
-		 TradeAction * TA = new TradeAction();
-		 TA->execute(*r);
-		 std::cout<<r->getId()<<std::endl;
 
-	  
+	void Province::copyPrice(const std::string replaced, std::string replacer)
+	{
+		Roman & r1= (Roman&) *getAgent(replaced);
+
+		Roman & r2= (Roman&) *getAgent(replacer);
+
+// 				std::cout<<"r1 "<<r1.getScore()<<std::endl;
+
+// 				std::cout<<"r2 "<<r2.getScore()<<std::endl;
+
+
+		std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= r1.getListGoods();
+
+
+		for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
+			std::string ressource= std::get<0>(*ot);
+
+			r1.setPrice(ressource,r2.getPrice(ressource));
+		}
 	}
-	  
-	  
-	  
-	for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
-	  Engine::AgentPtr oneA = *ag;
-	  Roman * r = (Roman *) (oneA.get());
-		 ConsumptionAction * CA = new ConsumptionAction();
-		 CA->execute(*r);
-	}
-	
-// 		int action = _agent->getMaxActions();
-// 		std::list<Engine::Action*> actions;
-// 		int timestep = _agent->getWorld()->getCurrentStep();
-// 		if(timestep%3 == 1 && _selectionProcess == "trade" )actions.push_back(new TradeAction());
-// 		if(timestep%3 == 2 && _selectionProcess == "trade" )actions.push_back(new ConsumptionAction());
-// 		if(timestep%30 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess));
-// 		if(timestep%31 == 0)_agent->setScore(0.0);
-if(_step%10 == 0)
-	
-	
-// 	_scheduler->executeAgents();
-        _scheduler->removeAgents();
-        log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
-	}
-	
+
+
 	void Province::buildTwoWayConnection(std::string source, std::string target)
 	{
 		buildConnection(source,target);
 		buildConnection(target,source);
 	}
+
 
 	void Province::killTwoWayConnection(std::string source, std::string target)
 	{
