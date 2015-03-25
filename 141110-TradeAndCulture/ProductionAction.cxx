@@ -27,8 +27,9 @@ void ProductionAction::execute(Engine::Agent& agent)
 	for( auto it = allGood.begin(); it != allGood.end();it++)
 	{
 	 std::string good = std::get<0>(*it);
-	 double producedQuantity = (double)(romanAgent.getProductionRate(good)*provinceWorld.getTypesOfGood().size());
+// 	 double producedQuantity = (double)(romanAgent.getProductionRate(good)*provinceWorld.getNumberOfAgents()*romanAgent.getNeed(good));
 	
+	 double producedQuantity = (double)(romanAgent.getProductionRate(good)*allGood.size());
 	 romanAgent.setQuantity(good,producedQuantity);
 	
 	}

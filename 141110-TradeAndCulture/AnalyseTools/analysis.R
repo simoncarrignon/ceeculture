@@ -3,10 +3,17 @@ library(plyr)
 
 
 fitness=function(p1,b1){abs(p1-b1)/b1}
+#fitness=function(p1,b1){abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
+#fitness=function(p1,b1){tan(p1^2-b1^2)/(b1/p1)}
 
 plotFitness=function(p1,b1){
 	print(b1)
 	plot(fitness(p1,b1)~p1)
+	abline(v=b1,col="red")
+}
+pointFitness=function(p1,b1){
+	print(b1)
+	points(fitness(p1,b1)~p1)
 	abline(v=b1,col="red")
 }
 
@@ -20,12 +27,16 @@ allClass<-function(datas,ngoods,g){
 			print(b)
 			res=rbind(res,datas[datas$agent == b,])
 		}
-
-
 		return(res)
-	
 }
 
+plotOneProdPrice(data,g,ng){
+	prodGood=unique(paste("g",g,"_n"))
+	prodGet=unique(paste("g",g,"_n"))
+}
+
+plotOneOther(){
+}
 
 
 

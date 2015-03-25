@@ -317,7 +317,6 @@ namespace Epnet
 		std::random_shuffle(randomizer.begin(),randomizer.end());
 		
 		
-		std::cout<<"step : "<<_step<<"========================="<<std::endl;
 		
 		//Trade Action
 		for( std::vector< int >::iterator it = randomizer.begin();it != randomizer.end();it++){
@@ -377,14 +376,15 @@ namespace Epnet
 			}
 
 			else{
+			      std::cout<<"step : "<<_step<<"========================="<<std::endl;
 
 				std::random_shuffle(_typesOfGood.begin(),_typesOfGood.end());
 				for(std::vector<std::string>::iterator good = _typesOfGood.begin(); good != _typesOfGood.end();good++){
-					int toGet= getNumberOfAgents()/(getTypesOfGood().size()) * .1;
-
+					int toGet= getNumberOfAgents()/(getTypesOfGood().size()) * .02;
+					
 					std::vector<std::string> toChange;
 				
-					std::cout<<"toGet"<< toGet<<std::endl;
+// 					std::cout<<"toGet"<< toGet<<std::endl;
 
 
 					while(toChange.size() < toGet){
@@ -394,7 +394,7 @@ namespace Epnet
 						oss << "Roman_" << rint;
 						Roman * r= (Roman *) getAgent(oss.str());
 						if(std::get<0>(r->getProducedGood()) == *good){
-						double relScore = (r->getScore()-getMinScore(*good))/getMaxScore(*good);
+						double relScore = (r->getScore()-getMinScore(*good))/(getMaxScore(*good)-getMinScore(*good));
 
 
 // 						std::cout<<"Id:"<<r->getId()<<" score rel"<< relScore<<" curescore "<<r->getScore()<<  " max "<<getMaxScore(*good)<<std::endl;
@@ -415,9 +415,9 @@ namespace Epnet
 						Roman * r= (Roman *) getAgent(oss.str());
 						if(std::get<0>(r->getProducedGood()) == *good){
 
-						double relScore = (r->getScore()-getMinScore(*good))/getMaxScore(*good);
+						double relScore = (r->getScore()-getMinScore(*good))/(getMaxScore(*good)-getMinScore(*good));
 						
-						std::cout<<"Id:"<<r->getId()<<" score rel"<< r->getScore()<< " max "<<getMaxScore(*good)<<" min "<<getMinScore(*good)<<std::endl;
+// 						std::cout<<"Id:"<<r->getId()<<" score rel"<< r->getScore()<< " max "<<getMaxScore(*good)<<" min "<<getMinScore(*good)<<std::endl;
 
 						if(std::rand()%RAND_MAX/(double)RAND_MAX <= 1-relScore){
 
@@ -451,9 +451,10 @@ namespace Epnet
 						else{
 
 							if(std::rand()%2 < 1)
-								r->setPrice(ressource,oldPrice*.95);//
+								r->setPrice(ressource,oldPrice+(std::rand()%50)/1000.0 );//
 							else
-								r->setPrice(ressource,oldPrice/.95);//
+								r->setPrice(ressource,oldPrice-(std::rand()%50)/1000.0);//
+							if(r->getPrice(ressource)<0)r->setPrice(ressource,0.0);
 						}				   
 					}
 					setMaxScore(ressource,0.0);
@@ -463,7 +464,7 @@ namespace Epnet
 				r->setScore(0.0);
 
 			}
-		}
+		}	
 
 
 		// 	_scheduler->executeAgents();

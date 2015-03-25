@@ -32,15 +32,20 @@ void ConsumptionAction::execute(Engine::Agent& agent)
 	    std::string good=std::get<0>(*it);
 	 if(good == std::get<0>(romanAgent.getProducedGood()))
 	   romanAgent.setQuantity(good,romanAgent.getNeed(good));
-// 	 utilityFunction+=(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))-(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))))/romanAgent.getNeed(good);
-	 utilityFunction+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)))/romanAgent.getNeed(good);
-
+if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)))utilityFunction+=0;
+else utilityFunction+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))-(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
+// 	double cur=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)))/romanAgent.getNeed(good);
+// 	  if(cur>1)cur=1;
+// 	 utilityFunction+=cur;
 	 it++;
 	}
 	
 	double score=romanAgent.getScore()+utilityFunction;
 	romanAgent.setScore(score);
-	
+	if(romanAgent.getScore() == 10.0)
+	  romanAgent.printInventory();
+	if(romanAgent.getScore() < 2.0 && provinceWorld.getCurrentStep() % 10 == 0)
+	  romanAgent.printInventory();
 
 	if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
 	if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
