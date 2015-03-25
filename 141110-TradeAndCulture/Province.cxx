@@ -10,7 +10,6 @@
 #include <GeneralState.hxx>
 #include <Logger.hxx>
 #include <Scheduler.hxx>
-#include <../../../usr/include/c++/4.9/list>
 
 namespace Epnet
 {
