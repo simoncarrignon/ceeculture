@@ -60,7 +60,7 @@ namespace Epnet
 				std::ostringstream sgoodType;
 				sgoodType << "g"<< i;				
 				std::string goodType = sgoodType.str();
-				_needs.push_back(std::make_tuple(goodType,(double)(i+1)));  
+				_needs.push_back(std::make_tuple(goodType,(double)(std::rand()%100)/100.0));  
 				_maxscore.push_back(std::make_tuple(goodType,0.0));
 				_minscore.push_back(std::make_tuple(goodType,0.0));
 				_typesOfGood.push_back(goodType);
@@ -325,7 +325,7 @@ namespace Epnet
 			std::ostringstream oss;
 			oss << "Roman_" << *it;
 			Roman * r= (Roman *) getAgent(oss.str());
-			std::cout<<"Trader : "<<r->getId()<<std::endl;
+// 			std::cout<<"Trader : "<<r->getId()<<std::endl;
 			TradeAction * TA = new TradeAction();
 			TA->execute(*r);
 
@@ -381,9 +381,11 @@ namespace Epnet
 
 				std::random_shuffle(_typesOfGood.begin(),_typesOfGood.end());
 				for(std::vector<std::string>::iterator good = _typesOfGood.begin(); good != _typesOfGood.end();good++){
-					int toGet= getNumberOfAgents()/(getTypesOfGood().size()) * .02;
+					int toGet= getNumberOfAgents()/(getTypesOfGood().size()) * .1;
+
 					std::vector<std::string> toChange;
 				
+					std::cout<<"toGet"<< toGet<<std::endl;
 
 
 					while(toChange.size() < toGet){
@@ -395,11 +397,10 @@ namespace Epnet
 						if(std::get<0>(r->getProducedGood()) == *good){
 						double relScore = (r->getScore()-getMinScore(*good))/getMaxScore(*good);
 
-						if(getMaxScore(*good)==0)relScore=.5;
 
-// 						std::cout<<"Id:"<<r->getId()<<" score rel"<< 1-relScore<< " max "<<getMaxScore(*good)<<std::endl;
+// 						std::cout<<"Id:"<<r->getId()<<" score rel"<< relScore<<" curescore "<<r->getScore()<<  " max "<<getMaxScore(*good)<<std::endl;
 
-						if((std::rand()%RAND_MAX/(double)RAND_MAX) <= (1-relScore) )
+						if((std::rand()%RAND_MAX/(double)RAND_MAX) <= (relScore) )
 							toChange.push_back(r->getId());
 // 						std::cout<<"TailleB :"<<toChange.size()<<std::endl;
 						}
@@ -417,11 +418,9 @@ namespace Epnet
 
 						double relScore = (r->getScore()-getMinScore(*good))/getMaxScore(*good);
 						
-						if(getMaxScore(*good)==0.0)relScore=.5;
+						std::cout<<"Id:"<<r->getId()<<" score rel"<< r->getScore()<< " max "<<getMaxScore(*good)<<" min "<<getMinScore(*good)<<std::endl;
 
-// 						std::cout<<"Id:"<<r->getId()<<" score rel"<< r->getScore()<< " max "<<getMaxScore(*good)<<" min "<<getMinScore(*good)<<std::endl;
-
-						if(std::rand()%RAND_MAX/(double)RAND_MAX <= relScore){
+						if(std::rand()%RAND_MAX/(double)RAND_MAX <= 1-relScore){
 
 							std::string replaced= toChange.back();
 
@@ -459,7 +458,7 @@ namespace Epnet
 						}				   
 					}
 					setMaxScore(ressource,0.0);
-					setMinScore(ressource,0.0);
+					setMinScore(ressource,RAND_MAX);
 
 				}  
 				r->setScore(0.0);

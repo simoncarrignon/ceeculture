@@ -1,7 +1,32 @@
 library(plyr)
 
 
-ab[ ab$agent == "Roman_0" | ab$agent == "Roman_3"|ab$agent == "Roman_6" | ab$agent == "Roman_9"|ab$agent == "Roman_12" | ab$agent == "Roman_15"|ab$agent == "Roman_18" | ab$agent == "Roman_21",]
+
+fitness=function(p1,b1){abs(p1-b1)/b1}
+
+plotFitness=function(p1,b1){
+	print(b1)
+	plot(fitness(p1,b1)~p1)
+	abline(v=b1,col="red")
+}
+
+
+allClass<-function(datas,ngoods,g){
+		nAgent=length(unique(datas$agent))
+		print(nAgent)
+		a=sapply(c(0:nAgent)[0:(nAgent-1)%%(ngoods)==g],function(i){paste("Roman_",i,sep="")})
+		res=c()
+		for( b in a){
+			print(b)
+			res=rbind(res,datas[datas$agent == b,])
+		}
+
+
+		return(res)
+	
+}
+
+
 
 
 computeVariantFrequency<-function(allData){

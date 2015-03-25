@@ -2,6 +2,7 @@
 
 #include <World.hxx>
 #include <Province.hxx>
+#include <cmath>
 
 #include <Logger.hxx>
 
@@ -25,27 +26,21 @@ void ConsumptionAction::execute(Engine::Agent& agent)
 	
 	std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= romanAgent.getListGoods();
 	std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = allGood.begin();
-	double utilityFunction=double(RAND_MAX);
-	
-//	it++;//skip money ou plus
+	double utilityFunction=0.0;
 	while(it!=allGood.end())
 	{
 	    std::string good=std::get<0>(*it);
-	 
-	  if(good == std::get<0>(romanAgent.getProducedGood()))
-	    romanAgent.setQuantity(good,romanAgent.getNeed(good)); 
-	  
-	  if(utilityFunction> romanAgent.getQuantity(good)/romanAgent.getNeed(good))
-			utilityFunction=romanAgent.getQuantity(good)/romanAgent.getNeed(good);
-	  if(good == std::get<0>(romanAgent.getProducedGood()))
-	    romanAgent.setQuantity(good,1); 
-	  else
-	    romanAgent.setQuantity(good,0.0);
-	  it++;
+	 if(good == std::get<0>(romanAgent.getProducedGood()))
+	   romanAgent.setQuantity(good,romanAgent.getNeed(good));
+// 	 utilityFunction+=(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))-(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))))/romanAgent.getNeed(good);
+	 utilityFunction+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)))/romanAgent.getNeed(good);
+
+	 it++;
 	}
 	
 	double score=romanAgent.getScore()+utilityFunction;
 	romanAgent.setScore(score);
+	
 
 	if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
 	if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
