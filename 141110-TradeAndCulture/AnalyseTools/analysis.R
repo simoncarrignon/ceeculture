@@ -1,4 +1,5 @@
 library(plyr)
+library(poweRlaw)
 
 
 
@@ -30,13 +31,36 @@ allClass<-function(datas,ngoods,g){
 		return(res)
 }
 
-plotOneProdPrice(data,g,ng){
-	prodGood=unique(paste("g",g,"_n"))
-	prodGet=unique(paste("g",g,"_n"))
+plotAllClass=function(datas,ngoods,timeStep,...){
+	oneClass=allClass(datas,ngoods,0)
+	plot(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=1,...)	
+
+	for( i in 1:(ngoods-1)){
+		oneClass=allClass(datas,ngoods,i)
+	points(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=i+2,...)	
+
+	}
 }
 
-plotOneOther(){
+boxAllClass=function(datas,ngoods,timeStep,...){
+	oneClass=allClass(datas,ngoods,0)
+	boxplot(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=1,...)	
+
+	for( i in 1:(ngoods-1)){
+		oneClass=allClass(datas,ngoods,i)
+		par(new=T)
+	boxplot(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=i+2,...)	
+
+	}
 }
+
+#plotOneProdPrice(data,g,ng){
+#	prodGood=unique(paste("g",g,"_n"))
+#	prodGet=unique(paste("g",g,"_n"))
+#}
+#
+#plotOneOther(){
+#}
 
 
 

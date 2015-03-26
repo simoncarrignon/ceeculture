@@ -2,7 +2,7 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="30000" serializeResolution="100"/>
+	<numSteps value="10000" serializeResolution="10"/>
 	<size width="600" height="1"/>
 	<numAgents value="300"/>
 	<controller type="basic" >

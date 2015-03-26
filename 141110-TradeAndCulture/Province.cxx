@@ -343,6 +343,7 @@ namespace Epnet
 		//Cultural innovation and transmission
 		if(_step%10 == 0 && _step > 0){
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+	      std::cout<<"step : "<<_step<<"========================="<<std::endl;
 		
 
 			if( provinceConfig._selectionProcess== "random"){
@@ -354,10 +355,10 @@ namespace Epnet
 					if( (std::rand()%1000)/1000.0 > provinceConfig._mutationRate){
 
 						int wsize = _agents.size();
-						int agId=std::rand()%wsize ;
+						int agId=std::rand()%(wsize-1) ;
 						std::vector< std::string > allAgents = r1->getValidRcvConnections();
 
-						std::string rId = allAgents[agId];
+						  std::string rId = allAgents[agId];
 
 						Roman & r2= (Roman&)(*getAgent(rId));
 
@@ -376,7 +377,6 @@ namespace Epnet
 			}
 
 			else{
-			      std::cout<<"step : "<<_step<<"========================="<<std::endl;
 
 				std::random_shuffle(_typesOfGood.begin(),_typesOfGood.end());
 				for(std::vector<std::string>::iterator good = _typesOfGood.begin(); good != _typesOfGood.end();good++){
