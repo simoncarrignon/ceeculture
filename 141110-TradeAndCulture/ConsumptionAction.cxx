@@ -35,7 +35,7 @@ namespace Epnet
 				
 			//fit= |a-b|/euclideDist(a,b) my favorite one
  			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)))utilityFunction+=0; //undefined fitness function for 0
-			else utilityFunction+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))-(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
+			else utilityFunction+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
 
 			
 			//fit= |a-b|/b : that one I cuts it too long right leg.

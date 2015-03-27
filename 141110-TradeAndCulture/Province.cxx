@@ -388,7 +388,7 @@ namespace Epnet
 					while(toChange.size() < toGet){
 
 						std::ostringstream oss;
-						int rint = (Engine::GeneralState::statistics().getUniformDistValue(0,_agents.size()));
+						int rint = (Engine::GeneralState::statistics().getUniformDistValue(0,_agents.size())-1);
 						oss << "Roman_" << rint;
 						Roman * r= (Roman *) getAgent(oss.str());
 						if(std::get<0>(r->getProducedGood()) == *good){
@@ -407,7 +407,7 @@ namespace Epnet
 					while(toChange.size() > 0){
 				
 						std::ostringstream oss;
-						int rint = (Engine::GeneralState::statistics().getUniformDistValue(0,_agents.size()));
+						int rint = (Engine::GeneralState::statistics().getUniformDistValue(0,_agents.size()-1));
 						oss << "Roman_" << rint;
 						
 						Roman * r= (Roman *) getAgent(oss.str());

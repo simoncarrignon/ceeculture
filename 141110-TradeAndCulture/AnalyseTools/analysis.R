@@ -4,6 +4,14 @@ library(RColorBrewer)
 
 
 
+plot4Distrib=function(){
+	plotLogBin(createNormalizedTable(lexp2$g0_p),main="Variants distribution for the 4 setup\n !!ONE RUN!!",col=2)
+	pointsLogBin(createNormalizedTable(lexp3$g0_p),col=3)
+	pointsLogBin(createNormalizedTable(lexp4$g0_p),col=4)
+	pointsLogBin(createNormalizedTable(lexp5$g0_p),col=5)
+	legend("topright",legend=c("A","B","C","D"),fill=c(2,4,3,5))
+
+}
 
 #fitness=function(p1,b1){abs(p1-b1)/b1}
 fitness=function(p1,b1){1-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
@@ -11,13 +19,15 @@ fitness=function(p1,b1){1-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
 
 plotFitness=function(p1,b1){
 	print(b1)
-	plot(fitness(p1,b1)~p1)
+	plot(fitness(p1,b1)~p1,ylim=c(-.05,1),xlab="price for x",ylab="score for one step",type="l",main="Score of an Agent \n for one good depending on some needs for this good" )
 	abline(v=b1,col="red")
+	text(b1,-0.08,paste("need(x)=",b1),srt=90,cex=.95,pos=4,col="red")
 }
 pointFitness=function(p1,b1){
 	print(b1)
-	points(fitness(p1,b1)~p1)
+	points(fitness(p1,b1)~p1,type="l")
 	abline(v=b1,col="red")
+	text(b1,-0.08,paste("need(x)=",b1),srt=90,cex=.95,pos=4,col="red")
 }
 
 
@@ -33,13 +43,28 @@ allClass<-function(datas,ngoods,g){
 		return(res)
 }
 
+
+plotEquilibrium=function(){
+	    par(mar=c(5.1,6.1,4.1,2.1))
+plot(tapply(t1$g0_p/t1$g1_p-t1$g0_n,t1$timeStep,mean)~unique(t1$timeStep),type="l",ylim=c(-.1,1),ylab=expression( frac(good(wanted),good(produce)) - need(wanted)),xlab="Time Step",main="Evolution of the mean ration good(wanted) good(produce)\n !!for one too short run only!!"
+     )
+points(tapply(t1$g2_p/t1$g1_p-t1$g2_n,t1$timeStep,mean)~unique(t1$timeStep),type="l",col=2)
+points(tapply(t2$g0_p/t2$g2_p-t2$g0_n,t2$timeStep,mean)~unique(t1$timeStep),type="l",col=3)
+points(tapply(t2$g1_p/t2$g2_p-t2$g1_n,t2$timeStep,mean)~unique(t1$timeStep),type="l",col=4)
+points(tapply(t0$g1_p/t0$g0_p-t0$g1_n,t0$timeStep,mean)~unique(t1$timeStep),type="l",col=5)
+points(tapply(t0$g2_p/t0$g0_p-t0$g2_n,t0$timeStep,mean)~unique(t1$timeStep),type="l",col=6)
+}
+
+
+
+
 plotAllClass=function(datas,ngoods,timeStep,...){
 	oneClass=allClass(datas,ngoods,0)
-	plot(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=1,...)	
+	plot(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=rgb(0,0,0,20,maxColorValue=255),xlab="Time Step",ylab="Score",...)	
 
 	for( i in 1:(ngoods-1)){
 		oneClass=allClass(datas,ngoods,i)
-	points(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=i+2,...)	
+	points(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=rgb(100,50*(i+1),200-50*i ,50,maxColorValue=255),...)	
 
 	}
 }
