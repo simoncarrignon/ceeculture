@@ -1,5 +1,7 @@
 library(plyr)
 library(poweRlaw)
+library(RColorBrewer)
+
 
 
 
@@ -89,17 +91,22 @@ logR<-function(n){
 
 
 
-createEverything<-function(expeDir,ressource,timeA,timeB,numRun){
+createEverything<-function(expeDir,ressource,timeA,timeB,numRun,modulo=1){
 
 	all=c()
+	if(modulo<0)skip=FALSE else skip=TRUE
 	for ( i in 0:(numRun-1)){
-		file=	paste(expeDir,"/run_",sprintf("%04d",i),"/agents.csv",sep="")
-		print(file)
-		work=read.csv(file,sep=";")
-		FreqOfVar=createNormalizedTable(work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource])
-		mu=unique(work$mu)
-		toBind=cbind(mu,FreqOfVar)
-		all=rbind.fill(all,as.data.frame(toBind))
+		if((i)%%modulo==0 ){skip= !skip}
+
+		if(!skip){
+			file=	paste(expeDir,"/run_",sprintf("%04d",i),"/agents.csv",sep="")
+			print(file)
+			work=read.csv(file,sep=";")
+			FreqOfVar=createNormalizedTable(work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource])
+			mu=unique(work$mu)
+			toBind=cbind(mu,FreqOfVar)
+			all=rbind.fill(all,as.data.frame(toBind))
+		}
 	}
 	return(all)
 }
@@ -219,22 +226,31 @@ createNormalizedTable<-function(data){
 }
 
 
-tableOfaAlpha<-function(expeDir,timeA,timeB,numRun,nRess){
+tableOfaAlpha<-function(expeDir,timeA,timeB,numRun,nRess,modulo=1){
 
 	all=data.frame()
+	if(modulo<0)skip=FALSE else skip=TRUE
+
+	mod=abs(modulo)
 	for ( i in 0:(numRun-1)){
-		file=	paste(expeDir,"/run_",sprintf("%04d",i),"/agents.csv",sep="")
-		print(file)
-		work=read.csv(file,sep=";")
-		for ( j in 0:(nRess-1)){
-			ressource=paste("g",j,"_p",sep="")
-			print(ressource)
-			toBind=work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource]
-			alpha=estimateAlpha(table(toBind))
-			print(alpha)
-			print(unique(work$mu))
-			toBind=cbind(unique(work$mu),ressource,alpha)
-			all=rbind(all,toBind)
+		if((i)%%mod==0 ){
+			skip= !skip
+		}
+		if(!skip){
+			file=	paste(expeDir,"/run_",sprintf("%04d",i),"/agents.csv",sep="")
+			print(file)
+			work=read.csv(file,sep=";")
+			print(length(unique(work$agent)))
+			for ( j in 0:(nRess-1)){
+				ressource=paste("g",j,"_p",sep="")
+				print(ressource)
+				toBind=work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource]
+				alpha=estimateAlpha(table(toBind))
+				print(alpha)
+				print(unique(work$mu))
+				toBind=cbind(unique(work$mu),ressource,alpha)
+				all=rbind(all,toBind)
+			}
 		}
 	}
 	all$alpha = as.numeric(as.character(all$alpha))
@@ -258,7 +274,7 @@ plotMu<-function(dataMu){
 	le=c()
 	cle=c()
 	plot(makeamean(dataMu)~ names(makeamean(dataMu)),log="yx",ylim=c(10^ymin,1),xlim=c(1,2^xmax),type="n",xaxt="n",yaxt="n",ylab="prop. of variant",xlab="# of variants")
-	for(i in unique(dataMu$mu)){ 
+	for(i in sort(unique(dataMu$mu))){ 
 		tc=brewer.pal(length(unique(dataMu$mu)),"RdYlBu")[c]
 		#tc=heat.colors(length(unique(dataMu$mu)))[c]
 		points(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])~ names(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])),type="o",col=tc)

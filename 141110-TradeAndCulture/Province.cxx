@@ -301,7 +301,9 @@ namespace Epnet
 
 		std::vector<int>randomizer;
 		int i =0;
-		
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+	
+		if(provinceConfig._selectionProcess == "trade"){
 		//Good's Production
 		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
 			Engine::AgentPtr oneA = *ag;
@@ -338,12 +340,10 @@ namespace Epnet
 			CA->execute(*r);
 		}
 
-		
+		}
 
 		//Cultural innovation and transmission
 		if(_step%10 == 0 && _step > 0){
-		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-	      std::cout<<"step : "<<_step<<"========================="<<std::endl;
 		
 
 			if( provinceConfig._selectionProcess== "random"){
