@@ -303,7 +303,7 @@ namespace Epnet
 		int i =0;
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 	
-// 		if(provinceConfig._selectionProcess == "trade"){
+		if(provinceConfig._selectionProcess == "trade"){
 		//Good's Production
 		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
 			Engine::AgentPtr oneA = *ag;
@@ -325,7 +325,6 @@ namespace Epnet
 			std::ostringstream oss;
 			oss << "Roman_" << *it;
 			Roman * r= (Roman *) getAgent(oss.str());
-// 			std::cout<<"Trader : "<<r->getId()<<std::endl;
 			TradeAction * TA = new TradeAction();
 			TA->execute(*r);
 
@@ -340,7 +339,7 @@ namespace Epnet
 			CA->execute(*r);
 		}
 
-// 		}
+		}
 
 		//Cultural innovation and transmission
 		if(_step%10 == 0 && _step > 0){

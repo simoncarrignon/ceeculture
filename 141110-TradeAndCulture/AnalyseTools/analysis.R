@@ -5,8 +5,8 @@ library(RColorBrewer)
 
 
 
-fitness=function(p1,b1){abs(p1-b1)/b1}
-#fitness=function(p1,b1){abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
+#fitness=function(p1,b1){abs(p1-b1)/b1}
+fitness=function(p1,b1){1-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
 #fitness=function(p1,b1){tan(p1^2-b1^2)/(b1/p1)}
 
 plotFitness=function(p1,b1){
@@ -96,7 +96,8 @@ createEverything<-function(expeDir,ressource,timeA,timeB,numRun,modulo=1){
 	all=c()
 	if(modulo<0)skip=FALSE else skip=TRUE
 	for ( i in 0:(numRun-1)){
-		if((i)%%modulo==0 ){skip= !skip}
+		if((i)%%modulo==0 && modulo != 1  ){skip= !skip}
+		if(modulo == 1  ){skip=FALSE}
 
 		if(!skip){
 			file=	paste(expeDir,"/run_",sprintf("%04d",i),"/agents.csv",sep="")
@@ -233,7 +234,8 @@ tableOfaAlpha<-function(expeDir,timeA,timeB,numRun,nRess,modulo=1){
 
 	mod=abs(modulo)
 	for ( i in 0:(numRun-1)){
-		if((i)%%mod==0 ){
+		if(modulo == 1)skip=FALSE;
+		if((i)%%mod==0 && modulo != 1){
 			skip= !skip
 		}
 		if(!skip){
