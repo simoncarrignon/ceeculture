@@ -59,7 +59,7 @@ namespace Epnet
 				std::ostringstream sgoodType;
 				sgoodType << "g"<< i;				
 				std::string goodType = sgoodType.str();
-				_needs.push_back(std::make_tuple(goodType,(double)(std::rand()%100)/100.0));  
+				_needs.push_back(std::make_tuple(goodType,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,100))/100.0));  
 				_maxscore.push_back(std::make_tuple(goodType,0.0));
 				_minscore.push_back(std::make_tuple(goodType,0.0));
 				_typesOfGood.push_back(goodType);
@@ -69,7 +69,7 @@ namespace Epnet
 		{
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 			{
-				_needs.push_back(std::make_tuple(std::get<0>(*it),(double)(std::rand()%100)/100.0));  
+				_needs.push_back(std::make_tuple(std::get<0>(*it),(double)(Engine::GeneralState::statistics().getUniformDistValue(0,100))/100.0));  
 				_maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
 				_minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
 				_typesOfGood.push_back(std::get<0>(*it));
@@ -107,9 +107,9 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)(std::rand()%1000)/1000.0);// market clearing price : 1.0/(i+1)
-						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)(std::rand()%1000)/1000.0);
-						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)(std::rand()%1000)/1000.0);
+						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
+						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						//---------------/*
 						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
 						agent->setNeed(goodType,std::get<1>(_needs[i]));
@@ -133,7 +133,7 @@ namespace Epnet
 
 						//set a random price for each goods
 
-						agent->setPrice(std::get<0>(*it),(double)(std::rand()%1000)/1000.0); //TODO:demiurge's job
+						agent->setPrice(std::get<0>(*it),(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0); //TODO:demiurge's job
 
 
 						//---------------
@@ -303,7 +303,7 @@ namespace Epnet
 		int i =0;
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 	
-		if(provinceConfig._selectionProcess == "trade"){
+// 		if(provinceConfig._selectionProcess == "trade"){
 		//Good's Production
 		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
 			Engine::AgentPtr oneA = *ag;
@@ -340,7 +340,7 @@ namespace Epnet
 			CA->execute(*r);
 		}
 
-		}
+// 		}
 
 		//Cultural innovation and transmission
 		if(_step%10 == 0 && _step > 0){
@@ -352,14 +352,13 @@ namespace Epnet
 					Engine::AgentPtr oneA = *ag;
 					Roman * r1 = (Roman *) (oneA.get());
 
-					if( (std::rand()%1000)/1000.0 > provinceConfig._mutationRate){
-
-						int wsize = _agents.size();
-						int agId=std::rand()%(wsize-1) ;
+					if( Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0 > provinceConfig._mutationRate){
 						std::vector< std::string > allAgents = r1->getValidRcvConnections();
 
-						  std::string rId = allAgents[agId];
+						int wsize = allAgents.size();
+						int agId=Engine::GeneralState::statistics().getUniformDistValue(0,wsize-1) ;
 
+						  std::string rId = allAgents[agId];
 						Roman & r2= (Roman&)(*getAgent(rId));
 
 						std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= r1->getListGoods();
@@ -390,7 +389,7 @@ namespace Epnet
 					while(toChange.size() < toGet){
 
 						std::ostringstream oss;
-						int rint = (std::rand()%(_agents.size()));
+						int rint = (Engine::GeneralState::statistics().getUniformDistValue(0,_agents.size()));
 						oss << "Roman_" << rint;
 						Roman * r= (Roman *) getAgent(oss.str());
 						if(std::get<0>(r->getProducedGood()) == *good){
@@ -399,7 +398,7 @@ namespace Epnet
 
 // 						std::cout<<"Id:"<<r->getId()<<" score rel"<< relScore<<" curescore "<<r->getScore()<<  " max "<<getMaxScore(*good)<<std::endl;
 
-						if((std::rand()%RAND_MAX/(double)RAND_MAX) <= (relScore) )
+						if((Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX) <= (relScore) )
 							toChange.push_back(r->getId());
 // 						std::cout<<"TailleB :"<<toChange.size()<<std::endl;
 						}
@@ -409,7 +408,7 @@ namespace Epnet
 					while(toChange.size() > 0){
 				
 						std::ostringstream oss;
-						int rint = (std::rand()%(_agents.size()));
+						int rint = (Engine::GeneralState::statistics().getUniformDistValue(0,_agents.size()));
 						oss << "Roman_" << rint;
 						
 						Roman * r= (Roman *) getAgent(oss.str());
@@ -419,7 +418,7 @@ namespace Epnet
 						
 // 						std::cout<<"Id:"<<r->getId()<<" score rel"<< r->getScore()<< " max "<<getMaxScore(*good)<<" min "<<getMinScore(*good)<<std::endl;
 
-						if(std::rand()%RAND_MAX/(double)RAND_MAX <= 1-relScore){
+						if(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX <= 1-relScore){
 
 							std::string replaced= toChange.back();
 
@@ -442,18 +441,18 @@ namespace Epnet
 				std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= r->getListGoods();
 				for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 					std::string ressource= std::get<0>(*ot);
-					if((std::rand()%1000)/1000.0 < provinceConfig._mutationRate)
+					if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0 < provinceConfig._mutationRate)
 					{
 
 						double oldPrice = r->getPrice(ressource);
 						if(provinceConfig._innovationProcess == "random")
-							r->setPrice(ressource,(double)(std::rand()%RAND_MAX)/RAND_MAX);//*.95
+							r->setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/RAND_MAX));//*.95
 						else{
 
-							if(std::rand()%2 < 1)
-								r->setPrice(ressource,oldPrice+(std::rand()%50)/1000.0 );//
+							if(Engine::GeneralState::statistics().getUniformDistValue(0,2) < 1)
+								r->setPrice(ressource,oldPrice+Engine::GeneralState::statistics().getUniformDistValue(0,50)/1000.0 );//
 							else
-								r->setPrice(ressource,oldPrice-(std::rand()%50)/1000.0);//
+								r->setPrice(ressource,oldPrice-(Engine::GeneralState::statistics().getUniformDistValue(0,50))/1000.0);//
 							if(r->getPrice(ressource)<0)r->setPrice(ressource,0.0);
 						}				   
 					}
