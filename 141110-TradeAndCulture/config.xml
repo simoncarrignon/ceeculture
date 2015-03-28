@@ -2,12 +2,12 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="200000" serializeResolution="10"/>
+	<numSteps value="3000" serializeResolution="10"/>
 	<size width="600" height="1"/>
 	<numAgents value="250"/>
 	<controller type="basic" >
 		<good type="random"/>
-		<culture transmission="trade" innovation="trade" mutation=".004"/>
+		<culture transmission="random" innovation="random" mutation=".004"/>
 	</controller>
 
 	<goods num="4">

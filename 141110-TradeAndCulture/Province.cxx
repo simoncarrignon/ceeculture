@@ -365,7 +365,6 @@ namespace Epnet
 
 						for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 							std::string ressource= std::get<0>(*ot);
-
 							r1->setPrice(ressource,r2.getPrice(ressource));
 						}
 					}
@@ -445,7 +444,7 @@ namespace Epnet
 
 						double oldPrice = r->getPrice(ressource);
 						if(provinceConfig._innovationProcess == "random")
-							r->setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/RAND_MAX));//*.95
+						  r->setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX));//*.95
 						else{
 
 							if(Engine::GeneralState::statistics().getUniformDistValue(0,2) < 1)

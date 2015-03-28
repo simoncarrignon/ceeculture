@@ -46,8 +46,8 @@ allClass<-function(datas,ngoods,g){
 
 plotEquilibrium=function(){
 	    par(mar=c(5.1,6.1,4.1,2.1))
-plot(tapply(t1$g0_p/t1$g1_p-t1$g0_n,t1$timeStep,mean)~unique(t1$timeStep),type="l",ylim=c(-.1,1),ylab=expression( frac(good(wanted),good(produce)) - need(wanted)),xlab="Time Step",main="Evolution of the mean ration good(wanted) good(produce)\n !!for one too short run only!!"
-     )
+plot(tapply(t1$g0_p/t1$g1_p-t1$g0_n,t1$timeStep,mean)~unique(t1$timeStep),type="l",ylim=c(-.1,1),ylab=expression( frac(good(wanted),good(produce)) - need(wanted)),xlab="Time Step",main="Evolution of the mean ration good(wanted) good(produce)\n !!for one too short run only!!")
+     
 points(tapply(t1$g2_p/t1$g1_p-t1$g2_n,t1$timeStep,mean)~unique(t1$timeStep),type="l",col=2)
 points(tapply(t2$g0_p/t2$g2_p-t2$g0_n,t2$timeStep,mean)~unique(t1$timeStep),type="l",col=3)
 points(tapply(t2$g1_p/t2$g2_p-t2$g1_n,t2$timeStep,mean)~unique(t1$timeStep),type="l",col=4)
@@ -55,7 +55,41 @@ points(tapply(t0$g1_p/t0$g0_p-t0$g1_n,t0$timeStep,mean)~unique(t1$timeStep),type
 points(tapply(t0$g2_p/t0$g0_p-t0$g2_n,t0$timeStep,mean)~unique(t1$timeStep),type="l",col=6)
 }
 
+plotAllEquilibrium=function(datas,nres){
 
+	cur=allClass(datas,nres,0)
+	pRes="g0_p"	
+	wRes="g1_p"	
+	wResN="g1_n"	
+	par(mar=c(5.1,6.1,4.1,2.1))
+	plot(tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)~unique(cur$timeStep),type="l",ylim=c(-.1,1),ylab=expression( frac(good(wanted),good(produce)) - need(wanted)),xlab="Time Step",main="Evolution of the mean ration good(wanted) good(produce)\n !!for one too short run only!!")
+	for ( i in 0:nres){
+		if(i != pRes){
+			wRes=paste("g",i,"_p",sep="")	
+			wResN=paste("g",i,"_n",sep="")	
+			points(tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)~unique(cur$timeStep),type="l",col=i)
+		}
+	}
+}
+
+getMeanRatio<-function(datas,nres){
+
+	for(p in 0:nres-1){
+		cur=allClass(datas,nres,p)
+		pRes=paste("g",p,"_p",sep="")	
+		res=c()
+		for ( i in 0:(nres-1)){
+			if(i != p){
+				wRes=paste("g",i,"_p",sep="")	
+				wResN=paste("g",i,"_n",sep="")	
+				print(wRes,pRes,wResN)
+				toBind=tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)
+				res=rbind(res,toBind)
+			}
+		}
+	}
+	return(res)
+}
 
 
 plotAllClass=function(datas,ngoods,timeStep,...){

@@ -76,7 +76,7 @@ namespace Epnet
 					
 // 			      std::cout<<"max:"<<max_score<< ","<<r.getScore()/max_score<< "," <<(1-romanAgent.getScore()/max_score)<<std::endl;
 					//std::cout<<"good"<<std::get<0>(r.getProducedGood())<<" good "<<std::get<0>(romanAgent.getProducedGood())<<std::endl;
-					if(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/RAND_MAX < r.getScore()/max_score && (double)Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/RAND_MAX <(1-romanAgent.getScore()/max_score) ){
+					if(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < r.getScore()/max_score && (double)Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX <(1-romanAgent.getScore()/max_score) ){
 						reproductionDone = 1;
 						std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
 
@@ -105,7 +105,7 @@ namespace Epnet
 				std::string ressource= std::get<0>(*ot);
 				double oldPrice = romanAgent.getPrice(ressource);
 				 if(_innovationProcess == "random")
-					romanAgent.setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/RAND_MAX));//*.95
+					romanAgent.setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX));//*.95
 				  else{
 
 				    if(Engine::GeneralState::statistics().getUniformDistValue(0,2) < 1)
