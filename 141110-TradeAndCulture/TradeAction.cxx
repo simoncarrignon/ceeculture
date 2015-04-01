@@ -69,16 +69,15 @@ namespace Epnet
 
 
 						if( responderTradeWill <= proposedQuantity &&
-								// 				( proposedQuantity*responder.getPrice(offererProducedGood) <= requestedQuantity*responder.getPrice(goodWanted)) &&
-								responder.getQuantity(goodWanted) >= requestedQuantity &&
-								offerer.getQuantity(offererProducedGood) >= proposedQuantity &&
-								responder.getQuantity(goodWanted) - requestedQuantity >= responder.getPrice(goodWanted)  &&
-								responderTradCounter<=requestedQuantity)
+						    //( proposedQuantity*responder.getPrice(offererProducedGood) <= requestedQuantity*responder.getPrice(goodWanted)) &&
+						    responder.getQuantity(goodWanted) >= requestedQuantity &&
+						    offerer.getQuantity(offererProducedGood) >= proposedQuantity &&
+						    responder.getQuantity(goodWanted) - requestedQuantity >= responder.getPrice(goodWanted)  &&
+						    responderTradCounter<=requestedQuantity)
 						{
 							if(responderTradeWill<=proposedQuantity)proposedQuantity=responderTradeWill;
 
 							if(std::get<2>(bestTrade) <= requestedQuantity){ 
-
 								bestTrade=std::make_tuple(*itO,requestedQuantity,proposedQuantity);
 								tradeDone=1;
 							}

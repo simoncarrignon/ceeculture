@@ -303,7 +303,7 @@ namespace Epnet
 		int i =0;
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 	
-		if(provinceConfig._selectionProcess == "trade"){
+	//	if(provinceConfig._selectionProcess == "trade"){
 		//Good's Production
 		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
 			Engine::AgentPtr oneA = *ag;
@@ -339,7 +339,7 @@ namespace Epnet
 			CA->execute(*r);
 		}
 
-		}
+	//	}
 
 		//Cultural innovation and transmission
 		if(_step%10 == 0 && _step > 0){
@@ -381,10 +381,11 @@ namespace Epnet
 					
 					std::vector<std::string> toChange;
 				
-// 					std::cout<<"toGet"<< toGet<<std::endl;
+					 int MaxTry=2*getNumberOfAgents();
+ 					 int tr=0;
 
-
-					while(toChange.size() < toGet){
+	
+					while(toChange.size() < toGet && tr < MaxTry ){
 
 						std::ostringstream oss;
 						int rint = (Engine::GeneralState::statistics().getUniformDistValue(0,_agents.size()-1));

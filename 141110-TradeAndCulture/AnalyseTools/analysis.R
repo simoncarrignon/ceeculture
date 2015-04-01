@@ -1,17 +1,9 @@
-library(plyr)
-library(poweRlaw)
-library(RColorBrewer)
+if(require("plyr")){library(plyr)}
+if(require("RColorBrewer")){library(RColorBrewer)}
+if(require("poweRlaw")){library(poweRlaw)}
 
 
 
-plot4Distrib=function(){
-	plotLogBin(createNormalizedTable(lexp2$g0_p),main="Variants distribution for the 4 setup\n !!ONE RUN!!",col=2)
-	pointsLogBin(createNormalizedTable(lexp3$g0_p),col=3)
-	pointsLogBin(createNormalizedTable(lexp4$g0_p),col=4)
-	pointsLogBin(createNormalizedTable(lexp5$g0_p),col=5)
-	legend("topright",legend=c("A","B","C","D"),fill=c(2,4,3,5))
-
-}
 
 #fitness=function(p1,b1){abs(p1-b1)/b1}
 fitness=function(p1,b1){1-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
@@ -33,11 +25,9 @@ pointFitness=function(p1,b1){
 
 allClass<-function(datas,ngoods,g){
 		nAgent=length(unique(datas$agent))
-		print(nAgent)
 		a=sapply(c(0:nAgent)[0:(nAgent-1)%%(ngoods)==g],function(i){paste("Roman_",i,sep="")})
 		res=c()
 		for( b in a){
-			print(b)
 			res=rbind(res,datas[datas$agent == b,])
 		}
 		return(res)
@@ -55,35 +45,36 @@ points(tapply(t0$g1_p/t0$g0_p-t0$g1_n,t0$timeStep,mean)~unique(t1$timeStep),type
 points(tapply(t0$g2_p/t0$g0_p-t0$g2_n,t0$timeStep,mean)~unique(t1$timeStep),type="l",col=6)
 }
 
-plotAllEquilibrium=function(datas,nres){
+plotAllEquilibrium=function(datas,...){
 
-	cur=allClass(datas,nres,0)
-	pRes="g0_p"	
-	wRes="g1_p"	
-	wResN="g1_n"	
 	par(mar=c(5.1,6.1,4.1,2.1))
-	plot(tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)~unique(cur$timeStep),type="l",ylim=c(-.1,1),ylab=expression( frac(good(wanted),good(produce)) - need(wanted)),xlab="Time Step",main="Evolution of the mean ration good(wanted) good(produce)\n !!for one too short run only!!")
-	for ( i in 0:nres){
-		if(i != pRes){
+	plot(datas[1,]~as.numeric(colnames(datas)),type="l",ylab=expression( frac(good(wanted),good(produce)) - need(wanted)),xlab="Time Step",main="Evolution of the mean ration good(wanted) good(produce)\n !!for one too short run only!!",...)
+	for ( i in 2:(nrow(datas))){
 			wRes=paste("g",i,"_p",sep="")	
 			wResN=paste("g",i,"_n",sep="")	
-			points(tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)~unique(cur$timeStep),type="l",col=i)
+			points(datas[i,]~as.numeric(colnames(datas)),type="l",col=i)
 		}
-	}
 }
 
-getMeanRatio<-function(datas,nres){
+getMeanRatio<-function(datas,nres,timestep,abs=TRUE){
 
-	for(p in 0:nres-1){
+		res=c()
+	for(p in 0:(nres-1)){
 		cur=allClass(datas,nres,p)
 		pRes=paste("g",p,"_p",sep="")	
-		res=c()
+		pResN=paste("g",p,"_n",sep="")	
+
+		print(pRes)
+		toBind=tapply(cur[,pRes]-1/cur[,pResN],cur$timeStep,mean)
 		for ( i in 0:(nres-1)){
 			if(i != p){
 				wRes=paste("g",i,"_p",sep="")	
 				wResN=paste("g",i,"_n",sep="")	
-				print(wRes,pRes,wResN)
-				toBind=tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)
+				print(wRes)
+				if(abs)
+					toBind=tapply(cur[,wRes]-cur[,wResN]*cur[,pResN],cur$timeStep,mean)
+				else
+					toBind=tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)
 				res=rbind(res,toBind)
 			}
 		}
@@ -93,24 +84,24 @@ getMeanRatio<-function(datas,nres){
 
 
 plotAllClass=function(datas,ngoods,timeStep,...){
-	oneClass=allClass(datas,ngoods,0)
-	plot(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=rgb(0,0,0,20,maxColorValue=255),xlab="Time Step",ylab="Score",...)	
+	oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,0)
+	plot(oneClass$scores~oneClass$timeStep,col=rgb(0,0,0,20,maxColorValue=255),xlab="Time Step",ylab="Score",...)	
 
 	for( i in 1:(ngoods-1)){
-		oneClass=allClass(datas,ngoods,i)
-	points(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=rgb(100,50*(i+1),200-50*i ,50,maxColorValue=255),...)	
+		oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,i)
+	points(oneClass$scores~oneClass$timeStep,col=rgb(100,50*(i+1),200-50*i ,50,maxColorValue=255),...)	
 
 	}
 }
 
 boxAllClass=function(datas,ngoods,timeStep,...){
-	oneClass=allClass(datas,ngoods,0)
-	boxplot(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=1,...)	
+	oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,0)
+	boxplot(oneClass$scores~oneClass$timeStep,col=1,...)	
 
 	for( i in 1:(ngoods-1)){
-		oneClass=allClass(datas,ngoods,i)
+	oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,i)
 		par(new=T)
-	boxplot(oneClass$scores[oneClass$timeStep%%timeStep == 0]~oneClass$timeStep[oneClass$timeStep%%timeStep == 0],col=i+2,...)	
+	boxplot(oneClass$scores~oneClass$timeStep,col=i+2,...)	
 
 	}
 }
@@ -150,23 +141,36 @@ logR<-function(n){
 
 
 
-createEverything<-function(expeDir,ressource,timeA,timeB,numRun,modulo=1){
+createEverything<-function(expeDir,ressource,timeA=0,timeB=0){
 
 	all=c()
-	if(modulo<0)skip=FALSE else skip=TRUE
-	for ( i in 0:(numRun-1)){
-		if((i)%%modulo==0 && modulo != 1  ){skip= !skip}
-		if(modulo == 1  ){skip=FALSE}
+	files=list.files(expeDir,pattern="run_*")
 
-		if(!skip){
-			file=	paste(expeDir,"/run_",sprintf("%04d",i),"/agents.csv",sep="")
+	for ( i in files){
+			file=	paste(expeDir,i,"/agents.csv",sep="")
 			print(file)
 			work=read.csv(file,sep=";")
+			if(timeB == 0){FreqOfVar=createNormalizedTable(work[,ressource])}
+			else{
 			FreqOfVar=createNormalizedTable(work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource])
+			}
 			mu=unique(work$mu)
 			toBind=cbind(mu,FreqOfVar)
 			all=rbind.fill(all,as.data.frame(toBind))
-		}
+	}
+	return(all)
+}
+getAllMeanRatio<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1,abs=TRUE){
+
+	all=c()
+	files=list.files(expeDir,pattern="run_*")
+
+	for ( i in files){
+			file=	paste(expeDir,i,"/agents.csv",sep="")
+			print(file)
+			work=read.csv(file,sep=";")
+			toBind=getMeanRatio(work[work$timeStep %% timestep == 0,],nRess,timestep,abs=abs)
+			all=rbind(all,toBind)
 	}
 	return(all)
 }
@@ -207,7 +211,7 @@ readDir<-function(expeDir,nrun){
 
 
 loadSource=function(){
-	source("./analysis.R")
+	source("../AnalyseTools/analysis.R")
 }
 
 plotAllRessource<-function(expeDir,ressoureN,nstep,nrun,...){
@@ -286,33 +290,31 @@ createNormalizedTable<-function(data){
 }
 
 
-tableOfaAlpha<-function(expeDir,timeA,timeB,numRun,nRess,modulo=1){
+tableOfaAlpha<-function(expeDir,timeA=0,timeB=0,nRess,modulo=1){
 
 	all=data.frame()
-	if(modulo<0)skip=FALSE else skip=TRUE
+	files=list.files(expeDir,pattern="run_*")
 
-	mod=abs(modulo)
-	for ( i in 0:(numRun-1)){
-		if(modulo == 1)skip=FALSE;
-		if((i)%%mod==0 && modulo != 1){
-			skip= !skip
-		}
-		if(!skip){
-			file=	paste(expeDir,"/run_",sprintf("%04d",i),"/agents.csv",sep="")
-			print(file)
-			work=read.csv(file,sep=";")
-			print(length(unique(work$agent)))
-			for ( j in 0:(nRess-1)){
-				ressource=paste("g",j,"_p",sep="")
-				print(ressource)
-				toBind=work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource]
-				alpha=estimateAlpha(table(toBind))
-				print(alpha)
-				print(unique(work$mu))
-				toBind=cbind(unique(work$mu),ressource,alpha)
-				all=rbind(all,toBind)
+	for ( i in files){
+		file=	paste(expeDir,i,"/agents.csv",sep="")
+		print(file)
+		work=read.csv(file,sep=";")
+		for ( j in 0:(nRess-1)){
+			ressource=paste("g",j,"_p",sep="")
+			print(ressource)
+			if(timeB<=timeA){
+				toBind=work[,ressource]
 			}
+			else{
+				toBind=work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource]
+			}
+			alpha=estimateAlpha(table(toBind))
+			print(alpha)
+			print(unique(work$mu))
+			toBind=cbind(unique(work$mu),ressource,alpha)
+			all=rbind(all,toBind)
 		}
+
 	}
 	all$alpha = as.numeric(as.character(all$alpha))
 	return(all)
@@ -362,6 +364,21 @@ plotMu<-function(dataMu){
 	axis(2,at=at,label=labels)
 	title(expression(paste("Freq. Of Var. and ",mu)))
 }
+pointsMu<-function(dataMu){
+	xmax=ncol(dataMu)-1
+	ymin=log10(min(dataMu,na.rm=T))
+	c=1
+	le=c()
+	cle=c()
+	for(i in sort(unique(dataMu$mu))){ 
+		tc=brewer.pal(length(unique(dataMu$mu)),"RdYlBu")[c]
+		#tc=heat.colors(length(unique(dataMu$mu)))[c]
+		points(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])~ names(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])),type="o",col=tc)
+		le=c(le,i)
+		cle=c(cle,tc)
+		c=c+1
+	}
+}
 
 
 plotVarientFrequency<-function(propOfEach,...){
@@ -385,3 +402,50 @@ plotVarientFrequency<-function(propOfEach,...){
 
 
 }
+#plot4Distrib=function(){
+#	plotLogBin(createNormalizedTable(lexp2$g0_p),main="Variants distribution for the 4 setup\n !!ONE RUN!!",col=2)
+#	pointsLogBin(createNormalizedTable(lexp3$g0_p),col=3)
+#	pointsLogBin(createNormalizedTable(lexp4$g0_p),col=4)
+#	pointsLogBin(createNormalizedTable(lexp5$g0_p),col=5)
+#	legend("topright",legend=c("A","B","C","D"),fill=c(2,4,3,5))
+#
+#}
+#
+#{
+#
+#	pdf("frequenciesABCD.pdf")
+#plotLogBin(exp2_2,col="lightblue")
+#pointsLogBin(exp4,col="blue")
+#pointsLogBin(exp3,col="lightgreen")
+#pointsLogBin(exp5A,col="green")
+#	legend("topright",legend=c("A","B","C","D"),fill=c("lightblue","blue","lightgreen","green"))
+#dev.off()
+#
+#	pdf("A-B.pdf")
+#plotLogBin(exp2_2,col="lightblue")
+#pointsLogBin(exp4,col="blue")
+#dev.off()
+#	pdf("A-C.pdf")
+#plotLogBin(exp2_2,col="lightblue")
+#pointsLogBin(exp3,col="lightgreen")
+#dev.off()
+#	pdf("A-D.pdf")
+#plotLogBin(exp2_2,col="lightblue")
+#pointsLogBin(exp5A,col="green")
+#dev.off()
+#	pdf("B-C.pdf")
+#plotLogBin(exp4,col="blue")
+#pointsLogBin(exp3,col="lightgreen")
+#dev.off()
+#	pdf("B-D.pdf")
+#plotLogBin(exp4,col="blue")
+#pointsLogBin(exp5A,col="green")
+#dev.off()
+#	pdf("C-D.pdf")
+#plotLogBin(exp3,col="lightgreen")
+#pointsLogBin(exp5A,col="green")
+#dev.off()
+#
+#
+#
+#}
