@@ -401,6 +401,7 @@ namespace Epnet
 							toChange.push_back(r->getId());
 // 						std::cout<<"TailleB :"<<toChange.size()<<std::endl;
 						}
+						tr++;
 
 					}
 

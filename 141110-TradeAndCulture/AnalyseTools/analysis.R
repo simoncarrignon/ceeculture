@@ -65,7 +65,6 @@ getMeanRatio<-function(datas,nres,timestep,abs=TRUE){
 		pResN=paste("g",p,"_n",sep="")	
 
 		print(pRes)
-		toBind=tapply(cur[,pRes]-1/cur[,pResN],cur$timeStep,mean)
 		for ( i in 0:(nres-1)){
 			if(i != p){
 				wRes=paste("g",i,"_p",sep="")	
@@ -76,6 +75,11 @@ getMeanRatio<-function(datas,nres,timestep,abs=TRUE){
 				else
 					toBind=tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)
 				res=rbind(res,toBind)
+			}
+			else{
+				toBind=tapply(cur[,pRes]-cur[,pResN],cur$timeStep,mean)
+				res=rbind(res,toBind)
+
 			}
 		}
 	}
@@ -96,12 +100,12 @@ plotAllClass=function(datas,ngoods,timeStep,...){
 
 boxAllClass=function(datas,ngoods,timeStep,...){
 	oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,0)
-	boxplot(oneClass$scores~oneClass$timeStep,col=1,...)	
+	boxplot(30-oneClass$scores~oneClass$timeStep,col=1,...)	
 
 	for( i in 1:(ngoods-1)){
 	oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,i)
 		par(new=T)
-	boxplot(oneClass$scores~oneClass$timeStep,col=i+2,...)	
+	boxplot(30-oneClass$scores~oneClass$timeStep,col=i+2,...)	
 
 	}
 }

@@ -30,8 +30,8 @@ namespace Epnet
 		while(it!=allGood.end())
 		{
 			std::string good=std::get<0>(*it);
-			if(good == std::get<0>(romanAgent.getProducedGood())) 
-				romanAgent.setQuantity(good,romanAgent.getNeed(good)); //we always satisfy our own need in the good we produced
+ 			if(good == std::get<0>(romanAgent.getProducedGood())) 
+ 				romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimeted value for its the production's good
 				
 			//fit= |a-b|/euclideDist(a,b) my favorite one
  			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)))utilityFunction+=0; //undefined fitness function for 0

@@ -54,7 +54,7 @@ namespace Epnet
 				int noffer=0;
 				bool tradeDone = 0;
 
-				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=provinceWorld.getNumberOfAgents()/2) //TODO:number of max test <nbmax (maybe gintis use it only because of computational limitiation)
+				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=100) //TODO:number of max test <nbmax (maybe gintis use it only because of computational limitiation)
 				{
 					noffer++;
 					Roman & responder = (Roman&)(*world->getAgent(*itO));
