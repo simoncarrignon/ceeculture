@@ -19,7 +19,7 @@ pointFitness=function(p1,b1){
 	print(b1)
 	points(fitness(p1,b1)~p1,type="l")
 	abline(v=b1,col="red")
-	text(b1,-0.08,paste("need(x)=",b1),srt=90,cex=.95,pos=4,col="red")
+	text(b1,-0.09,paste("n(g)=",b1,sep=""),srt=90,cex=1.2,pos=4,col="red")
 }
 
 
@@ -36,7 +36,7 @@ allClass<-function(datas,ngoods,g){
 
 plotEquilibrium=function(){
 	    par(mar=c(5.1,6.1,4.1,2.1))
-plot(tapply(t1$g0_p/t1$g1_p-t1$g0_n,t1$timeStep,mean)~unique(t1$timeStep),type="l",ylim=c(-.1,1),ylab=expression( frac(good(wanted),good(produce)) - need(wanted)),xlab="Time Step",main="Evolution of the mean ration good(wanted) good(produce)\n !!for one too short run only!!")
+plot(tapply(t1$g0_p/t1$g1_p-t1$g0_n,t1$timeStep,mean)~unique(t1$timeStep),type="l",ylim=c(-.1,1))
      
 points(tapply(t1$g2_p/t1$g1_p-t1$g2_n,t1$timeStep,mean)~unique(t1$timeStep),type="l",col=2)
 points(tapply(t2$g0_p/t2$g2_p-t2$g0_n,t2$timeStep,mean)~unique(t1$timeStep),type="l",col=3)
@@ -87,13 +87,21 @@ getMeanRatio<-function(datas,nres,timestep,abs=TRUE){
 }
 
 
-plotAllClass=function(datas,ngoods,timeStep,...){
-	oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,0)
-	plot(oneClass$scores~oneClass$timeStep,col=rgb(0,0,0,20,maxColorValue=255),xlab="Time Step",ylab="Score",...)	
+plotAllClassMean=function(datas,ngoods,timeStep,...){
 
+	oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,0)
+	avg=tapply(10*ngoods-oneClass$scores,oneClass$timeStep,mean)
+	sdev=tapply(10*ngoods-oneClass$scores,oneClass$timeStep,sd)
+	plot(avg~names(avg),ylim=c(0,ngoods*10),type="o",pch=1,col=1)
+	x=as.numeric(names(avg))
+	arrows(x, avg-sdev, x, avg+sdev, length=0.01, angle=90, code=3,col=1)
 	for( i in 1:(ngoods-1)){
 		oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,i)
-	points(oneClass$scores~oneClass$timeStep,col=rgb(100,50*(i+1),200-50*i ,50,maxColorValue=255),...)	
+		avg=	tapply(10*ngoods-oneClass$scores,oneClass$timeStep,mean)
+		sdev=	tapply(10*ngoods-oneClass$scores,oneClass$timeStep,sd)
+		points(avg~names(avg),ylim=c(20,40),type="o",pch=i,col=i+1)
+		x=as.numeric(names(avg))
+		arrows(x, avg-sdev, x, avg+sdev, length=0.01, angle=90, code=3,col=i+1)
 
 	}
 }
@@ -151,19 +159,37 @@ createEverything<-function(expeDir,ressource,timeA=0,timeB=0){
 	files=list.files(expeDir,pattern="run_*")
 
 	for ( i in files){
-			file=	paste(expeDir,i,"/agents.csv",sep="")
-			print(file)
-			work=read.csv(file,sep=";")
-			if(timeB == 0){FreqOfVar=createNormalizedTable(work[,ressource])}
+		file=	paste(expeDir,i,"/agents.csv",sep="")
+		print(file)
+		work=read.csv(file,sep=";")
+		if(ressource == 1){
+			if(timeB == 0){FreqOfVar=createNormalizedTable(work[,"g0_p"])}
 			else{
-			FreqOfVar=createNormalizedTable(work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource])
+				FreqOfVar=createNormalizedTable(work[work$timeStep>=timeA & work$timeStep<=timeB ,ressource])
 			}
 			mu=unique(work$mu)
 			toBind=cbind(mu,FreqOfVar)
 			all=rbind.fill(all,as.data.frame(toBind))
+		}
+		else{
+			for( i in 1:(ressource-1)){
+				oneClass=allClass(work[work$timeStep %% 1 == 0,],ressource,i)
+				for( i in 1:(ressource-1)){
+					res=paste("g",i,"_p",sep="")
+					if(timeB == 0){FreqOfVar=createNormalizedTable(work[,res])}
+					else{
+						FreqOfVar=createNormalizedTable(work[work$timeStep>=timeA & work$timeStep<=timeB ,res])
+					}
+					mu=unique(work$mu)
+					toBind=cbind(mu,FreqOfVar)
+					all=rbind.fill(all,as.data.frame(toBind))
+				}
+			}
+		}
 	}
 	return(all)
 }
+
 getAllMeanRatio<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1,abs=TRUE){
 
 	all=c()
@@ -221,7 +247,7 @@ loadSource=function(){
 plotAllRessource<-function(expeDir,ressoureN,nstep,nrun,...){
 
 	toPlot=createEverything(expeDir,"g0_p",0,nstep,nrun)
-	plotLogBin(toPlot,...)
+	plotLogBin(toPlot,ylab="proportion of variant",xlab="number of variants",...)
 	for ( i in 1:(ressoureN-1)){
 		ressource=paste("g",i,"_p",sep="")
 		toPlot=createEverything(expeDir,ressource,0,nstep,nrun)
@@ -263,13 +289,27 @@ createAllBin<-function(expeDir,timeA,timeB,numRun){
 }
 
 plotLogBin=function(freq,...){
-#	xmax=ncol(freq)
-#	ymin=log10(min(freq,na.rm=T))
-#ylim=c(10^ymin,1),xlim=c(1,2^xmax)
-	plot(makeamean(freq)~ names(makeamean(freq)),log="yx",ylab="prop. of variant",xlab="# of variants",type="o",...)
+
+	xmax=ncol(freq)-1
+	ymin=log10(min(freq,na.rm=T))-1
+	plot(makeamean(freq)~ names(makeamean(freq)),log="yx",ylab="proportion of variant",xlab="number of variants",type="b",xaxt="n",yaxt="n",ylim=c(10^ymin,1),...)
+
+
+	ticks <- seq(0, xmax, by=1)
+	at <- sapply(ticks, function(i) {10^i})
+	labels <- sapply(ticks, function(i) as.expression(bquote(10^ .(i))))
+	axis(1,at=at,label=labels)
+
+	ticks <- seq(-1, ymin, by=-2)
+
+	at <- sapply(ticks, function(i) {10^i})
+	at = c(1,0,at)
+	labels <- sapply(ticks, function(i) as.expression(bquote(10^ .(i))))
+	labels=c(1,0,labels)
+	axis(2,at=at,label=labels)
 }
 pointsLogBin=function(freq,...){
-	points(makeamean(freq)~ names(makeamean(freq)),type="o",...)
+	points(makeamean(freq)~ names(makeamean(freq)),type="b",...)
 }
 
 makeamean=function(al){
@@ -336,20 +376,26 @@ estimateAlpha<-function(data){
 
 plotMu<-function(dataMu){
 	xmax=ncol(dataMu)-1
-	ymin=log10(min(dataMu,na.rm=T))
+	ymin=log10(min(dataMu,na.rm=T))-1
 	c=1
 	le=c()
+	ple=c()
 	cle=c()
-	plot(makeamean(dataMu)~ names(makeamean(dataMu)),log="yx",ylim=c(10^ymin,1),xlim=c(1,2^xmax),type="n",xaxt="n",yaxt="n",ylab="prop. of variant",xlab="# of variants")
+	pch=c(0,1,2)
+	plot(makeamean(dataMu)~ names(makeamean(dataMu)),log="yx",ylim=c(10^ymin,1),xlim=c(1,2^xmax),type="n",xaxt="n",yaxt="n",ylab="proportion of variant",xlab="number of variants")
 	for(i in sort(unique(dataMu$mu))){ 
-		tc=brewer.pal(length(unique(dataMu$mu)),"RdYlBu")[c]
+		#tc=brewer.pal(length(unique(dataMu$mu)),"RdYlBu")[c]
 		#tc=heat.colors(length(unique(dataMu$mu)))[c]
-		points(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])~ names(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])),type="o",col=tc)
+		tc=1
+		pc=pch[c]
+		points(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])~ names(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])),type="b",col=tc,pch=pc)
 		le=c(le,i)
 		cle=c(cle,tc)
+		ple=c(ple,pc)
 		c=c+1
 	}
-	legend(2^(xmax-3),1,legend=le,col=cle,lty=1)
+	#legend(2^(xmax-3),1,legend=le,col=cle,lty=1,pch=ple)
+	legend("topright",legend=le,col=cle,pch=ple)
 
 
 	ticks <- seq(0, xmax, by=1)
@@ -357,7 +403,7 @@ plotMu<-function(dataMu){
 	labels <- sapply(ticks, function(i) as.expression(bquote(10^ .(i))))
 	axis(1,at=at,label=labels)
 
-	ticks <- seq(-1, ymin, by=-1)
+	ticks <- seq(-1, ymin, by=-2)
 
 	at <- sapply(ticks, function(i) {10^i})
 	at = c(1,0,at)
@@ -366,7 +412,7 @@ plotMu<-function(dataMu){
 	labels=c(1,0,labels)
 	print(labels)
 	axis(2,at=at,label=labels)
-	title(expression(paste("Freq. Of Var. and ",mu)))
+	#title( expression(paste("Frequencies distribution for differents ",mu,sep="")))
 }
 pointsMu<-function(dataMu){
 	xmax=ncol(dataMu)-1
@@ -375,9 +421,9 @@ pointsMu<-function(dataMu){
 	le=c()
 	cle=c()
 	for(i in sort(unique(dataMu$mu))){ 
-		tc=brewer.pal(length(unique(dataMu$mu)),"RdYlBu")[c]
-		#tc=heat.colors(length(unique(dataMu$mu)))[c]
-		points(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])~ names(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])),type="o",col=tc)
+		#tc=brewer.pal(length(unique(dataMu$mu)),"RdYlBu")[c]
+		tc=heat.colors(length(unique(dataMu$mu)))[c]
+		points(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])~ names(makeamean(dataMu[dataMu$mu == i,2:ncol(dataMu)])),type="b",col=tc)
 		le=c(le,i)
 		cle=c(cle,tc)
 		c=c+1
@@ -453,3 +499,51 @@ plotVarientFrequency<-function(propOfEach,...){
 #
 #
 #}
+#
+#
+#pdf("scatterPlotGood1.pdf")
+# ggplot(data.frame(40-g0$scores,g0$timeStep),aes(g0$timeStep,40-g0$scores)) +  geom_point() + geom_smooth() + labs(title="Evolution of the score of produceur of good 1",ylab="score")
+#dev.off()                                                       
+#pdf("scatterPlotGood2.pdf")                                     
+# ggplot(data.frame(40-g1$scores,g1$timeStep),aes(g1$timeStep,40-g1$scores)) +  geom_point() + geom_smooth() + labs(title="Evolution of the score of produceur of good 2",ylab="score")
+#dev.off()                                                       
+#pdf("scatterPlotGood3.pdf")                                     
+# ggplot(data.frame(40-g2$scores,g2$timeStep),aes(g2$timeStep,40-g2$scores)) +  geom_point() + geom_smooth() + labs(title="Evolution of the score of produceur of good 3",ylab="score")
+#dev.off()                                                       
+#pdf("scatterPlotGood4.pdf")                                     
+# ggplot(data.frame(40-g3$scores,g3$timeStep),aes(g3$timeStep,40-g3$scores)) +  geom_point() + geom_smooth() + labs(title="Evolution of the score of produceur of good 4",ylab="score")
+#dev.off()
+
+#pdf("ScoreMeanForEachAgetnsType.pdf")
+
+
+
+
+#dev.off()                                                       
+#pdf("scatterPlotGood2.pdf")                                     
+# ggplot(data.frame(40-g1$scores,g1$timeStep),aes(g1$timeStep,40-g1$scores)) +  geom_point() + geom_smooth() + labs(title="Evolution of the score of produceur of good 2",ylab="score")
+#dev.off()                                                       
+#pdf("scatterPlotGood3.pdf")                                     
+# ggplot(data.frame(40-g2$scores,g2$timeStep),aes(g2$timeStep,40-g2$scores)) +  geom_point() + geom_smooth() + labs(title="Evolution of the score of produceur of good 3",ylab="score")
+#dev.off()                                                       
+#pdf("scatterPlotGood4.pdf")                                     
+# ggplot(data.frame(40-g3$scores,g3$timeStep),aes(g3$timeStep,40-g3$scores)) +  geom_point() + geom_smooth() + labs(title="Evolution of the score of produceur of good 4",ylab="score")
+#dev.off()
+
+pritnAllGRaph<-function(){
+	c=1
+	le=c()
+	ple=c()
+	cle=c()
+	for( i in unique(da$site)){
+		subP=da[da$site == i,]
+		png(paste(i,".png",sep=""))
+		plotLogBin(createNormalizedTable(table(subP$typology)),main=i)
+		dev.off()
+		c=c+1
+		le=c(le,i)
+		cle=c(cle,c)
+	}
+
+}
+

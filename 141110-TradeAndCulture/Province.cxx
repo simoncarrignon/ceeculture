@@ -67,6 +67,9 @@ namespace Epnet
 		}
 		else
 		{
+		//In that case each good and the properties of thoses good have to be manually set by the user in the config file
+  
+
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 			{
 				_needs.push_back(std::make_tuple(std::get<0>(*it),(double)(Engine::GeneralState::statistics().getUniformDistValue(0,100))/100.0));  
@@ -299,10 +302,11 @@ namespace Epnet
 		log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
 
 
-		std::vector<int>randomizer;
+		std::vector<int>randomizer; //a list where all agent_id is stored and that we will use to randomize
 		int i =0;
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 	
+		
 	//	if(provinceConfig._selectionProcess == "trade"){
 		//Good's Production
 		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
@@ -314,10 +318,8 @@ namespace Epnet
 			i++;
 		}
 
-
-
+	  
 		std::random_shuffle(randomizer.begin(),randomizer.end());
-		
 		
 		
 		//Trade Action
@@ -472,20 +474,12 @@ namespace Epnet
 	}
 
 
+	//Jsut a small function to hard copy all the prices of on agents into another agent
 	void Province::copyPrice(const std::string replaced, std::string replacer)
 	{
 		Roman & r1= (Roman&) *getAgent(replaced);
-
 		Roman & r2= (Roman&) *getAgent(replacer);
-
-// 				std::cout<<"r1 "<<r1.getScore()<<std::endl;
-
-// 				std::cout<<"r2 "<<r2.getScore()<<std::endl;
-
-
 		std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= r1.getListGoods();
-
-
 		for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 			std::string ressource= std::get<0>(*ot);
 
