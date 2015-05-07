@@ -34,8 +34,8 @@ namespace Epnet
 
 	void BasicController::updateState()
 	{
-		treatIncomingConnections();
-		treatIncomingTrades();
+// 		treatIncomingConnections();
+// 		treatIncomingTrades();
 	}
 
 	std::list<Engine::Action*> BasicController::selectActions()

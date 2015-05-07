@@ -14,7 +14,6 @@ namespace Epnet
 
 	TradeAction::~TradeAction()
 	{
-	  std::cout<<"tradeDone?"<<std::endl;
 	}
 
 	void TradeAction::execute(Engine::Agent& agent)
