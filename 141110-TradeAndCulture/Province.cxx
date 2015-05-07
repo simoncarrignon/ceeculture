@@ -67,8 +67,8 @@ namespace Epnet
 		}
 		else
 		{
-		//In that case each good and the properties of thoses good have to be manually set by the user in the config file
-  
+			//In that case each good and the properties of thoses good have to be manually set by the user in the config file
+
 
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 			{
@@ -305,9 +305,9 @@ namespace Epnet
 		std::vector<int>randomizer; //a list where all agent_id is stored and that we will use to randomize
 		int i =0;
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-	
-		
-	//	if(provinceConfig._selectionProcess == "trade"){
+
+
+		//	if(provinceConfig._selectionProcess == "trade"){
 		//Good's Production
 		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
 			Engine::AgentPtr oneA = *ag;
@@ -318,10 +318,10 @@ namespace Epnet
 			i++;
 		}
 
-	  
+
 		std::random_shuffle(randomizer.begin(),randomizer.end());
-		
-		
+
+
 		//Trade Action
 		for( std::vector< int >::iterator it = randomizer.begin();it != randomizer.end();it++){
 			std::ostringstream oss;
@@ -332,7 +332,7 @@ namespace Epnet
 
 		}
 
-		
+
 		//Good's consumption
 		for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
 			Engine::AgentPtr oneA = *ag;
@@ -341,11 +341,11 @@ namespace Epnet
 			CA->execute(*r);
 		}
 
-	//	}
+		//	}
 
 		//Cultural innovation and transmission
 		if(_step%10 == 0 && _step > 0){
-		
+
 
 			if( provinceConfig._selectionProcess== "random"){
 
@@ -359,7 +359,7 @@ namespace Epnet
 						int wsize = allAgents.size();
 						int agId=Engine::GeneralState::statistics().getUniformDistValue(0,wsize-1) ;
 
-						  std::string rId = allAgents[agId];
+						std::string rId = allAgents[agId];
 						Roman & r2= (Roman&)(*getAgent(rId));
 
 						std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= r1->getListGoods();
@@ -378,15 +378,18 @@ namespace Epnet
 			else{
 
 				std::random_shuffle(_typesOfGood.begin(),_typesOfGood.end());
+
+
 				for(std::vector<std::string>::iterator good = _typesOfGood.begin(); good != _typesOfGood.end();good++){
 					int toGet= getNumberOfAgents()/(getTypesOfGood().size()) * .02;
-					
-					std::vector<std::string> toChange;
-				
-					 int MaxTry=2*getNumberOfAgents();
- 					 int tr=0;
 
-	
+					std::vector<std::string> toChange;
+
+					int MaxTry=2*getNumberOfAgents();
+					int tr=0;
+					
+					//Following Gintis 2006, we look for 2% of the best agent for each market. 
+					//This is highly time consuming if only so we set a max limit and it's badly implementend (should have list of the agent sorted by the agent's score)
 					while(toChange.size() < toGet && tr < MaxTry ){
 
 						std::ostringstream oss;
@@ -394,52 +397,46 @@ namespace Epnet
 						oss << "Roman_" << rint;
 						Roman * r= (Roman *) getAgent(oss.str());
 						if(std::get<0>(r->getProducedGood()) == *good){
-						double relScore = (r->getScore()-getMinScore(*good))/(getMaxScore(*good)-getMinScore(*good));
+							double relScore = (r->getScore()-getMinScore(*good))/(getMaxScore(*good)-getMinScore(*good));
 
-
-// 						std::cout<<"Id:"<<r->getId()<<" score rel"<< relScore<<" curescore "<<r->getScore()<<  " max "<<getMaxScore(*good)<<std::endl;
-
-						if((Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX) <= (relScore) )
-							toChange.push_back(r->getId());
-// 						std::cout<<"TailleB :"<<toChange.size()<<std::endl;
+							if((Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX) <= (relScore) )
+								toChange.push_back(r->getId());
 						}
 						tr++;
 
 					}
 
 					while(toChange.size() > 0){
-				
+
 						std::ostringstream oss;
 						int rint = (Engine::GeneralState::statistics().getUniformDistValue(0,_agents.size()-1));
 						oss << "Roman_" << rint;
-						
+
 						Roman * r= (Roman *) getAgent(oss.str());
 						if(std::get<0>(r->getProducedGood()) == *good){
 
-						double relScore = (r->getScore()-getMinScore(*good))/(getMaxScore(*good)-getMinScore(*good));
-						
-// 						std::cout<<"Id:"<<r->getId()<<" score rel"<< r->getScore()<< " max "<<getMaxScore(*good)<<" min "<<getMinScore(*good)<<std::endl;
+							double relScore = (r->getScore()-getMinScore(*good))/(getMaxScore(*good)-getMinScore(*good));
 
-						if(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX <= 1-relScore){
+							if(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX <= 1-relScore){
 
-							std::string replaced= toChange.back();
+								std::string replaced= toChange.back();
 
-							toChange.pop_back();
-							copyPrice(replaced,r->getId()); 
+								toChange.pop_back();
+								copyPrice(replaced,r->getId()); 
+							}
 						}
-						}
-
-// 							 					std::cout<<"TailleA :"<<toChange.size()<<std::endl;
 
 					}
-					// 			std::cout<<toChange[1]<<std::endl;
 				}
 			}
 
+			
+			//During the cultural step, there is also the mutation of the prices 
 			for( std::list< Engine::AgentPtr >::iterator ag=_agents.begin(); ag != _agents.end();ag++){
+		
 				Engine::AgentPtr oneA = *ag;
 				Roman * r = (Roman *) (oneA.get());
-
+		
 				std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= r->getListGoods();
 				for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 					std::string ressource= std::get<0>(*ot);
@@ -448,7 +445,7 @@ namespace Epnet
 
 						double oldPrice = r->getPrice(ressource);
 						if(provinceConfig._innovationProcess == "random")
-						  r->setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX));//*.95
+							r->setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX));//*.95
 						else{
 
 							if(Engine::GeneralState::statistics().getUniformDistValue(0,2) < 1)
@@ -468,7 +465,7 @@ namespace Epnet
 		}	
 
 
-		// 	_scheduler->executeAgents();
+		// 	_scheduler->executeAgents(); //the scheduler's job is done sequentially before
 		_scheduler->removeAgents();
 		log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
 	}
