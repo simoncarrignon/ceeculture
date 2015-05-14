@@ -56,14 +56,18 @@ plotAllEquilibrium=function(datas,...){
 		}
 }
 
-getMeanRatio<-function(datas,nres,timestep,abs=TRUE){
+#This function return the difference between the price of each ressources and the optimal price for those ressources (rember that the optimal price is not the same depending on if the ressource is produced or not by the agents.
+getMeanRatio<-function(datas,nres,timestep,timeA=0,timeB=0,abs=TRUE){
 
-		res=c()
+	res=c()
+	datas=datas[datas$timeStep %% timestep == 0,]
+	
+	if(timeB>timeA)
+		datas=datas[datas$timeStep >timeA & datas$timeStep < timeB ,]
 	for(p in 0:(nres-1)){
 		cur=allClass(datas,nres,p)
 		pRes=paste("g",p,"_p",sep="")	
 		pResN=paste("g",p,"_n",sep="")	
-
 		print(pRes)
 		for ( i in 0:(nres-1)){
 			if(i != p){
@@ -199,7 +203,7 @@ getAllMeanRatio<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1,abs=TRUE){
 			file=	paste(expeDir,i,"/agents.csv",sep="")
 			print(file)
 			work=read.csv(file,sep=";")
-			toBind=getMeanRatio(work[work$timeStep %% timestep == 0,],nRess,timestep,abs=abs)
+			toBind=getMeanRatio(work,nRess,timestep,timeA=timeA,timeB=timeB,abs=abs)
 			all=rbind(all,toBind)
 	}
 	return(all)

@@ -36,7 +36,7 @@ namespace Epnet
 
 
 		// 		//Cultural innovation and transmission
-
+  
 
 		if(_selectionProcess == "random"){
 
@@ -62,7 +62,7 @@ namespace Epnet
 		else{
 
 
-			//Here do a I choose a guy of same type given my proba and is probab
+			//Here do a "I choose a guy of same type given my proba and is probab"
 			// 				std::random_shuffle(_typesOfGood.begin(),_typesOfGood.end());
 
 
@@ -118,32 +118,26 @@ namespace Epnet
 
 
 
-
+			std::random_shuffle(allAgents.begin(),allAgents.end());
+// 
 
 			std::vector< std::string >::iterator it = allAgents.begin();
 			bool reproductionDone = 0;
 
-			int toGet= provinceWorld.getNumberOfAgents()/(provinceWorld.getTypesOfGood().size())*5;
-
-			// 			std::cout<<"tg:"<<toGet<<"maxS:"<<max_score<<std::endl;
+			std::string producedGood =std::get<0>(romanAgent.getProducedGood());
 
 			while(it!= allAgents.end() && !reproductionDone )
 			{
 				Roman & r= (Roman&)(*world->getAgent(*it));
-				double max_score=provinceWorld.getMaxScore(std::get<0>(r.getProducedGood()));	
-				if(max_score == 0) max_score = 1; //first it;
+				if(std::get<0>(r.getProducedGood()) == producedGood ){
 
+					double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
+					double selfRelScore = (romanAgent.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
 
-
-				if(Engine::GeneralState::statistics().getUniformDistValue(0,100) < toGet  &&  std::get<0>(r.getProducedGood()) == std::get<0>(romanAgent.getProducedGood())){
-
-					// 			      std::cout<<"max:"<<max_score<< ","<<r.getScore()/max_score<< "," <<(1-romanAgent.getScore()/max_score)<<std::endl;
-					//std::cout<<"good"<<std::get<0>(r.getProducedGood())<<" good "<<std::get<0>(romanAgent.getProducedGood())<<std::endl;
-					if(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < r.getScore()/max_score && (double)Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX <(1-romanAgent.getScore()/max_score) ){
+					// a simple cultural exchange based on my score and the score of the other agents I know
+					if(relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore){
 						reproductionDone = 1;
 						std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
-
-						// 						std::cout<<" done"<<std::endl;
 
 						for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 							std::string ressource= std::get<0>(*ot);
