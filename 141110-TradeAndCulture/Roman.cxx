@@ -944,6 +944,30 @@ namespace Epnet
 
 		targetPtr->killTradesFrom(_id);
 	}
+	
+	//Small function to hard copy all the prices of on agents into another agent
+	void Roman::copyPriceFrom(std::string replacerId)
+	{
+		Agent* uncastedPtr = _world->getAgent(replacerId);
+		if (uncastedPtr == NULL)
+		{
+			std::cout << "function killTradesTo" << std::endl;
+			std::cout << "unable to get requested agent. clean the connection" << std::endl;
+			exit(1);
+		}
+		Roman* replacerPtr = dynamic_cast<Roman*> (uncastedPtr);
+		if (replacerPtr == NULL)
+		{
+			std::cout << "function killTradesTo" << std::endl;
+			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
+			exit(1);
+		}
+	
+		for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = this->listGoods.begin();ot != this->listGoods.end();ot ++){
+			std::string ressource= std::get<0>(*ot);
+			this->setPrice(ressource,replacerPtr->getPrice(ressource));
+		}
+	}
 
 } // namespace Roman
 

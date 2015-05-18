@@ -47,6 +47,7 @@ private:
 	void removeReceivedTrade(std::string source, std::string type, double value, double currency);
 	void removeProposedTrade(std::string source, std::string type, double value, double currency);
 
+
 	void consumeEssentialResources();
 	void checkDeath();
 
@@ -83,7 +84,8 @@ public:
 	void setScore(double value) {_score = value ;};
 
 
-	
+	void copyPriceFrom(std::string replacerId);
+
 	
 	// setup connections
 	void proposeConnectionTo(std::string target);

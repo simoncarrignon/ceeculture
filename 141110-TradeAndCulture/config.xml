@@ -4,10 +4,10 @@
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
 	<numSteps value="30000" serializeResolution="30"/>
 	<size width="1800" height="1"/>
-	<numAgents value="400"/>
+	<numAgents value="250"/>
 	<controller type="basic" >
 		<good type="random"/>
-		<culture transmission="trade" innovation="trade" mutation=".001"/>
+		<culture transmission="random" innovation="random" mutation=".001"/>
 	</controller>
 
 	<goods num="2">

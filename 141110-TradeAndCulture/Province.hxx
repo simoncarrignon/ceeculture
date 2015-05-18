@@ -14,7 +14,6 @@ class Province : public Engine::World
 	void createRasters();
 	void createAgents();
 	void executeTrade(Roman* r);
-	void copyPrice(const std::string replaced, std::string replacer);
 	std::vector<std::string> _typesOfGood;
 	std::vector<std::tuple<std::string,double>> _needs;
 	std::vector<std::tuple<std::string,double>> _maxscore;
