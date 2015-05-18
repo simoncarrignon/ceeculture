@@ -36,7 +36,7 @@ namespace Epnet
 
 
 		// Cultural innovation and transmission
-  
+
 
 		if(_selectionProcess == "random"){
 
@@ -46,14 +46,14 @@ namespace Epnet
 				int agId=Engine::GeneralState::statistics().getUniformDistValue(0,wsize-1) ;
 				std::string rId = allAgents[agId];
 
- 				romanAgent.copyPriceFrom(rId);
+				romanAgent.copyPriceFrom(rId);
 
 			}
 
 		}
 		else{
 
-		//Here do a "I choose a guy of same type given my proba and is proba"
+			//The actual cultural exchange done when trade is on is done as follow: Each roman will look at the other roman 
 			std::random_shuffle(allAgents.begin(),allAgents.end());
 			std::vector< std::string >::iterator it = allAgents.begin();
 			bool reproductionDone = 0;
@@ -68,15 +68,14 @@ namespace Epnet
 					double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
 					double selfRelScore = (romanAgent.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
 
-// 					if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
+					// 					if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
 					// a simple cultural exchange based on my score and the score of the other agents I know
 					if(relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore){
 						reproductionDone = 1;
-
 						romanAgent.copyPriceFrom(r.getId());
 
 					}
-// 					}
+					// 					}
 				}
 				it++;
 
@@ -113,13 +112,13 @@ namespace Epnet
 
 				double oldPrice = romanAgent.getPrice(ressource);
 				if(_innovationProcess == "random")
-					romanAgent.setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX));//*.95
+					romanAgent.setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX));
 				else{
 
 					if(Engine::GeneralState::statistics().getUniformDistValue(0,2) < 1)
-						romanAgent.setPrice(ressource,oldPrice+Engine::GeneralState::statistics().getUniformDistValue(0,50)/1000.0 );//
+						romanAgent.setPrice(ressource,oldPrice+Engine::GeneralState::statistics().getUniformDistValue(0,50)/1000.0 );
 					else
-						romanAgent.setPrice(ressource,oldPrice-(Engine::GeneralState::statistics().getUniformDistValue(0,50))/1000.0);//
+						romanAgent.setPrice(ressource,oldPrice-(Engine::GeneralState::statistics().getUniformDistValue(0,50))/1000.0);
 					if(romanAgent.getPrice(ressource)<0)romanAgent.setPrice(ressource,0.0);
 				}				   
 			}
@@ -131,7 +130,7 @@ namespace Epnet
 
 
 
-	
+
 
 	std::string CulturalAction::describe() const
 	{

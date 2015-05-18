@@ -13,160 +13,161 @@ namespace Epnet
 
 	class AgentController;
 
-class Roman : public Engine::Agent
-{
-	int _resources; // MpiBasicAttribute
-	
-private:
-	std::vector<std::string> proposedConnections;
+	class Roman : public Engine::Agent
+	{
+		int _resources; // MpiBasicAttribute
 
-	void requestConnectionFrom(std::string source);
-	std::vector<std::string> receivedConnections;
+		private:
+		std::vector<std::string> proposedConnections;
 
-	std::vector<std::string> validRcvConnections;
+		void requestConnectionFrom(std::string source);
+		std::vector<std::string> receivedConnections;
 
-	int ackConnectionFrom(std::string target);
-	int nackConnectionFrom(std::string target);
-	std::vector<std::string> validSendConnections;
+		std::vector<std::string> validRcvConnections;
 
-	void receiveMessageFrom(std::string source, std::string msg);
-	std::vector<std::tuple<std::string,std::string> > receivedMessages;
+		int ackConnectionFrom(std::string target);
+		int nackConnectionFrom(std::string target);
+		std::vector<std::string> validSendConnections;
 
-	//type, quantity, maxQuantity, price, need, productionRate
-	std::vector<std::tuple<std::string,double,double,double,double,double> > listGoods;
-	int receiveGoodFrom(std::string source, std::string type, double value);
+		void receiveMessageFrom(std::string source, std::string msg);
+		std::vector<std::tuple<std::string,std::string> > receivedMessages;
 
-	
-	std::vector<std::string> listProducedGoods;
+		//type, quantity, maxQuantity, price, need, productionRate
+		std::vector<std::tuple<std::string,double,double,double,double,double> > listGoods;
+
+		int receiveGoodFrom(std::string source, std::string type, double value);
 
 
-	
-	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
-	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades;
-	int receiveTradeFrom(std::string source, std::string type, double value, double currency);
-	void removeReceivedTrade(std::string source, std::string type, double value, double currency);
-	void removeProposedTrade(std::string source, std::string type, double value, double currency);
+		std::vector<std::string> listProducedGoods;
 
 
-	void consumeEssentialResources();
-	void checkDeath();
 
-	int _maxActions;
-	int _nbTrades;
-	double _score;
-	
-	
-	AgentController* _controller;
-    double _mutationRate;
-
-public:
-	Roman( const std::string & id, std::string controllerType );
-	Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess,std::string innovationProcess);
-
-	virtual ~Roman();
-	
-	void updateState();
-	void selectActions();
-	void updateKnowledge();
-
-	void registerAttributes();
-	void serialize();
-
-	void setResources( int resources );
-	int getResources() const;
-
-	void resetNbTrades();
-	void increaseNbTrades(int value);
-
-	int getMaxActions();
-
-	double getScore() {return _score;};
-	void setScore(double value) {_score = value ;};
+		std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
+		std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades;
+		int receiveTradeFrom(std::string source, std::string type, double value, double currency);
+		void removeReceivedTrade(std::string source, std::string type, double value, double currency);
+		void removeProposedTrade(std::string source, std::string type, double value, double currency);
 
 
-	void copyPriceFrom(std::string replacerId);
+		void consumeEssentialResources();
+		void checkDeath();
 
-	
-	// setup connections
-	void proposeConnectionTo(std::string target);
-	void killConnectionTo(std::string target);
-	std::vector<std::string> getProposedConnections() {return proposedConnections;};
-	std::vector<std::string> getValidSendConnections() {return validSendConnections;};
+		int _maxActions;
+		int _nbTrades;
+		double _score;
 
 
-	void acceptConnectionFrom(std::string source);
-	void refuseConnectionFrom(std::string source);
-	void killConnectionFrom(std::string source);
-	std::vector<std::string> getReceivedConnections() {return receivedConnections;};
-	std::vector<std::string> getValidRcvConnections() {return validRcvConnections;};
+		AgentController* _controller;
+		double _mutationRate;
 
-	void proposeConnectionBetween(std::string source, std::string target);
-	void killConnectionBetween(std::string source, std::string target);
+		public:
+		Roman( const std::string & id, std::string controllerType );
+		Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess,std::string innovationProcess);
 
-	void killConnections(std::string target);
+		virtual ~Roman();
 
-	//message system
-	void sendMessageTo(std::string target, std::string msg);
-	std::vector<std::tuple<std::string,std::string> > getReceivedMessages() {return receivedMessages;};
+		void updateState();
+		void selectActions();
+		void updateKnowledge();
+
+		void registerAttributes();
+		void serialize();
+
+		void setResources( int resources );
+		int getResources() const;
+
+		void resetNbTrades();
+		void increaseNbTrades(int value);
+
+		int getMaxActions();
+
+		double getScore() {return _score;};
+		void setScore(double value) {_score = value ;};
 
 
-	//good system
-	void addGoodType(std::string type,double max,double price,double need,double productionRate);
-	void removeGoodType(std::string type);
-	std::vector<std::tuple<std::string,double,double,double,double,double> > getListGoods() { return listGoods;};
-	std::tuple<double,double,double,double,double> getGood(std::string type);
-
-	void addGood(std::string type,double value);
-	void removeGood(std::string type,double value);
+		void copyPriceFrom(std::string replacerId);
 
 
-	std::tuple<std::string,double,double,double,double,double>  getProducedGood();
+		// setup connections
+		void proposeConnectionTo(std::string target);
+		void killConnectionTo(std::string target);
+		std::vector<std::string> getProposedConnections() {return proposedConnections;};
+		std::vector<std::string> getValidSendConnections() {return validSendConnections;};
 
-	//acess differents values of one ressource
 
-	double getQuantity(std::string type){ return std::get<0>(getGood(type));};
-	double getPrice(std::string type){ return std::get<2>(getGood(type));};
-	double getNeed(std::string type){ return std::get<3>(getGood(type));};
-	double getProductionRate(std::string type){ return std::get<4>(getGood(type));};
-	
-	void setPrice(std::string type,double value);
-	void setQuantity(std::string type, double value);
-	void setNeed(std::string type, double value);
-	void setProductionRate(std::string type, double value);
-	
-	std::vector<std::tuple<std::string,double,double,double,double,double> >  getListGoodsFrom(std::string target);
-	void printInventory();
-	
-	//sending goods
-	void sendGoodTo(std::string target, std::string type, double value);
+		void acceptConnectionFrom(std::string source);
+		void refuseConnectionFrom(std::string source);
+		void killConnectionFrom(std::string source);
+		std::vector<std::string> getReceivedConnections() {return receivedConnections;};
+		std::vector<std::string> getValidRcvConnections() {return validRcvConnections;};
 
-	//trading goods
-	void proposeTradeTo(std::string target, std::string type, double valueGood, double valueCurrency);
-	void acceptTradeFrom(std::string source, std::string type, double valueGood, double valueCurrency);
-	void refuseTradeFrom(std::string source, std::string type, double valueGood, double valueCurrency);
-	
-	std::vector<std::tuple<std::string,std::string,double,double> > getProposedTrades() {return listProposedTrades;};
-	std::vector<std::tuple<std::string,double,double> > getProposedTradesTo(std::string target);
+		void proposeConnectionBetween(std::string source, std::string target);
+		void killConnectionBetween(std::string source, std::string target);
 
-	std::vector<std::tuple<std::string,std::string,double,double> > getReceivedTrades(){return listReceivedTrades;};
-	std::vector<std::tuple<std::string,double,double> > getReceivedTradesFrom(std::string source);
+		void killConnections(std::string target);
 
-	void killTradesTo(std::string source);
-	void killTradesFrom(std::string source);
+		//message system
+		void sendMessageTo(std::string target, std::string msg);
+		std::vector<std::tuple<std::string,std::string> > getReceivedMessages() {return receivedMessages;};
 
-	////////////////////////////////////////////////
-	// This code has been automatically generated //
-	/////// Please do not modify it ////////////////
-	////////////////////////////////////////////////
-	 Roman( void * );
-	void * fillPackage();
-	void sendVectorAttributes(int);
-	void receiveVectorAttributes(int);
-  	////////////////////////////////////////////////
-	//////// End of generated code /////////////////
-	////////////////////////////////////////////////
 
-};
+		//good system
+		void addGoodType(std::string type,double max,double price,double need,double productionRate);
+		void removeGoodType(std::string type);
+		std::vector<std::tuple<std::string,double,double,double,double,double> > getListGoods() { return listGoods;};
+		std::tuple<double,double,double,double,double> getGood(std::string type);
+
+		void addGood(std::string type,double value);
+		void removeGood(std::string type,double value);
+
+
+		std::tuple<std::string,double,double,double,double,double>  getProducedGood();
+
+		//acess differents values of one ressource
+
+		double getQuantity(std::string type){ return std::get<0>(getGood(type));};
+		double getPrice(std::string type){ return std::get<2>(getGood(type));};
+		double getNeed(std::string type){ return std::get<3>(getGood(type));};
+		double getProductionRate(std::string type){ return std::get<4>(getGood(type));};
+
+		void setPrice(std::string type,double value);
+		void setQuantity(std::string type, double value);
+		void setNeed(std::string type, double value);
+		void setProductionRate(std::string type, double value);
+
+		std::vector<std::tuple<std::string,double,double,double,double,double> >  getListGoodsFrom(std::string target);
+		void printInventory();
+
+		//sending goods
+		void sendGoodTo(std::string target, std::string type, double value);
+
+		//trading goods
+		void proposeTradeTo(std::string target, std::string type, double valueGood, double valueCurrency);
+		void acceptTradeFrom(std::string source, std::string type, double valueGood, double valueCurrency);
+		void refuseTradeFrom(std::string source, std::string type, double valueGood, double valueCurrency);
+
+		std::vector<std::tuple<std::string,std::string,double,double> > getProposedTrades() {return listProposedTrades;};
+		std::vector<std::tuple<std::string,double,double> > getProposedTradesTo(std::string target);
+
+		std::vector<std::tuple<std::string,std::string,double,double> > getReceivedTrades(){return listReceivedTrades;};
+		std::vector<std::tuple<std::string,double,double> > getReceivedTradesFrom(std::string source);
+
+		void killTradesTo(std::string source);
+		void killTradesFrom(std::string source);
+
+		////////////////////////////////////////////////
+		// This code has been automatically generated //
+		/////// Please do not modify it ////////////////
+		////////////////////////////////////////////////
+		Roman( void * );
+		void * fillPackage();
+		void sendVectorAttributes(int);
+		void receiveVectorAttributes(int);
+		////////////////////////////////////////////////
+		//////// End of generated code /////////////////
+		////////////////////////////////////////////////
+
+	};
 
 } // namespace Epnet
 

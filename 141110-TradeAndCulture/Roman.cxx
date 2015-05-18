@@ -25,23 +25,23 @@ namespace Epnet
 		_mutationRate=mutationRate;
 	}
 
-	
-	
+
+
 	Roman::~Roman()
 	{
 	}
 
 	void Roman::registerAttributes()
 	{
- 		registerFloatAttribute("scores");
+		registerFloatAttribute("scores");
 		registerFloatAttribute("mu");
 
-	  for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-// 			std::ostringstream oss;
-// 			oss <<std::get<0>(*it) << "_q";
-// 			std::string name=oss.str();
-// 			registerFloatAttribute(name);
+			// 			std::ostringstream oss;
+			// 			oss <<std::get<0>(*it) << "_q";
+			// 			std::string name=oss.str();
+			// 			registerFloatAttribute(name);
 			std::ostringstream ossb;
 			ossb <<std::get<0>(*it) << "_p";
 			std::string name=ossb.str();
@@ -50,21 +50,21 @@ namespace Epnet
 			ossc <<std::get<0>(*it) << "_n";
 			name=ossc.str();
 			registerFloatAttribute(name);
-		
-			
-			
+
+
+
 			/*std::ostringstream ossb;
-			oss <<std::get<0>(*it) << "_q";
-			 registerFloatAttribute(ossb.str());
-			std::ostringstream ossc;
-			oss <<std::get<0>(*it) << "_n";
-			registerFloatAttribute(ossc.str());
-*/
+			  oss <<std::get<0>(*it) << "_q";
+			  registerFloatAttribute(ossb.str());
+			  std::ostringstream ossc;
+			  oss <<std::get<0>(*it) << "_n";
+			  registerFloatAttribute(ossc.str());
+			  */
 		}
-		
-	//	registerIntAttribute("nbConnectionsRcv");
-	//	registerIntAttribute("nbConnectionsSend");
-	//	registerIntAttribute("nbAchievedTrades");		
+
+		//	registerIntAttribute("nbConnectionsRcv");
+		//	registerIntAttribute("nbConnectionsSend");
+		//	registerIntAttribute("nbAchievedTrades");		
 
 	}
 
@@ -74,41 +74,41 @@ namespace Epnet
 		serializeAttribute("mu", (float)_mutationRate);
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-/*			std::ostringstream oss;
-			oss <<std::get<0>(*it) << "_q";
-			std::string name=oss.str();
-			float value =(float)getQuantity(std::get<0>(*it));
+			/*			std::ostringstream oss;
+						oss <<std::get<0>(*it) << "_q";
+						std::string name=oss.str();
+						float value =(float)getQuantity(std::get<0>(*it));
 
-			serializeAttribute(name,value); */
+						serializeAttribute(name,value); */
 			std::ostringstream ossb;
-			 ossb <<std::get<0>(*it) << "_p";
+			ossb <<std::get<0>(*it) << "_p";
 			std::string name=ossb.str();
 			float value =(float)getPrice(std::get<0>(*it));
-			
+
 			serializeAttribute(name,value );
 
 			std::ostringstream ossc;
 			ossc <<std::get<0>(*it) << "_n";
 			name=ossc.str();
 			value =(float)getNeed(std::get<0>(*it));
-			
+
 			serializeAttribute(name,value); 
-	
+
 			/*			std::ostringstream ossb;
-			oss <<std::get<0>(*it) << "_q";
-			serializeAttribute(ossb.str(), (float)getQuantity(std::get<0>(*it)));
-			std::ostringstream ossc;
-			oss <<std::get<0>(*it) << "_n";
-			serializeAttribute(ossc.str(), (float)getNeed(std::get<0>(*it)));
-*/			
+						oss <<std::get<0>(*it) << "_q";
+						serializeAttribute(ossb.str(), (float)getQuantity(std::get<0>(*it)));
+						std::ostringstream ossc;
+						oss <<std::get<0>(*it) << "_n";
+						serializeAttribute(ossc.str(), (float)getNeed(std::get<0>(*it)));
+						*/			
 		}
 
 		//serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
 		//serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
 		//serializeAttribute("nbAchievedTrades", _nbTrades);		
-		
 
-	
+
+
 	}
 
 
@@ -210,7 +210,7 @@ namespace Epnet
 
 
 
-  
+
 
 
 	void Roman::setResources( int resources )
@@ -559,7 +559,7 @@ namespace Epnet
 		return std::make_tuple(-1.0,-1.0,-1.0,-1.0,-1.0);
 	}
 
-	
+
 	//TODO: actually this function return the good that is produced. But should return a vector of goods if there are more than one good produced
 	std::tuple<std::string,double,double,double,double,double>  Roman::getProducedGood()
 	{
@@ -567,7 +567,7 @@ namespace Epnet
 
 		return *it;
 	}
-	
+
 	void Roman::addGood(std::string type,double value)
 	{
 		//check if a good of that type exists in that list
@@ -579,7 +579,7 @@ namespace Epnet
 			std::get<1>(*it) = toSet;
 		}
 	}
-	
+
 	void Roman::setPrice(std::string type,double value)
 	{
 		//check if a good of that type exists in that list
@@ -590,7 +590,7 @@ namespace Epnet
 			std::get<3>(*it) = value;
 		}
 	}
-	
+
 	void Roman::setQuantity(std::string type,double value)
 	{
 		//check if a good of that type exists in that list
@@ -622,10 +622,10 @@ namespace Epnet
 		{
 			std::get<5>(*it) = value;
 		}
-		
+
 	}
 
-	
+
 	void Roman::removeGood(std::string type,double value)
 	{
 		//check if a good of that type exists in that list
@@ -656,19 +656,19 @@ namespace Epnet
 		}
 		return targetPtr->getListGoods();
 	}
-	
+
 	void Roman::printInventory()
 	{
-	  std::cout<<"-------------------------------"<<std::endl;
-	  std::cout<<"Inventory of :"<<_id<<" with score "<<_score<<std::endl;
+		std::cout<<"-------------------------------"<<std::endl;
+		std::cout<<"Inventory of :"<<_id<<" with score "<<_score<<std::endl;
 
-	  for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = this->listGoods.begin() ; it != this->listGoods.end() ; it++)
+		for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = this->listGoods.begin() ; it != this->listGoods.end() ; it++)
 		{
-		  std::cout<<std::get<0>(*it)<<"\t"<<std::get<1>(*it)<<"\t"<<std::get<2>(*it)<<"\t"<<std::get<3>(*it)<<"\t"<<std::get<4>(*it)<<"\t"<<std::get<5>(*it)<<std::endl;
+			std::cout<<std::get<0>(*it)<<"\t"<<std::get<1>(*it)<<"\t"<<std::get<2>(*it)<<"\t"<<std::get<3>(*it)<<"\t"<<std::get<4>(*it)<<"\t"<<std::get<5>(*it)<<std::endl;
 		}
-	  std::cout<<"-------------------------------"<<std::endl;
+		std::cout<<"-------------------------------"<<std::endl;
 
-	  
+
 	}
 
 	void Roman::sendGoodTo(std::string target, std::string type, double value)
@@ -944,7 +944,7 @@ namespace Epnet
 
 		targetPtr->killTradesFrom(_id);
 	}
-	
+
 	//Small function to hard copy all the prices of on agents into another agent
 	void Roman::copyPriceFrom(std::string replacerId)
 	{
@@ -962,7 +962,7 @@ namespace Epnet
 			std::cout << "dynamic_cast from Agent* to Roman* fail" << std::endl;
 			exit(1);
 		}
-	
+
 		for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = this->listGoods.begin();ot != this->listGoods.end();ot ++){
 			std::string ressource= std::get<0>(*ot);
 			this->setPrice(ressource,replacerPtr->getPrice(ressource));

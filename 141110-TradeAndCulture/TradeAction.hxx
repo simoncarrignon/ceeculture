@@ -12,19 +12,19 @@ namespace Engine
 namespace Epnet
 {
 
-class TradeAction : public Engine::Action
-{
-public:
-	TradeAction();
-	virtual ~TradeAction();
-	void execute( Engine::Agent & agent );
-	std::string describe() const;
+	class TradeAction : public Engine::Action
+	{
+		public:
+			TradeAction();
+			virtual ~TradeAction();
+			void execute( Engine::Agent & agent );
+			std::string describe() const;
 
-private:
-    double getRequestedQuantity(Engine::Agent& r, std::string goodWanted);
-	std::string type;
-	int requested;
-};
+		private:
+			double getRequestedQuantity(Engine::Agent& r, std::string goodWanted);
+			std::string type;
+			int requested;
+	};
 
 } // namespace Epnet
 

@@ -38,7 +38,7 @@ namespace Epnet
 			else utilityFunction+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
 
 			
-			//fit= |a-b|/b : that one I cuts it too long right leg.
+			//fit= |a-b|/b : In that one I cut its too long right leg.
 			// 	double cur=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)))/romanAgent.getNeed(good);
 			// 	  if(cur>1)cur=1;
 			// 	 utilityFunction+=cur;

@@ -29,18 +29,18 @@ namespace Epnet
 		std::vector<std::string>::iterator  it = gto.begin();
 
 		std::string offererProducedGood= std::get<0>(offerer.getProducedGood()); 
+
 		//For all type of ressource
 		while(it != gto.end()){	
 
 
 			std::string goodWanted = *it;
 			if(goodWanted != offererProducedGood){
-				std::vector< std::string > exchangeNetwork =offerer.getValidRcvConnections();
 
+				std::vector< std::string > exchangeNetwork =offerer.getValidRcvConnections();
 				std::random_shuffle(exchangeNetwork.begin(),exchangeNetwork.end());
 
 				std::vector< std::string >::iterator itO=exchangeNetwork.begin();
-
 
 				std::tuple< std::string, double, double> bestTrade=std::make_tuple<std::string,double,double>(std::string(""),0,0);
 
@@ -54,8 +54,7 @@ namespace Epnet
 				int noffer=0;
 				bool tradeDone = 0;
 
-				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=100) //TODO:number of max test <nbmax (maybe gintis use it only because of computational limitiation)
-				{
+				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=100){
 					noffer++;
 					Roman & responder = (Roman&)(*world->getAgent(*itO));
 
@@ -69,11 +68,10 @@ namespace Epnet
 
 
 						if( responderTradeWill <= proposedQuantity &&
-						    //( proposedQuantity*responder.getPrice(offererProducedGood) <= requestedQuantity*responder.getPrice(goodWanted)) &&
-						    responder.getQuantity(goodWanted) >= requestedQuantity &&
-						    offerer.getQuantity(offererProducedGood) >= proposedQuantity &&
-						    responder.getQuantity(goodWanted) - requestedQuantity >= responder.getPrice(goodWanted)  &&
-						    responderTradCounter<=requestedQuantity)
+								responder.getQuantity(goodWanted) >= requestedQuantity &&
+								offerer.getQuantity(offererProducedGood) >= proposedQuantity &&
+								responder.getQuantity(goodWanted) - requestedQuantity >= responder.getPrice(goodWanted)  &&
+								responderTradCounter<=requestedQuantity)
 						{
 							if(responderTradeWill<=proposedQuantity)proposedQuantity=responderTradeWill;
 
@@ -82,7 +80,7 @@ namespace Epnet
 								tradeDone=1;
 							}
 						}else{
-						  //trade fail
+							//trade fail
 						}
 
 

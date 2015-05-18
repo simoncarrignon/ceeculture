@@ -51,7 +51,7 @@ namespace Epnet
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 
 
-		//initialize some usefull stuff to know about good : the differents type that exist and the their associated need value
+		//initialize some usefull stuff to know about good : the different types that exist and the their associated need value
 		if(provinceConfig._goodsParam== "random"){
 			for (int i = 0; i < provinceConfig._numGoods ; i++)
 			{
@@ -113,6 +113,7 @@ namespace Epnet
 						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
+
 						//---------------/*
 						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
 						agent->setNeed(goodType,std::get<1>(_needs[i]));
@@ -120,7 +121,7 @@ namespace Epnet
 
 
 
-					//Set producedGood
+					//Set producedGood as a modulo of the agent ID
 					int randg = i%provinceConfig._numGoods;
 					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
 					agent->setProductionRate(std::get<0>(producedGood),1.0);
@@ -131,6 +132,7 @@ namespace Epnet
 					{
 						//id, maxQuantity, price, need and production rate of the good
 						agent->addGoodType(std::get<0>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it),std::get<5>(*it));
+
 						//add init quantity to new good
 						agent->addGood(std::get<0>(*it),std::get<1>(*it));
 

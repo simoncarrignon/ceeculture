@@ -12,18 +12,18 @@ namespace Engine
 namespace Epnet
 {
 
-class ProductionAction : public Engine::Action
-{
-public:
-	ProductionAction();
-	virtual ~ProductionAction();
-	void execute( Engine::Agent & agent );
-	std::string describe() const;
+	class ProductionAction : public Engine::Action
+	{
+		public:
+			ProductionAction();
+			virtual ~ProductionAction();
+			void execute( Engine::Agent & agent );
+			std::string describe() const;
 
-private:
-	std::string type;
-	int requested;
-};
+		private:
+			std::string type;
+			int requested;
+	};
 
 } // namespace Epnet
 
