@@ -33,6 +33,11 @@ namespace Epnet
 		Province & provinceWorld = (Province&) *world;
 
 		std::vector< std::string > allAgents = romanAgent.getValidRcvConnections();
+  
+// 		std::cout<<"network size"<<allAgents.size()<<std::endl;
+// 		for(int i = 0 ; i< allAgents.size();i++)
+// 		    std::cout<<allAgents[i]<<std::endl;
+// 		std::cout<<"---"<<std::endl;
 
 
 		// Cultural innovation and transmission
@@ -40,7 +45,7 @@ namespace Epnet
 
 		if(_selectionProcess == "random"){
 
-			if( (Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0 < _mutationRate){
+			if( (Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0 > _mutationRate){
 
 				int wsize = allAgents.size();
 				int agId=Engine::GeneralState::statistics().getUniformDistValue(0,wsize-1) ;

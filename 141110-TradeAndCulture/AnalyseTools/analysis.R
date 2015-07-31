@@ -209,6 +209,22 @@ getAllMeanRatio<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1,abs=TRUE){
 	return(all)
 }
 
+getFinalRatioVsMu<-function(expeDir,nRess){
+
+	all=c()
+	files=list.files(expeDir,pattern="run_*")
+
+	for ( i in files){
+			file=	paste(expeDir,i,"/agents.csv",sep="")
+			print(file)
+			work=read.csv(file,sep=";")
+			toBind=getMeanRatio(work[work$timeStep == max(work$timeStep),],nRess,timestep=1)
+			orow=cbind(toBind,unique(work$mu))
+			all=rbind(all,orow)
+	}
+	return(all)
+}
+
 
 computeMeanSd<-function(expeDir,nRess,timeA,timeB,numRun){
 

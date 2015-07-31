@@ -7,10 +7,10 @@
 	<numAgents value="250"/>
 	<controller type="basic" >
 		<good type="random"/>
-		<culture transmission="trade" innovation="trade" mutation=".001"/>
+		<culture transmission="random" innovation="random" mutation=".04"/>
 	</controller>
 
-	<goods num="2">
+	<goods num="1">
 		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1.0"	productionRate="0"/>
 	</goods>
 
