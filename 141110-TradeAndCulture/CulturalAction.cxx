@@ -73,7 +73,7 @@ namespace Epnet
 					double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
 					double selfRelScore = (romanAgent.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
 
-					// 					if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
+					// if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
 					// a simple cultural exchange based on my score and the score of the other agents I know
 					if(relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore){
 						reproductionDone = 1;
