@@ -37,8 +37,9 @@ else:
     env.Append(LIBS = 'pandora')
 
 env.Append(CPPPATH = ['.', pandoraPath+'/include'])
+env.Append(CPPPATH = ['/usr/local/hdf5/include/'])
 env.Append(LIBPATH = [pandoraPath+'/lib'])
-env.Append(LIBPATH = ['/usr/local/hdf5/include/'])
+env.Append(LIBPATH = ['/usr/local/hdf5/lib/'])
 
 # add the list of mpi code that must be generated & compiled
 mpiAgentsSrc = ['mpiCode/FactoryCode.cxx']

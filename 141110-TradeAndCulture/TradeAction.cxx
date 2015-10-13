@@ -47,9 +47,9 @@ namespace Epnet
 				//qt is the quantity that of is own produced good the agent is willing to exchange
 
 
-				double requestedQuantity= offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood)-offerer.getQuantity(goodWanted);
+				double requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
 
-				double proposedQuantity = offerer.getPrice(offererProducedGood);
+				double proposedQuantity = offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood);
 
 				int noffer=0;
 				bool tradeDone = 0;
@@ -63,15 +63,14 @@ namespace Epnet
 
 					if(responderProducedGood == goodWanted ){ 
 
-						double responderTradeWill =  responder.getPrice(offererProducedGood)/responder.getPrice(goodWanted)-responder.getQuantity(offererProducedGood); 
-						double responderTradCounter= (responder.getPrice(goodWanted)); 
+						double responderTradeWill =  responder.getPrice(offererProducedGood)-responder.getQuantity(offererProducedGood); 
+						double responderTradCounter= responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
 
-						if( responderTradeWill <= proposedQuantity &&
-								responder.getQuantity(goodWanted) >= requestedQuantity &&
+						if( responderTradeWill <= proposedQuantity && //the quantity offered is at least egual to the quantity the other estim good for him
+								responder.getQuantity(goodWanted) >= requestedQuantity && //
 								offerer.getQuantity(offererProducedGood) >= proposedQuantity &&
-								responder.getQuantity(goodWanted) - requestedQuantity >= responder.getPrice(goodWanted)  &&
-								responderTradCounter<=requestedQuantity)
+								responderTradCounter >= requestedQuantity)
 						{
 							if(responderTradeWill<=proposedQuantity)proposedQuantity=responderTradeWill;
 
@@ -81,6 +80,7 @@ namespace Epnet
 							}
 						}else{
 							//trade fail
+// 						  std::cout<<"blouqé"<<std::endl;
 						}
 
 

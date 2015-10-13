@@ -657,4 +657,6 @@ plot(nratR[,"30000"] ~ nratR[,4],col=nratR$nGood)
 	A=createEverything("~/result/testGoodOnRepA/",timeA=0,timeB=0)
 	A=createEverything("~/result/testGoodOnRepB/",timeA=0,timeB=0)
 
+	a=read.csv("../agents.csv",sep=";")
+	plot(a$scores ~a$timeStep)
     }
