@@ -74,21 +74,37 @@ getMeanRatio<-function(datas,nres,timestep,timeA=0,timeB=0,abs=TRUE){
 	pResN=paste("g",p,"_n",sep="")	
 	print(pRes)
 	for ( i in 0:(nres-1)){
-	    if(i != p){
-		wRes=paste("g",i,"_p",sep="")	
-		wResN=paste("g",i,"_n",sep="")	
-		print(wRes)
-		if(abs)
-		    toBind=tapply(cur[,wRes]-cur[,wResN]*cur[,pResN],cur$timeStep,mean)
-		else
-		    toBind=tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)
-		res=rbind(res,toBind)
-	    }
-	    else{
-		toBind=tapply(cur[,pRes]-cur[,pResN],cur$timeStep,mean)
-		res=rbind(res,toBind)
+	   #### Following the old ratio
+	   # if(i != p){
+	   #     wRes=paste("g",i,"_p",sep="")	
+	   #     wResN=paste("g",i,"_n",sep="")	
+	   #     print(wRes)
+	   #     if(abs)
+	   #         toBind=tapply(cur[,wRes]-cur[,wResN]*cur[,pResN],cur$timeStep,mean)
+	   #     else
+	   #         toBind=tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)
+	   #     res=rbind(res,toBind)
+	   # }
+	   # else{
+	   #     toBind=tapply(cur[,pRes]-cur[,pResN],cur$timeStep,mean)
+	   #     res=rbind(res,toBind)
 
+	   # }
+	   if(i != p){
+	        wRes=paste("g",i,"_p",sep="")	
+	        wResN=paste("g",i,"_n",sep="")	
+	        print(wRes)
+	        toBind=tapply(cur[,wRes]-cur[,wResN],cur$timeStep,mean)
+	        res=rbind(res,toBind)
 	    }
+	    #else{
+	        #if(abs)
+	        #    toBind=tapply(cur[,pRes]-cur[,wResN]*cur[,pResN],cur$timeStep,mean)
+	        #else
+	        #    toBind=tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)
+	        #res=rbind(res,toBind)
+
+	    #}
 	}
     }
     return(res)
@@ -658,5 +674,6 @@ plot(nratR[,"30000"] ~ nratR[,4],col=nratR$nGood)
 	A=createEverything("~/result/testGoodOnRepB/",timeA=0,timeB=0)
 
 	a=read.csv("../agents.csv",sep=";")
-	plot(a$scores ~a$timeStep)
+	dev.off()
+boxplot(a$scores ~a$timeStep)
     }
