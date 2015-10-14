@@ -49,7 +49,7 @@ namespace Epnet
 
 				double requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
 
-				double proposedQuantity = requestedQuantity/offerer.getPrice(offererProducedGood);
+				double proposedQuantity = requestedQuantity*requestedQuantity/offerer.getPrice(offererProducedGood);
 
 				int noffer=0;
 				bool tradeDone = 0;
@@ -64,11 +64,11 @@ namespace Epnet
 					if(responderProducedGood == goodWanted ){ 
 
 						double responderTradeWill =  responder.getPrice(offererProducedGood)-responder.getQuantity(offererProducedGood); 
-						double responderTradCounter= responderTradeWill/(responder.getPrice(goodWanted)); 
+						double responderTradCounter= responderTradeWill*responderTradeWill/(responder.getPrice(goodWanted)); 
 
 
 						if(
-						  responderTradeWill <= proposedQuantity && //the quantity offered is at least egual to the quantity the other estim good for him
+						  responderTradeWill <= proposedQuantity && 				//the quantity offered is at least egual to the quantity the other estim good for him
 						  responder.getQuantity(goodWanted) >= requestedQuantity &&		//the quantity asked is available in the stock of the responder
 						  offerer.getQuantity(offererProducedGood) >= proposedQuantity &&	//the quantity proposed is available in the offerer stock
 						  responderTradCounter >= requestedQuantity				//the quantity asked is less that the value estimated by the responder
@@ -82,7 +82,6 @@ namespace Epnet
 							}
 						}else{
 							//trade fail
-// 						  std::cout<<"blouqé"<<std::endl;
 						}
 
 
