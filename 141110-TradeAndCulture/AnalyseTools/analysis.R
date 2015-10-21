@@ -676,4 +676,47 @@ plot(nratR[,"30000"] ~ nratR[,4],col=nratR$nGood)
 	a=read.csv("../agents.csv",sep=";")
 	dev.off()
 boxplot(a$scores ~a$timeStep)
+
+	newrat1=getAllMeanRatio("~/newcondition1/",3,timestep=50)
+	newrat12=getAllMeanRatio("~/newcondition12/",3,timestep=50)
+
+	newratlast=getAllMeanRatio("~/newconditionlast/",3,timestep=50)
+	newrat=getAllMeanRatio("~/newcondition/",3,timestep=50)
+	colname=read.csv("~/newcondition1/run_0000/agents.csv",sep=";",nrows=1)
+	a=c()
+	expeDir="~/newcondition1/"
+	for(i in list.files(expeDir,pattern="run_*")){
+	    print(i)
+	    a=rbind(a,read.csv(paste(expeDir,i,"/agents.csv",sep=""),sep=";",))
+	}
+	dev.off()
+	par(mfcol=c(2,2))
+	pdf("boxScoreTime.pdf")
+	boxplot((30-a$scores)~a$timeStep,range=0)
+	dev.off()
+	pdf("meanEachGroup.pdf")
+	plotAllClassMean(a,3,100)
+	dev.off()
+	getAllMeanRatio(expeDir,timeStep=100
+
+    }
+
+    getSumPrice<-function(data,nRess){
+
+	res=0
+	for ( j in 0:(nRess-1)){
+	    ressource=paste("g",j,"_n",sep="")
+	    res=res+unique(data[,ressource])
+	}
+	return (res)
+    }
+
+
+    getAllSumPrice<-function(folder,nRess){
+	res=c()
+	allF =list.files(folder,pattern="run_*")
+	for (i in allF){
+	    res=c(res,getSumPrice(read.csv(paste(folder,i,"/agents.csv",sep=""),sep=";"),nRess))
+	}
+	return (res)
     }
