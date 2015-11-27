@@ -15,6 +15,8 @@ namespace Epnet
 		void createAgents();
 		void executeTrade(Roman* r);
 		std::vector<std::string> _typesOfGood;
+		std::map<std::string,std::vector<int>> _listOfProducer;
+
 		std::vector<std::tuple<std::string,double>> _needs;
 		std::vector<std::tuple<std::string,double>> _maxscore;
 		std::vector<std::tuple<std::string,double>> _minscore;

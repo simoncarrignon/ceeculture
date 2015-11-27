@@ -2,7 +2,8 @@
 
 #include <World.hxx>
 #include <Province.hxx>
-
+#include <ctime>
+#include <iostream>
 #include <Logger.hxx>
 
 namespace Epnet
@@ -18,6 +19,9 @@ namespace Epnet
 
 	void TradeAction::execute(Engine::Agent& agent)
 	{
+	  
+	       std::clock_t    start;
+		start = std::clock();
 		Roman & offerer = (Roman&)agent;
 		Engine::World * world = agent.getWorld();
 		Province & provinceWorld = (Province&) *world;
@@ -113,7 +117,7 @@ namespace Epnet
 
 			it++;
 		}
-
+//      std::cout << "tradetime," << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << ","<< world->getCurrentTimeStep()<<std::endl;
 
 
 

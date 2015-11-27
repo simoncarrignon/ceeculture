@@ -64,7 +64,8 @@ namespace Epnet
 
 		//	registerIntAttribute("nbConnectionsRcv");
 		//	registerIntAttribute("nbConnectionsSend");
-		//	registerIntAttribute("nbAchievedTrades");		
+		//	registerIntAttribute("nbAchievedTrades");
+		registerStringAttribute("p_good");
 
 	}
 
@@ -102,6 +103,7 @@ namespace Epnet
 						serializeAttribute(ossc.str(), (float)getNeed(std::get<0>(*it)));
 						*/			
 		}
+		serializeAttribute("p_good", std::get<0>(getProducedGood()));
 
 		//serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
 		//serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());

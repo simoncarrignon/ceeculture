@@ -10,6 +10,7 @@
 #include <GeneralState.hxx>
 #include <Logger.hxx>
 #include <Scheduler.hxx>
+#include <map>
 
 namespace Epnet
 {
@@ -63,6 +64,7 @@ namespace Epnet
 				_maxscore.push_back(std::make_tuple(goodType,0.0));
 				_minscore.push_back(std::make_tuple(goodType,0.0));
 				_typesOfGood.push_back(goodType);
+				_listOfProducer.insert(std::pair<std::string,std::vector<int>>(goodType,{}));
 			}	  
 		}
 		else
@@ -76,7 +78,10 @@ namespace Epnet
 				_maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
 				_minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
 				_typesOfGood.push_back(std::get<0>(*it));
+				_listOfProducer.insert(std::pair<std::string,std::vector<int>>(std::get<0>(*it),{}));
 
+
+				
 			}
 		}	
 
@@ -97,11 +102,11 @@ namespace Epnet
 				{
 
 					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
-					for (int i = 0; i < provinceConfig._numGoods ; i++)
+					for (int g = 0; g < provinceConfig._numGoods ; g++)
 					{
 
 						std::ostringstream sgoodType;
-						sgoodType << "g"<< i;				
+						sgoodType << "g"<< g;				
 						std::string goodType = sgoodType.str();
 						//id, maxQuantity, price, need and production rate of the good
 						agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood));
@@ -116,7 +121,7 @@ namespace Epnet
 
 						//---------------/*
 						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
-						agent->setNeed(goodType,std::get<1>(_needs[i]));
+						agent->setNeed(goodType,std::get<1>(_needs[g]));
 					}			
 
 
@@ -125,6 +130,7 @@ namespace Epnet
 					int randg = i%provinceConfig._numGoods;
 					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
 					agent->setProductionRate(std::get<0>(producedGood),1.0);
+// 					_listOfProducer.
 
 				}
 				else{
@@ -161,6 +167,7 @@ namespace Epnet
 					std::ostringstream ossb;
 					ossb << "Roman_" << j;
 					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
+					
 				}
 			}
 		}

@@ -65,7 +65,16 @@ void NoState::apply( const Engine::SimulationRecord & simRecord, const std::stri
 	Engine::SimulationRecord::AgentTypesMap::const_iterator at=simRecord.beginTypes();
 	const Engine::SimulationRecord::AgentRecordsMap & agentRecords = at->second;
 	Engine::AgentRecord * anAgent = (agentRecords.begin()->second);
+	
 	for(Engine::AgentRecord::FloatAttributesMap::const_iterator itB = anAgent->beginFloat();itB != anAgent->endFloat();itB++ ){
+
+
+		header << _separator << itB->first;
+
+
+	}
+
+	for(Engine::AgentRecord::StrAttributesMap::const_iterator itB = anAgent->beginStr();itB != anAgent->endStr();itB++ ){
 
 
 		header << _separator << itB->first;
@@ -90,6 +99,13 @@ void NoState::apply( const Engine::SimulationRecord & simRecord, const std::stri
 				newLine << _separator << (itA->first);
 				Engine::AgentRecord * a = (itA->second);
 				for(Engine::AgentRecord::FloatAttributesMap::const_iterator itB = a->beginFloat();itB != a->endFloat();itB++ ){
+
+
+					newLine<< _separator <<(itB->second)[i/simRecord.getFinalResolution()];
+
+
+				}
+				for(Engine::AgentRecord::StrAttributesMap::const_iterator itB = a->beginStr();itB != a->endStr();itB++ ){
 
 
 					newLine<< _separator <<(itB->second)[i/simRecord.getFinalResolution()];

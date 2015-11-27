@@ -91,27 +91,35 @@ getMeanRatio<-function(datas,nres,timestep,timeA=0,timeB=0,abs=TRUE){
 
 	   # }
 	   if(i != p){
-	        wRes=paste("g",i,"_p",sep="")	
-	        wResN=paste("g",i,"_n",sep="")	
-	        print(wRes)
-	        toBind=tapply(cur[,wRes]-cur[,wResN],cur$timeStep,mean)
+	   #     wRes=paste("g",i,"_p",sep="")	
+	   #     wResN=paste("g",i,"_n",sep="")	
+	   #     print(wRes)
+	   #     toBind=tapply(cur[,wRes]-cur[,wResN],cur$timeStep,mean)
+	   #     res=rbind(res,toBind)
+	    }
+	    else{
+	        ni=c()
+	        for ( o in 0:(nres-1)){
+	            if(o != p){
+	        	wResN=paste("g",o,"_n",sep="")	
+	        	ni=c(ni,unique(cur[,wResN]))
+	            }
+	        }
+
+	        nP=unique(cur[,pResN])
+	        opt=prodOpt(nP,ni)
+	        print(opt)
+	        print(nP)
+	        toBind=tapply(cur[,pRes]-opt,cur$timeStep,mean)
 	        res=rbind(res,toBind)
 	    }
-	    #else{
-	        #if(abs)
-	        #    toBind=tapply(cur[,pRes]-cur[,wResN]*cur[,pResN],cur$timeStep,mean)
-	        #else
-	        #    toBind=tapply(cur[,wRes]/cur[,pRes]-cur[,wResN],cur$timeStep,mean)
-	        #res=rbind(res,toBind)
-
-	    #}
 	}
     }
     return(res)
 }
 
 
-plotAllClassMean=function(datas,ngoods,timeStep,...){
+plotAllClassMeanI=function(datas,ngoods,timeStep,...){
 
     oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,0)
     avg=tapply(10*ngoods-oneClass$scores,oneClass$timeStep,mean)
@@ -128,6 +136,26 @@ plotAllClassMean=function(datas,ngoods,timeStep,...){
 	arrows(x, avg-sdev, x, avg+sdev, length=0.01, angle=90, code=3,col=i+1)
 
     }
+    legend("bottomleft",legend=0:(ngoods-1),col=c(1:ngoods),lty=1)
+
+}
+plotAllClassMean=function(datas,timeStep=1,...){
+
+    allgoods=levels(datas$p_good)
+    ngoods=length(allgoods)
+    j=0
+    plot(c(0,max(datas$timeStep)),c(1,1),ylim=c(0,ngoods*10),type="n")
+    for( i in allgoods){
+	oneClass=datas[datas$timeStep %% timeStep == 0 & datas$p_good == i,]
+	avg=	tapply(10*ngoods-oneClass$scores,oneClass$timeStep,mean)
+	sdev=	tapply(10*ngoods-oneClass$scores,oneClass$timeStep,sd)
+	points(avg~names(avg),ylim=c(20,40),type="o",pch=j,col=j+1)
+	x=as.numeric(names(avg))
+	arrows(x, avg-sdev, x, avg+sdev, length=0.01, angle=90, code=3,col=j+1)
+	j=j+1
+
+    }
+    legend("bottomleft",legend=allgoods,col=1:ngoods,lty=1)
 }
 
 boxAllClass=function(datas,ngoods,timeStep,...){
@@ -218,6 +246,7 @@ createEverything<-function(expeDir,timeA=0,timeB=0){
     return(all)
 }
 
+#Return a table with all ratio mean for each file of the dir expedir
 getAllMeanRatio<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1,abs=TRUE){
 
     all=c()
@@ -232,6 +261,49 @@ getAllMeanRatio<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1,abs=TRUE){
     }
     return(all)
 }
+
+getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1){
+
+    all=c()
+    files=list.files(expeDir,pattern="run_*")
+
+    for ( i in files){
+	file=	paste(expeDir,i,"/agents.csv",sep="")
+	print(file)
+	work=read.csv(file,sep=";")
+	work=work[work$timeStep %% timestep == 0,]
+	toBind=tapply(work$scores,work$timeStep,mean)
+	all=rbind(all,toBind)
+    }
+    return(all)
+}
+
+getAllFinalCharac<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1){
+
+    all=data.frame()
+    files=list.files(expeDir,pattern="run_*")
+
+    rname=c()
+    for ( i in files){
+	file=	paste(expeDir,i,"/agents.csv",sep="")
+	print(file)
+	rname=c(rname,i)
+	work=read.csv(file,sep=";")
+	maxt=max(work$timeStep)
+	tBind=mean(work$score[work$timeStep == maxt])
+	tbName="score_mean"
+	for ( j in 0:(nRess-1)){
+	    ressource=paste("g",j,"_n",sep="")
+	    tBind=cbind(tBind,unique(work[,ressource]))
+	    tbName=c(tbName,ressource)
+	}
+	all=rbind(all,tBind)
+    }
+    colnames(all)=tbName
+    rownames(all)=rname
+    return(all)
+}
+
 
 getFinalRatioVsVar<-function(expeDir,Var){
 
@@ -679,6 +751,7 @@ boxplot(a$scores ~a$timeStep)
 
 	newrat1=getAllMeanRatio("~/newcondition1/",3,timestep=50)
 	newrat12=getAllMeanRatio("~/newcondition12/",3,timestep=50)
+	longRat=getAllMeanRatio("~/long/",3)
 
 	newratlast=getAllMeanRatio("~/newconditionlast/",3,timestep=50)
 	newrat=getAllMeanRatio("~/newcondition/",3,timestep=50)
@@ -687,18 +760,63 @@ boxplot(a$scores ~a$timeStep)
 	expeDir="~/newcondition1/"
 	for(i in list.files(expeDir,pattern="run_*")){
 	    print(i)
-	    a=rbind(a,read.csv(paste(expeDir,i,"/agents.csv",sep=""),sep=";",))
+	    temp=read.csv(paste(expeDir,i,"/agents.csv",sep=""),sep=";")
+	    a=rbind(a,temp[temp$timeStep %% 100 ==0,])
 	}
-	dev.off()
-	par(mfcol=c(2,2))
 	pdf("boxScoreTime.pdf")
-	boxplot((30-a$scores)~a$timeStep,range=0)
+	boxplot((30-a$scores)~a$timeStep,outline=F,ylim=c(0,30))
 	dev.off()
 	pdf("meanEachGroup.pdf")
 	plotAllClassMean(a,3,100)
 	dev.off()
-	getAllMeanRatio(expeDir,timeStep=100
+	rat=getAllMeanRatio(expeDir,3,timestep=100)
+	pdf("meanRatio.pdf")
+	boxplot(rat,outline=F)
+	dev.off()
 
+
+	b=getAllMeanScore("~/long/",timestep=1)
+	bf=getAllFinalCharac("~/long/",3)
+	l=cbind(bf,apply(bf[,2:ncol(bf)],1, rapMin))
+	plot(bf$score_mean ~ apply(bf[,2:ncol(bf)],1, rapMin))
+
+apply(a[,2:ncol(a)],1,function(x) sum(x)/prod(x))
+
+	ex=ex[ex$timeStep %% 1000 == 0,]
+
+	g0=allClass(ex,3,0)
+	ni0=c(unique(g0$g1_n),unique(g0$g2_n))
+	n0=unique(g0$g0_n)
+	opt0=prodOpt(n0,ni0)
+	plot((g0$g0_p-opt0)~g0$timeStep,ylim=c(-1,1))
+
+	g1=allClass(ex,3,1)
+	ni1=c(unique(g1$g0_n),unique(g1$g2_n))
+	n1=unique(g1$g1_n)
+	opt1=prodOpt(n1,ni1)
+	points((g1$g1_p-opt1)~g1$timeStep)
+
+	g2=allClass(ex,3,2)
+	ni2=c(unique(g2$g0_n),unique(g2$g1_n))
+	n2=unique(g2$g2_n)
+	opt2=prodOpt(n2,ni2)
+	points((g2$g1_p-opt2)~g2$timeStep)
+
+	plot(tapply((30-ex$score),ex$timeStep,mean)~as.numeric(unique(ex$timeStep)),type="l",col="red")
+	rex=getMeanRatio(ex,3,1)
+	boxplot(rex)
+
+	boxplot(ex$score ~ex$timeStep)
+	par(new=T)
+	plotAllClassMean(ex,3,1)
+
+    }
+    rapMin <- function(x){
+	a=vapply(seq_along(x),function(i)x[i]/sum(x[-1]),numeric(1))
+	min(a)/max(a)
+    }
+    prodOpt <- function(np,ni){
+	return(sum(ni*ni)/(length(ni)*np))
     }
 
     getSumPrice<-function(data,nRess){
