@@ -9,6 +9,7 @@ if(require("poweRlaw")){library(poweRlaw)}
 
 
 fitness<-function(p1,b1){1-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
+#mariofit<-function(p1,b1){if(p11-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
 #fitness=function(p1,b1){tan(p1^2-b1^2)/(b1/p1)}
 #fitness=function(p1,b1){abs(p1-b1)/b1}
 
@@ -113,6 +114,48 @@ getMeanRatio<-function(datas,nres,timestep,timeA=0,timeB=0,abs=TRUE){
 	        toBind=tapply(cur[,pRes]-opt,cur$timeStep,mean)
 	        res=rbind(res,toBind)
 	    }
+	}
+    }
+    return(res)
+}
+
+
+getMeanRatio2<-function(datas,timestep=1,timeA=0,timeB=0){
+
+    res=c()
+    datas=datas[datas$timeStep %% timestep == 0,]
+
+    if(timeB>timeA)
+	datas=datas[datas$timeStep >timeA & datas$timeStep < timeB ,]
+    for(p in levels(datas$p_good)){
+	cur=datas[datas$p_good == p,]
+	pRes=paste(p,"_p",sep="")	
+	pResN=paste(p,"_n",sep="")	
+	print(pRes)
+	for(i in levels(cur$p_good)){
+	    if(i != p){
+		wRes=paste(i,"_p",sep="")	
+		wResN=paste(i,"_n",sep="")	
+		print(wRes)
+		toBind=tapply(cur[,wRes]-cur[,wResN],cur$timeStep,mean)
+		res=rbind(res,toBind)
+	    }
+	    #else{
+	    #    ni=c()
+	    #    for ( o in 0:(nres-1)){
+	    #        if(o != p){
+	    #    	wResN=paste("g",o,"_n",sep="")	
+	    #    	ni=c(ni,unique(cur[,wResN]))
+	    #        }
+	    #    }
+
+	    #    nP=unique(cur[,pResN])
+	    #    opt=prodOpt(nP,ni)
+	    #    print(opt)
+	    #    print(nP)
+	    #    toBind=tapply(cur[,pRes]-opt,cur$timeStep,mean)
+	    #    res=rbind(res,toBind)
+	    #}
 	}
     }
     return(res)
@@ -256,7 +299,7 @@ getAllMeanRatio<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1,abs=TRUE){
 	file=	paste(expeDir,i,"/agents.csv",sep="")
 	print(file)
 	work=read.csv(file,sep=";")
-	toBind=getMeanRatio(work,nRess,timestep,timeA=timeA,timeB=timeB,abs=abs)
+	toBind=getMeanRatio2(work,timestep,timeA=timeA,timeB=timeB)
 	all=rbind(all,toBind)
     }
     return(all)
