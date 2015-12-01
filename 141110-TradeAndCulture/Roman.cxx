@@ -38,13 +38,13 @@ namespace Epnet
 
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-			// 			std::ostringstream oss;
-			// 			oss <<std::get<0>(*it) << "_q";
-			// 			std::string name=oss.str();
-			// 			registerFloatAttribute(name);
+			std::ostringstream oss;
+			oss <<std::get<0>(*it) << "_q";
+			std::string name=oss.str();
+			registerFloatAttribute(name);
 			std::ostringstream ossb;
 			ossb <<std::get<0>(*it) << "_p";
-			std::string name=ossb.str();
+			name=ossb.str();
 			registerFloatAttribute(name);
 			std::ostringstream ossc;
 			ossc <<std::get<0>(*it) << "_n";
@@ -75,24 +75,22 @@ namespace Epnet
 		serializeAttribute("mu", (float)_mutationRate);
 		for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 		{
-			/*			std::ostringstream oss;
-						oss <<std::get<0>(*it) << "_q";
-						std::string name=oss.str();
-						float value =(float)getQuantity(std::get<0>(*it));
+			std::ostringstream oss;
+			oss <<std::get<0>(*it) << "_q";
+			std::string name=oss.str();
+			float value =(float)getQuantity(std::get<0>(*it));
+			serializeAttribute(name,value); 
 
-						serializeAttribute(name,value); */
 			std::ostringstream ossb;
 			ossb <<std::get<0>(*it) << "_p";
-			std::string name=ossb.str();
-			float value =(float)getPrice(std::get<0>(*it));
-
+			name=ossb.str();
+			value =(float)getPrice(std::get<0>(*it));
 			serializeAttribute(name,value );
 
 			std::ostringstream ossc;
 			ossc <<std::get<0>(*it) << "_n";
 			name=ossc.str();
 			value =(float)getNeed(std::get<0>(*it));
-
 			serializeAttribute(name,value); 
 
 			/*			std::ostringstream ossb;

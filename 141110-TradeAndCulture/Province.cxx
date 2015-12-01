@@ -45,22 +45,22 @@ namespace Epnet
 
 	void Province::createAgents()
 	{
-
-
 		std::stringstream logName;
 		logName << "agents_" << getId();
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 
+			double all_needs=0.0;
 
 		//initialize some usefull stuff to know about good : the different types that exist and the their associated need value
 		if(provinceConfig._goodsParam== "random"){
 			for (int i = 0; i < provinceConfig._numGoods ; i++)
 			{
-
+		  		double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+				all_needs += tneed;
 				std::ostringstream sgoodType;
 				sgoodType << "g"<< i;				
 				std::string goodType = sgoodType.str();
-				_needs.push_back(std::make_tuple(goodType,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,100))/100.0));  
+				_needs.push_back(std::make_tuple(goodType,tneed));  
 				_maxscore.push_back(std::make_tuple(goodType,0.0));
 				_minscore.push_back(std::make_tuple(goodType,0.0));
 				_typesOfGood.push_back(goodType);
@@ -70,11 +70,13 @@ namespace Epnet
 		else
 		{
 			//In that case each good and the properties of thoses good have to be manually set by the user in the config file
-
-
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 			{
-				_needs.push_back(std::make_tuple(std::get<0>(*it),(double)(Engine::GeneralState::statistics().getUniformDistValue(0,100))/100.0));  
+			  	double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+
+			  	all_needs += tneed;
+			
+				_needs.push_back(std::make_tuple(std::get<0>(*it),tneed));  
 				_maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
 				_minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
 				_typesOfGood.push_back(std::get<0>(*it));
@@ -83,7 +85,20 @@ namespace Epnet
 
 				
 			}
+			 
+			
+			  
 		}	
+		bool prop=true;
+			if( prop){
+			
+			  for (auto it = _needs.begin(); it != _needs.end() ; it++){
+			    double p = std::get<1>(*it);
+			    *it=std::make_tuple(std::get<0>(*it),p/all_needs);
+			       
+			  }
+			}
+			  
 
 		for(int i=0; i<provinceConfig._numAgents; i++)
 		{
