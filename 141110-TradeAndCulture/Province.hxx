@@ -33,7 +33,8 @@ namespace Epnet
 		double getMinScore(std::string good);
 		void setMinScore(std::string good,double score);
 
-
+		void printListOfProd(std::string s);//print all producer of the good "s"
+	 
 		void proposeConnection(std::string source, std::string target);
 		void buildConnection(std::string source, std::string target);
 		void killConnection(std::string source, std::string target);

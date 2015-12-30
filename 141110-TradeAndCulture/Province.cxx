@@ -89,7 +89,8 @@ namespace Epnet
 			
 			  
 		}	
-		bool prop=true;
+		
+		bool prop=false ;
 			if( prop){
 			
 			  for (auto it = _needs.begin(); it != _needs.end() ; it++){
@@ -145,7 +146,7 @@ namespace Epnet
 					int randg = i%provinceConfig._numGoods;
 					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
 					agent->setProductionRate(std::get<0>(producedGood),1.0);
-// 					_listOfProducer.
+					_listOfProducer[std::get<0>(producedGood)].push_back(i);
 
 				}
 				else{
@@ -186,9 +187,21 @@ namespace Epnet
 				}
 			}
 		}
-
+/*
+		for( std::vector<std::string>::iterator it= _typesOfGood.begin() ; it!=_typesOfGood.end(); it++){
+		  std::cout<<"good "<<*it<<std::endl;
+		  printListOfProd(*it);
+		  
+		}*/
+	   
+	  
 	}
 
+ 	 void Province::createSocialNetworks(){
+	   
+	   
+ 	 }
+	 
 	double Province::getMaxScore(std::string good)
 	{
 		std::vector< std::tuple< std::string, double > >::iterator it = _maxscore.begin();
@@ -311,7 +324,18 @@ namespace Epnet
 	}
 
 
+	void Province::printListOfProd(std::string s){
+	  
+	  std::vector<int> allprod= _listOfProducer[s];
 
+	   std::cout<<allprod.size()<<std::endl;
+	  std::cout<<"The producers of the good g"<<s<<" are :"<<std::endl;
+	 
+	  for (std::vector<int>::iterator it = allprod.begin(); it != allprod.end() ; it++)
+	    std::cout<<" "<<*it;
+	  std::cout<<std::endl;
+
+	}
 
 
 

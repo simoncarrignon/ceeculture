@@ -294,7 +294,7 @@ createEverything<-function(expeDir,timeA=0,timeB=0){
 }
 
 #Return a table with all ratio mean for each file of the dir expedir
-getAllMeanRatio<-function(expeDir,nRess,timeA=0,timeB=0,timestep=1,abs=TRUE){
+getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1){
 
     all=c()
     files=list.files(expeDir,pattern="run_*")
