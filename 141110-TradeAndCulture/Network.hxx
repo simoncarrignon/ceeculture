@@ -22,21 +22,24 @@
 
 #include <vector>
 #include <ostream>
+#include <map>
 
 namespace Epnet
 {
 	class Network
 	{
 		std::vector<std::string> _nodeNames;
+		std::map< std::string, std::vector< std::string > >  _node2Neighbours;
 	public:
 		Network();
 		Network(std::vector< std::string > nodes);
+		Network(std::vector< std::string > nodes,int nnb);
 		~Network();
 		Network& operator=(const Network& other);
 		bool operator==(const Network& other) const;
 		
 		friend std::ostream& operator<<(std::ostream& os, const Epnet::Network& n);
-		std::vector<std::string> getNeighboursOf(std::string arg1);
+		std::vector<std::string> getNeighboursOf(std::string nodeName);
 	};
 } //namespace Epnet
 

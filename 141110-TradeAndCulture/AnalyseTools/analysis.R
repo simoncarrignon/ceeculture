@@ -7,7 +7,6 @@ if(require("poweRlaw")){library(poweRlaw)}
 
 
 
-
 fitness<-function(p1,b1){1-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
 mariofit<-function(p1,b1=.5){
     if(p1>=b1)
@@ -166,26 +165,8 @@ getMeanRatio2<-function(datas,timestep=1,timeA=0,timeB=0){
 }
 
 
-plotAllClassMeanI=function(datas,ngoods,timeStep,...){
 
-    oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,0)
-    avg=tapply(10*ngoods-oneClass$scores,oneClass$timeStep,mean)
-    sdev=tapply(10*ngoods-oneClass$scores,oneClass$timeStep,sd)
-    plot(avg~names(avg),ylim=c(0,ngoods*10),type="o",pch=1,col=1)
-    x=as.numeric(names(avg))
-    arrows(x, avg-sdev, x, avg+sdev, length=0.01, angle=90, code=3,col=1)
-    for( i in 1:(ngoods-1)){
-	oneClass=allClass(datas[datas$timeStep %% timeStep == 0,],ngoods,i)
-	avg=	tapply(10*ngoods-oneClass$scores,oneClass$timeStep,mean)
-	sdev=	tapply(10*ngoods-oneClass$scores,oneClass$timeStep,sd)
-	points(avg~names(avg),ylim=c(20,40),type="o",pch=i,col=i+1)
-	x=as.numeric(names(avg))
-	arrows(x, avg-sdev, x, avg+sdev, length=0.01, angle=90, code=3,col=i+1)
-
-	legend("bottomleft",legend=0:(ngoods-1),col=c(1:ngoods),lty=1)
-
-    }
-}
+##This function plot mean score for each producer group during time
 plotAllClassMean=function(datas,timeStep=1,...){
 
     allgoods=levels(datas$p_good)
@@ -199,6 +180,21 @@ plotAllClassMean=function(datas,timeStep=1,...){
 	points(avg~names(avg),ylim=c(20,40),type="o",pch=j,col=j+1)
 	x=as.numeric(names(avg))
 	arrows(x, avg-sdev, x, avg+sdev, length=0.01, angle=90, code=3,col=j+1)
+	j=j+1
+
+    }
+    legend("bottomleft",legend=allgoods,col=1:ngoods,lty=1)
+}
+
+plotAllClass=function(datas,timeStep=1,...){
+
+    allgoods=levels(datas$p_good)
+    ngoods=length(allgoods)
+    j=0
+    plot(c(0,max(datas$timeStep)),c(1,1),ylim=c(0,ngoods*10),type="n")
+    for( i in allgoods){
+	oneClass=datas[datas$timeStep %% timeStep == 0 & datas$p_good == i,]
+	points(10*ngoods-oneClass$score~oneClass$timeStep,ylim=c(20,40),col=j+1)
 	j=j+1
 
     }
@@ -893,7 +889,7 @@ getColors=function(datas){
     return(cgood)
 }
 
-plot(c$g0_q ~ c$timeStep, col=cg[c$p_good])
+#plot(c$g0_q ~ c$timeStep, col=cg[c$p_good])
 
 
 

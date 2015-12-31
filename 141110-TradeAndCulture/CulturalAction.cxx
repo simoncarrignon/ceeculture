@@ -70,6 +70,7 @@ namespace Epnet
 			{
 				if(*it != romanAgent.getId()){
 				Roman & r= (Roman&)(*world->getAgent(*it));
+				//should be good : they are all from same producedGood
 				if(std::get<0>(r.getProducedGood()) == producedGood ){
 
 					double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));

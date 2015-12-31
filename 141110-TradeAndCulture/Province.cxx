@@ -211,7 +211,7 @@ namespace Epnet
 		for (std::map< std::string, std::vector< std::string > >::iterator it = _good2Producers.begin(); it != _good2Producers.end();it++) {
 				
 			std::vector<std::string> groupOfproducer = it->second;
-			Network n = Network(groupOfproducer);
+			Network n = Network(groupOfproducer,1);
 			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
 			//printListOfProd(it->first);
 
