@@ -10,10 +10,12 @@
 #include <GeneralState.hxx>
 #include <Logger.hxx>
 #include <Scheduler.hxx>
+#include <Network.hxx>
 #include <map>
 
 namespace Epnet
 {
+	
 
 	Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, false)
 	{
@@ -64,7 +66,8 @@ namespace Epnet
 				_maxscore.push_back(std::make_tuple(goodType,0.0));
 				_minscore.push_back(std::make_tuple(goodType,0.0));
 				_typesOfGood.push_back(goodType);
-				_listOfProducer.insert(std::pair<std::string,std::vector<int>>(goodType,{}));
+				_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+//				_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
 			}	  
 		}
 		else
@@ -80,7 +83,7 @@ namespace Epnet
 				_maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
 				_minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
 				_typesOfGood.push_back(std::get<0>(*it));
-				_listOfProducer.insert(std::pair<std::string,std::vector<int>>(std::get<0>(*it),{}));
+				_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(std::get<0>(*it),{}));
 
 
 				
@@ -146,7 +149,7 @@ namespace Epnet
 					int randg = i%provinceConfig._numGoods;
 					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
 					agent->setProductionRate(std::get<0>(producedGood),1.0);
-					_listOfProducer[std::get<0>(producedGood)].push_back(i);
+					_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				}
 				else{
@@ -187,6 +190,10 @@ namespace Epnet
 				}
 			}
 		}
+		
+		createCulturalNetwork();
+		
+		//printAllCulturalNerwork();
 /*
 		for( std::vector<std::string>::iterator it= _typesOfGood.begin() ; it!=_typesOfGood.end(); it++){
 		  std::cout<<"good "<<*it<<std::endl;
@@ -197,11 +204,35 @@ namespace Epnet
 	  
 	}
 
- 	 void Province::createSocialNetworks(){
-	   
-	   
- 	 }
-	 
+	
+	//Create social network for all productors groups and set it for all agents
+	void Province::createCulturalNetwork(){
+		
+		for (std::map< std::string, std::vector< std::string > >::iterator it = _good2Producers.begin(); it != _good2Producers.end();it++) {
+				
+			std::vector<std::string> groupOfproducer = it->second;
+			Network n = Network(groupOfproducer);
+			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
+			//printListOfProd(it->first);
+
+			for (std::vector<std::string>::iterator producer = groupOfproducer.begin(); producer != groupOfproducer.end(); producer++){
+				
+				Roman* romanProducer = dynamic_cast<Roman*> (getAgent(*producer));
+				if (romanProducer == NULL)
+				{
+					std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+					exit(1);
+				}
+				romanProducer->setListOfCulturalNeighbours( n.getNeighboursOf(*producer));
+				
+			}
+		}
+		
+		
+		
+	}
+  	 
+ 	 	 
 	double Province::getMaxScore(std::string good)
 	{
 		std::vector< std::tuple< std::string, double > >::iterator it = _maxscore.begin();
@@ -323,18 +354,27 @@ namespace Epnet
 		targetPtr->proposeConnectionTo(source);
 	}
 
-
+	
 	void Province::printListOfProd(std::string s){
-	  
-	  std::vector<int> allprod= _listOfProducer[s];
-
-	   std::cout<<allprod.size()<<std::endl;
-	  std::cout<<"The producers of the good g"<<s<<" are :"<<std::endl;
-	 
-	  for (std::vector<int>::iterator it = allprod.begin(); it != allprod.end() ; it++)
-	    std::cout<<" "<<*it;
-	  std::cout<<std::endl;
-
+		
+		std::vector<std::string> allprod= _good2Producers[s];
+		
+		std::cout<<allprod.size()<<std::endl;
+		std::cout<<"The producers of the good g"<<s<<" are :"<<std::endl;
+		
+		for (std::vector<std::string>::iterator it = allprod.begin(); it != allprod.end() ; it++)
+			std::cout<<" "<<*it;
+		std::cout<<std::endl;
+		
+	}
+	
+	void Province::printAllCulturalNerwork(){
+		
+		for(std::map< std::string, Network >::iterator it= _good2CulturalNetwork.begin();it!=_good2CulturalNetwork.end();it++)
+		{
+			std::cout<<"The network of producers of"<<it->first<<" is :"<<it->second<<std::endl;
+			
+		}
 	}
 
 
@@ -368,4 +408,5 @@ namespace Epnet
 	}
 
 } // namespace Roman
+
 

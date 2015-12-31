@@ -40,6 +40,7 @@ namespace Epnet
 
 		std::vector<std::string> listProducedGoods;
 
+		std::vector<int> _culturalNetwork;
 
 
 		std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
@@ -59,6 +60,7 @@ namespace Epnet
 
 		AgentController* _controller;
 		double _mutationRate;
+		std::vector< std::string > _culturalNeighbours;
 
 		public:
 		Roman( const std::string & id, std::string controllerType );
@@ -154,6 +156,8 @@ namespace Epnet
 
 		void killTradesTo(std::string source);
 		void killTradesFrom(std::string source);
+		void setListOfCulturalNeighbours(std::vector<std::string> neighbours );
+		std::vector<std::string> getListOfCulturalNeighbours();
 
 		////////////////////////////////////////////////
 		// This code has been automatically generated //

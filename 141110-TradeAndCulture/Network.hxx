@@ -20,15 +20,24 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-class Network
+#include <vector>
+#include <ostream>
+
+namespace Epnet
 {
-	std::vector<int> nodes;
-public:
-	Network();
-	Network(const Network& other);
-	~Network();
-	Network& operator=(const Network& other);
-	bool operator==(const Network& other) const;
-};
+	class Network
+	{
+		std::vector<std::string> _nodeNames;
+	public:
+		Network();
+		Network(std::vector< std::string > nodes);
+		~Network();
+		Network& operator=(const Network& other);
+		bool operator==(const Network& other) const;
+		
+		friend std::ostream& operator<<(std::ostream& os, const Epnet::Network& n);
+		std::vector<std::string> getNeighboursOf(std::string arg1);
+	};
+} //namespace Epnet
 
 #endif 

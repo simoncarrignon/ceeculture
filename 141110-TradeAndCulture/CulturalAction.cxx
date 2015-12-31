@@ -59,14 +59,16 @@ namespace Epnet
 		else{
 
 			//The actual cultural exchange done when trade is on is done as follow: Each roman will look at the other roman 
-			std::random_shuffle(allAgents.begin(),allAgents.end());
-			std::vector< std::string >::iterator it = allAgents.begin();
+			std::vector< std::string > nb=romanAgent.getListOfCulturalNeighbours();
+			std::random_shuffle(nb.begin(),nb.end());
+			std::vector< std::string >::iterator it = nb.begin();
 			bool reproductionDone = 0;
 
 			std::string producedGood =std::get<0>(romanAgent.getProducedGood());
 
-			while(it!= allAgents.end() && !reproductionDone )
+			while(it!= nb.end() && !reproductionDone )
 			{
+				if(*it != romanAgent.getId()){
 				Roman & r= (Roman&)(*world->getAgent(*it));
 				if(std::get<0>(r.getProducedGood()) == producedGood ){
 
@@ -82,7 +84,9 @@ namespace Epnet
 					}
 					// 					}
 				}
+				}
 				it++;
+				
 
 			}
 

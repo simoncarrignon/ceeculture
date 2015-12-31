@@ -17,29 +17,52 @@
  *
  */
 
-#include "Network.hxx"
+#include <Network.hxx>
+#include <iostream>
 
-Network::Network()
+namespace Epnet
 {
+	
+	Network::Network()
+	{
+		
+	}
+	
+	Network::Network(std::vector< std::string > nodes)
+	{
+		_nodeNames= std::vector<std::string>(nodes);
+		
+		
+	}
 
-}
+	
+	Network::~Network()
+	{
+		
+	}
+	
+	Network& Network::operator=(const Network& other)
+	{
+		
+	}
+	
+	bool Network::operator==(const Network& other) const
+	{
+		
+	}
 
-Network::Network(const Network& other)
-{
 
-}
-
-Network::~Network()
-{
-
-}
-
-Network& Network::operator=(const Network& other)
-{
-
-}
-
-bool Network::operator==(const Network& other) const
-{
+	std::ostream& operator<<(std::ostream& os, const Network& n)
+	{
+		os << "this network has : "<<n._nodeNames.size()<< " nodes"; 
+		return(os);
+		
+	}
+	std::vector< std::string > Network::getNeighboursOf(std::string arg1)
+	{
+		return _nodeNames;
+		
+	}
+	
 
 }

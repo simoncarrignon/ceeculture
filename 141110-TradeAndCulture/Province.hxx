@@ -3,6 +3,7 @@
 
 #include <World.hxx>
 #include <Roman.hxx>
+#include <Network.hxx>	
 
 namespace Epnet
 {
@@ -15,7 +16,8 @@ namespace Epnet
 		void createAgents();
 		void executeTrade(Roman* r);
 		std::vector<std::string> _typesOfGood;
-		std::map<std::string,std::vector<int>> _listOfProducer;
+		std::map<std::string,std::vector<std::string>> _good2Producers;
+		std::map<std::string,Network> _good2CulturalNetwork;
 
 		std::vector<std::tuple<std::string,double>> _needs;
 		std::vector<std::tuple<std::string,double>> _maxscore;
@@ -42,6 +44,8 @@ namespace Epnet
 		void proposeTwoWayConnection(std::string source, std::string target);
 		void buildTwoWayConnection(std::string source, std::string target);
 		void killTwoWayConnection(std::string source, std::string target);
+		void createCulturalNetwork();
+		void printAllCulturalNerwork();
 	};
 
 } // namespace Epnet

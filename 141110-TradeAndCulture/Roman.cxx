@@ -15,6 +15,7 @@ namespace Epnet
 		_controller = ControllerFactory::get().makeController(controllerType);
 		_controller->setAgent(this);
 		_score=0.0;
+		_culturalNetwork={};
 	}
 
 	Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess, std::string innovationProcess) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
@@ -968,6 +969,20 @@ namespace Epnet
 			this->setPrice(ressource,replacerPtr->getPrice(ressource));
 		}
 	}
+	
+	void Roman::setListOfCulturalNeighbours(std::vector< std::string > neighbours)
+	{
+		
+		_culturalNeighbours = std::vector<std::string>(neighbours);
+	}
+	
+std::vector<std::string> Roman::getListOfCulturalNeighbours()
+{
+	return _culturalNeighbours;
+}
+
+	
+	
 
 } // namespace Roman
 
