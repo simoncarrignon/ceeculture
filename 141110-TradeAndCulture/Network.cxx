@@ -19,13 +19,16 @@
 
 #include <Network.hxx>
 #include <iostream>
+#include <sstream>
 #include <algorithm>
-
+#include <fstream>
 namespace Epnet
 {
 	
 	Network::Network()
 	{
+		_name="";
+		_nodeNames= std::vector<std::string>();
 		
 	}
 	
@@ -39,9 +42,10 @@ namespace Epnet
 		
 	}
 	
-	Network::Network(std::vector< std::string > nodes,int nnb)
+	Network::Network(std::vector< std::string > nodes,int nnb,std::string name)
 	{
 
+		_name=name;
 		_nodeNames= std::vector<std::string>(nodes);
 		for( std::vector<std::string>::iterator it = _nodeNames.begin();it != _nodeNames.end();it++){
 			std::vector<std::string> listnodes= std::vector<std::string>(nodes);
@@ -90,5 +94,43 @@ namespace Epnet
 		
 	}
 	
+	int Network::write()
+	{
+		std::string filename="";
+		if(_name != ""){
+			std::ostringstream ossb;
+			ossb << _name << ".gdf";
+			filename=ossb.str();
+		}
+		else
+			filename="network.gdf";
+		std::ofstream fs(filename); 
+		
+		if(!fs)
+		{
+			std::cerr<<"Cannot open the output file."<<std::endl;
+			return 1;
+		}
+		
+		std::ostringstream node ;
+		///the following lines write in gegphi format
+		node<<"nodedef>name VARCHAR\n";
+		std::ostringstream edge ;
+		edge<<"edgedef>node1 VARCHAR,node2 VARCHAR\n";
+		
+		for ( std::map< std::string, std::vector< std::string > >::iterator it = _node2Neighbours.begin(); it != _node2Neighbours.end();it++){
+			
+			node<<it->first<<"\n";
+			std::vector< std::string > nb = it->second;
+			for(std::vector< std::string >::iterator i = nb.begin() ; i!=nb.end();i++)
+				edge<<it->first<<","<<*i<<"\n";
+		}
+		fs<<node.str();
+		fs<<edge.str();
+		fs.close();
+		return 0;
+		
+	}
+
 
 }

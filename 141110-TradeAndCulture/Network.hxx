@@ -30,16 +30,18 @@ namespace Epnet
 	{
 		std::vector<std::string> _nodeNames;
 		std::map< std::string, std::vector< std::string > >  _node2Neighbours;
+		std::string _name;
 	public:
 		Network();
 		Network(std::vector< std::string > nodes);
-		Network(std::vector< std::string > nodes,int nnb);
+		Network(std::vector< std::string > nodes,int nnb,std::string name);
 		~Network();
 		Network& operator=(const Network& other);
 		bool operator==(const Network& other) const;
 		
 		friend std::ostream& operator<<(std::ostream& os, const Epnet::Network& n);
 		std::vector<std::string> getNeighboursOf(std::string nodeName);
+		  int write();
 	};
 } //namespace Epnet
 
