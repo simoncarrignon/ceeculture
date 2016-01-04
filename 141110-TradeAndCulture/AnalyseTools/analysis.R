@@ -186,7 +186,7 @@ plotAllClassMean=function(datas,timeStep=1,...){
     legend("bottomleft",legend=allgoods,col=1:ngoods,lty=1)
 }
 
-plotAllClass=function(datas,timeStep=1,...){
+pointsAllClass=function(datas,timeStep=1,...){
 
     allgoods=levels(datas$p_good)
     ngoods=length(allgoods)
