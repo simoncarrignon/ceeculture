@@ -893,7 +893,7 @@ getColors=function(datas){
 
 
 
-legend("bottomright",legend=names(cg),col=cg,lty=1)
+#legend("bottomright",legend=names(cg),col=cg,lty=1)
 
 sumfact=function(datas){
     res=0
@@ -903,5 +903,5 @@ sumfact=function(datas){
     return(res)
 }
 
-c(unique(c$g0_n),unique(c$g1_n),unique(c$g2_n))
-c(mean(c$g0_p),mean(c$g1_p),mean(c$g2_p))
+#c(unique(c$g0_n),unique(c$g1_n),unique(c$g2_n))
+#c(mean(c$g0_p),mean(c$g1_p),mean(c$g2_p))

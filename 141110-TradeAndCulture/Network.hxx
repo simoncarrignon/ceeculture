@@ -20,6 +20,7 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include <World.hxx>
 #include <vector>
 #include <ostream>
 #include <map>
@@ -28,20 +29,29 @@ namespace Epnet
 {
 	class Network
 	{
-		std::vector<std::string> _nodeNames;
-		std::map< std::string, std::vector< std::string > >  _node2Neighbours;
-		std::string _name;
+		std::vector<std::string> _nodeNames; //list of all node in the network
+		std::map< std::string, std::vector< std::string > >  _node2Neighbours; //a map that gives all the neighbours of each node
+		std::string _name; 
+		std::string _type;
+    std::map< std::string, double > _param;
+		
+		void fullNetwork();
+		void freescaleNetwork();
+		void smallworldNetwork();
+		void randomNetwork();
 	public:
 		Network();
 		Network(std::vector< std::string > nodes);
 		Network(std::vector< std::string > nodes,int nnb,std::string name);
+		Network(std::vector< std::string > nodes,std::string type,std::string name,std::map<std::string,double> param);
 		~Network();
 		Network& operator=(const Network& other);
 		bool operator==(const Network& other) const;
 		
 		friend std::ostream& operator<<(std::ostream& os, const Epnet::Network& n);
 		std::vector<std::string> getNeighboursOf(std::string nodeName);
-		  int write();
+		
+		int write(); // write the network in a file in gephi format
 	};
 } //namespace Epnet
 

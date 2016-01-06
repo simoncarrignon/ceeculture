@@ -22,6 +22,8 @@
 #include <sstream>
 #include <algorithm>
 #include <fstream>
+
+#include <GeneralState.hxx>
 namespace Epnet
 {
 	
@@ -66,6 +68,76 @@ namespace Epnet
 	}
 
 	
+	
+	Network::Network(std::vector< std::string > nodes, std::string type, std::string name, std::map< std::string, double > param)
+	{
+
+		_name=name;
+		_nodeNames= std::vector<std::string>(nodes);
+		_type =std::string(type) ;
+		_param=param;
+		if(_type == "random" ) {randomNetwork();}
+		else if(_type == "sw" ) {smallworldNetwork();}
+		else if(_type == "fs" ) {freescaleNetwork();}
+		else if(_type == "full" ) {fullNetwork();}
+		
+		
+		
+	}
+	void Network::fullNetwork()
+	{
+		
+		for( std::vector<std::string>::iterator it = _nodeNames.begin();it != _nodeNames.end();it++){
+			std::vector<std::string> neighbours= std::vector<std::string>(_nodeNames);
+			std::string self= *it;
+			neighbours.erase(std::remove(neighbours.begin(),neighbours.end(),self),neighbours.end());
+			
+			_node2Neighbours.insert(std::pair<std::string,std::vector<std::string>>(*it,neighbours));
+		}
+	}
+	void Network::freescaleNetwork()
+	{
+			std::cerr<<"Freescale Newtwork aren't implemented yet!"<<std::endl;
+		
+	}
+	
+	void Network::randomNetwork()
+	{
+		
+		double p=_param["p"];
+		if(!p){ std::cerr<< "network of type \"random\" need a parameter \"p\"!"<<std::endl; exit(1);}
+		int count=0;
+		for( std::vector<std::string>::iterator v1 = _nodeNames.begin();v1 != _nodeNames.end();v1++){
+			for( std::vector<std::string>::iterator v2 = v1+1;v2 != _nodeNames.end();v2++){
+				
+		  		double prob=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+				if(prob<p){
+					std::cout<<"edge:"<<*v1<<","<<*v2<<std::endl;
+					
+					_node2Neighbours[*v1].push_back(*v2);
+					
+					_node2Neighbours[*v2].push_back(*v1);
+					std::vector<std::string> nv1=_node2Neighbours[*v1];
+					std::vector<std::string> nv2=_node2Neighbours[*v2];
+					std::cout<<"nv1:"<<nv1.size()<<"|"<<nv1[0]<<std::endl;
+					std::cout<<"nv2:"<<nv2.size()<<std::endl;
+					
+					count+=2;
+				}
+				
+			}
+		}
+		std::cout<<"nedge="<<count<<std::endl;
+			
+	}
+	void Network::smallworldNetwork()
+	{
+			std::cerr<<"Small World Newtwork aren't implemented yet!"<<std::endl;
+		
+	}
+
+
+
 	Network::~Network()
 	{
 		
@@ -93,6 +165,7 @@ namespace Epnet
 		return _node2Neighbours[nodeName];
 		
 	}
+	
 	
 	int Network::write()
 	{
@@ -132,5 +205,6 @@ namespace Epnet
 		
 	}
 
+	
 
 }

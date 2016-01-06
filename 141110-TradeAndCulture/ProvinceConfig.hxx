@@ -4,6 +4,7 @@
 #include <Config.hxx>
 #include <vector>
 #include <tuple>
+#include <map>
 
 namespace Epnet
 {
@@ -23,6 +24,8 @@ class ProvinceConfig : public Engine::Config
 	std::tuple<std::string,double,double,double,double,double>  _protoGood;
 	std::string _selectionProcess;
 	std::string _goodsParam;
+	std::string _networkType;
+	std::map<std::string,double> _networkParam;
 	float _mutationRate;
 	std::string _innovationProcess;
 

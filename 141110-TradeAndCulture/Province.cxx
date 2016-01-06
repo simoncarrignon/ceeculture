@@ -191,6 +191,26 @@ namespace Epnet
 			}
 		}
 		
+		for (std::map< std::string, std::vector< std::string > >::iterator it = _good2Producers.begin(); it != _good2Producers.end();it++) {
+				
+			std::vector<std::string> groupOfproducer = it->second;
+			std::string type = provinceConfig._networkType; 
+			Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
+//			n.write();
+			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
+
+			for (std::vector<std::string>::iterator producer = groupOfproducer.begin(); producer != groupOfproducer.end(); producer++){
+				
+				Roman* romanProducer = dynamic_cast<Roman*> (getAgent(*producer));
+				if (romanProducer == NULL)
+				{
+					std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
+					exit(1);
+				}
+				romanProducer->setListOfCulturalNeighbours( n.getNeighboursOf(*producer));
+				
+			}
+		}
 		createCulturalNetwork();
 		
 		//printAllCulturalNerwork();
@@ -208,26 +228,6 @@ namespace Epnet
 	//Create social network for all productors groups and set it for all agents
 	void Province::createCulturalNetwork(){
 		
-		for (std::map< std::string, std::vector< std::string > >::iterator it = _good2Producers.begin(); it != _good2Producers.end();it++) {
-				
-			std::vector<std::string> groupOfproducer = it->second;
-			Network n = Network(groupOfproducer,4,it->first);
-			std::cout<<it->first<<std::endl;
-			n.write();
-			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
-
-			for (std::vector<std::string>::iterator producer = groupOfproducer.begin(); producer != groupOfproducer.end(); producer++){
-				
-				Roman* romanProducer = dynamic_cast<Roman*> (getAgent(*producer));
-				if (romanProducer == NULL)
-				{
-					std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
-					exit(1);
-				}
-				romanProducer->setListOfCulturalNeighbours( n.getNeighboursOf(*producer));
-				
-			}
-		}
 		
 		
 		

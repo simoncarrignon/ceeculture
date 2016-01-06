@@ -26,6 +26,20 @@ void ProvinceConfig::loadParams()
 
 	_mutationRate= getParamFloat( "controller/culture", "mutation");
 	_goodsParam= getParamStr( "controller/good", "type");
+	_networkType= getParamStr( "network", "type");
+	
+	int nParam = getParamInt("network","nparam");
+	std::cout<<"Reseau "<<_networkType<<std::endl;
+	
+	for(int i=0;i<nParam;i++){
+		std::ostringstream name;
+		name << "network/prop" << i;
+		std::string id=getParamStr(name.str(),"id");
+		double value= getParamFloat(name.str(),"value");
+		std::cout<<"avec "<<id<<"="<<value<<std::endl;
+		_networkParam.insert(std::make_pair(id,value));
+	}
+		
 
 	_numGoods = getParamInt( "goods", "num");
 	
