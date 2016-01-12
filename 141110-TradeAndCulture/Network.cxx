@@ -112,22 +112,22 @@ namespace Epnet
 				
 		  		double prob=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
 				if(prob<p){
-					std::cout<<"edge:"<<*v1<<","<<*v2<<std::endl;
+// 				std::cout<<"edge:"<<*v1<<","<<*v2<<std::endl;
 					
 					_node2Neighbours[*v1].push_back(*v2);
 					
 					_node2Neighbours[*v2].push_back(*v1);
-					std::vector<std::string> nv1=_node2Neighbours[*v1];
-					std::vector<std::string> nv2=_node2Neighbours[*v2];
-					std::cout<<"nv1:"<<nv1.size()<<"|"<<nv1[0]<<std::endl;
-					std::cout<<"nv2:"<<nv2.size()<<std::endl;
-					
-					count+=2;
+// 					std::vector<std::string> nv1=_node2Neighbours[*v1];
+// 					std::vector<std::string> nv2=_node2Neighbours[*v2];
+// 					std::cout<<"nv1:"<<nv1.size()<<"|"<<nv1[0]<<std::endl;
+// 					std::cout<<"nv2:"<<nv2.size()<<std::endl;
+// 					
+// 					count+=2;
 				}
 				
 			}
 		}
-		std::cout<<"nedge="<<count<<std::endl;
+// 		std::cout<<"nedge="<<count<<std::endl;
 			
 	}
 	void Network::smallworldNetwork()

@@ -181,13 +181,13 @@ namespace Epnet
 
 
 				//loop for initialize the connection of the current agent with all previously created agents.
-				for(int j=(i-1); j>=0; j--)
-				{
-					std::ostringstream ossb;
-					ossb << "Roman_" << j;
-					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
-					
-				}
+// 				for(int j=(i-1); j>=0; j--)
+// 				{
+// 					std::ostringstream ossb;
+// 					ossb << "Roman_" << j;
+// 					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
+// 					
+// 				}
 			}
 		}
 		

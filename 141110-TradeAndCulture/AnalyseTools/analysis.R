@@ -1,8 +1,7 @@
 if(require("plyr")){library(plyr)}
 if(require("RColorBrewer")){library(RColorBrewer)}
 if(require("poweRlaw")){library(poweRlaw)}
-
-
+if(require("XML")){library(XML)}
 
 
 
@@ -31,6 +30,53 @@ pointFitness=function(p1,b1){
     text(b1,-0.09,paste("n(g)=",b1,sep=""),srt=90,cex=1.2,pos=4,col="red")
 }
 
+###Thsi fuction read a csv and add the propertie associeted to a elelment find in the xml config file
+##Warning : do it just for "network" pro, should be extend to put a list of properties.
+readAddProp<-function(docname,...){
+    res=read.csv(paste(docname,"/agents.csv",sep=""),sep=";")
+
+    i=xmlTreeParse(paste(docname,"/config.xml",sep=""))
+    i=xmlRoot(i)
+    net=i[["network"]]
+    print(net)
+    for( u in 1:xmlSize(net)){
+	attri=xmlAttrs(net[[u]])
+	if(length(attri)>0){
+	    paramId=attri[["id"]]
+	    paramValue=as.numeric(attri[["value"]])
+	    newCol=rep(paramValue,nrow(res))
+	    res=cbind(res,newCol)
+	    names(res)[length(res)]=paramId
+	}
+
+    }
+    return(res)
+}
+
+
+###This return aa properties in an XML config file.
+##the XML file shoudl be on the form:
+## <type>
+##	<XXX id=propId value=valeureturned/>
+## </type>
+getPropFromXml <- function(expeDir,type,propId,format=as.numeric){
+    filename=paste(expeDir,"/config.xml",sep="")
+    i=xmlTreeParse(filename)
+    i=xmlRoot(i)
+    net=i[[type]]
+    if(length(net)<1){
+	print(paste("Object\'",type,"\' not defined in the XML file",filename))
+	return(NULL)
+    }
+    child=xmlChildren(net)
+    for(j in child){
+	a=xmlAttrs(j)
+	if(a["id"]==propId)
+	    return(format(a["value"]))
+    }
+    print(paste("Property \'", propId, "\' not defined in the XML file",filename))
+    return(NULL)
+}
 
 allClass<-function(datas,ngoods,g){
     nAgent=length(unique(datas$agent))
@@ -296,11 +342,13 @@ getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1){
     files=list.files(expeDir,pattern="run_*")
 
     for ( i in files){
+	folder=	paste(expeDir,i,sep="")
 	file=	paste(expeDir,i,"/agents.csv",sep="")
 	print(file)
 	work=read.csv(file,sep=";")
 	toBind=getMeanRatio2(work,timestep,timeA=timeA,timeB=timeB)
-	all=rbind(all,toBind)
+	p=getPropFromXml(folder,"network","p")
+	all=rbind(all,cbind(toBind,p))
     }
     return(all)
 }
@@ -310,13 +358,15 @@ getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1){
     all=c()
     files=list.files(expeDir,pattern="run_*")
 
-    for ( i in files){
+    for ( i in files[1:10]){
+	folder=	paste(expeDir,i,sep="")
 	file=	paste(expeDir,i,"/agents.csv",sep="")
 	print(file)
 	work=read.csv(file,sep=";")
 	work=work[work$timeStep %% timestep == 0,]
 	toBind=tapply(work$scores,work$timeStep,mean)
-	all=rbind(all,toBind)
+	p=getPropFromXml(folder,"network","p")
+	all=rbind(all,c(toBind,p))
     }
     return(all)
 }
@@ -792,7 +842,7 @@ main <- function(){
     dev.off()
     boxplot(a$scores ~a$timeStep)
 
-    newrat1=getAllMeanRatio("~/newcondition1/",3,timestep=50)
+    rand=getAllMeanRatio("~/randnet//",timestep=50)
     newrat12=getAllMeanRatio("~/newcondition12/",3,timestep=50)
     longRat=getAllMeanRatio("~/long/",3)
 
@@ -905,3 +955,26 @@ sumfact=function(datas){
 
 #c(unique(c$g0_n),unique(c$g1_n),unique(c$g2_n))
 #c(mean(c$g0_p),mean(c$g1_p),mean(c$g2_p))
+
+
+############################################################
+##XML tools
+
+xmltest<-function(){
+    i=xmlTreeParse("~/randnet/run_0000/config.xml")
+    i=xmlRoot(i)
+    net=i[["network"]]
+    paramId=c()
+    paramValue=c()
+    print(xmlAttrs(net))
+    print(xmlElementsByTagName(net,"prop0"))
+    print(xmlChildren(net))
+#    for( u in 1:xmlSize(net)){
+#	attri=xmlAttrs(net[[u]]);
+#	attri[["id"]]
+#	paramValue=c(paramValue,as.numeric(attri[["value"]]))
+#	#paramName=c(param,attri[0
+#    }
+#    print(paramValue)
+}
+
