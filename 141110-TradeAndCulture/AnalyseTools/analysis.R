@@ -336,37 +336,43 @@ createEverything<-function(expeDir,timeA=0,timeB=0){
 }
 
 #Return a table with all ratio mean for each file of the dir expedir
-getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1){
+getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 
-    all=c()
+    all=data.frame()
     files=list.files(expeDir,pattern="run_*")
+    sim=0
 
-    for ( i in files){
+    for ( i in files[1:min(c(length(files),maxfolder))]){
 	folder=	paste(expeDir,i,sep="")
 	file=	paste(expeDir,i,"/agents.csv",sep="")
 	print(file)
 	work=read.csv(file,sep=";")
 	toBind=getMeanRatio2(work,timestep,timeA=timeA,timeB=timeB)
 	p=getPropFromXml(folder,"network","p")
-	all=rbind(all,cbind(toBind,p))
+	network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
+	all=rbind(all,cbind(t(toBind),p,network))
+	sim=sim+1
     }
     return(all)
 }
 
-getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1){
+getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 
-    all=c()
+    all=data.frame()
     files=list.files(expeDir,pattern="run_*")
+    sim=0
 
-    for ( i in files[1:10]){
+    for ( i in files[1:min(c(length(files),maxfolder))]){
 	folder=	paste(expeDir,i,sep="")
 	file=	paste(expeDir,i,"/agents.csv",sep="")
 	print(file)
 	work=read.csv(file,sep=";")
 	work=work[work$timeStep %% timestep == 0,]
-	toBind=tapply(work$scores,work$timeStep,mean)
+	toBind=tapply(work$scores,work[,c("timeStep","p_good")],mean)
 	p=getPropFromXml(folder,"network","p")
-	all=rbind(all,c(toBind,p))
+	network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
+	all=rbind(all,cbind(t(toBind),p,network))
+	sim=sim+1
     }
     return(all)
 }

@@ -44,6 +44,7 @@ namespace Epnet
 		Network(std::vector< std::string > nodes);
 		Network(std::vector< std::string > nodes,int nnb,std::string name);
 		Network(std::vector< std::string > nodes,std::string type,std::string name,std::map<std::string,double> param);
+		Network(std::vector< std::string > nodes,std::string type,std::string name,bool fromfile);
 		~Network();
 		Network& operator=(const Network& other);
 		bool operator==(const Network& other) const;

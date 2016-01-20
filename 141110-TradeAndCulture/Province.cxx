@@ -1,7 +1,5 @@
 #include <Province.hxx>
-
 #include <ProvinceConfig.hxx>
-#include <Roman.hxx>
 #include <ProductionAction.hxx>
 #include <TradeAction.hxx>
 #include <ConsumptionAction.hxx>
@@ -10,7 +8,7 @@
 #include <GeneralState.hxx>
 #include <Logger.hxx>
 #include <Scheduler.hxx>
-#include <Network.hxx>
+
 #include <map>
 
 namespace Epnet
@@ -180,14 +178,14 @@ namespace Epnet
 				log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
 
 
-				//loop for initialize the connection of the current agent with all previously created agents.
-// 				for(int j=(i-1); j>=0; j--)
-// 				{
-// 					std::ostringstream ossb;
-// 					ossb << "Roman_" << j;
-// 					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
-// 					
-// 				}
+				//loop for initialize the commercial connection of the current agent with all previously created agents.
+				for(int j=(i-1); j>=0; j--)
+				{
+					std::ostringstream ossb;
+					ossb << "Roman_" << j;
+					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
+					
+				}
 			}
 		}
 		
@@ -195,8 +193,11 @@ namespace Epnet
 				
 			std::vector<std::string> groupOfproducer = it->second;
 			std::string type = provinceConfig._networkType; 
-			Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
-//			n.write();
+			
+			
+			//Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
+			Network n = Network(groupOfproducer,type,it->first,true);
+			n.write();
 			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
 
 			for (std::vector<std::string>::iterator producer = groupOfproducer.begin(); producer != groupOfproducer.end(); producer++){
@@ -206,7 +207,10 @@ namespace Epnet
 				{
 					std::cout << "dynamice_cast from Agent* to Roman* fail" << std::endl;
 					exit(1);
+					
 				}
+				std::vector< std::string > u= n.getNeighboursOf(*producer);
+// 				std::cout<<*producer<< " as "<<u.size()<< " getNeighboursOf"<<std::endl;
 				romanProducer->setListOfCulturalNeighbours( n.getNeighboursOf(*producer));
 				
 			}

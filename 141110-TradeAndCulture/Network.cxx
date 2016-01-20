@@ -69,6 +69,87 @@ namespace Epnet
 
 	
 	
+	Network::Network(std::vector< std::string > nodes, std::string type, std::string name, bool fromfile)
+	{
+		_nodeNames= std::vector<std::string>(nodes);
+		_type=type;
+		_name=name;
+		
+		//create a network using a file where are stored each node and their neighbor (adjacent list)
+		//file should be stored in the form : network/name
+		
+		
+		//for( std::vector<std::string>::iterator it = _nodeNames.begin();it != _nodeNames.end();it++){
+		//	_node2Neighbours.insert(std::pair<std::string,std::vector<std::string>>(*it,_nodeNames));
+		//}
+		std::cout<<"network config read from file"<<std::endl;
+		
+		std::ifstream myfile;
+		std::ostringstream ossb;
+		ossb <<"networks/"<< _name << ".txt";
+		std::string filename=ossb.str();
+		myfile.open (filename);
+		std::string line;
+		if (myfile.is_open())
+		{
+			
+			//parse the file
+			while ( std::getline (myfile,line) )
+			{
+				std::istringstream iss(line);
+				std::string s;
+				std::cout<<"line:"<<std::endl;
+				std::cout<<line<<std::endl;
+				std::cout<<line[0]<<std::endl;
+				std::cout<<"---first"<<std::endl;
+				if(line[0]!= '#'){ //skip comments
+					int count=0;
+					std::string currentNode;
+					std::vector<std::string> neighbours;
+					//this loop while take all number on on line and 
+					//1- convert them into theire equivalent Roman-id in the current cultural group
+					//2-put the first as a independant name (the current node) and the other as the neighbor list
+					
+					std::cout<<"line :"<<line<<std::endl;
+					std::istringstream sline(line);
+					while(std::getline(sline,s,' ')){
+						int ind; //ind is the integer give the ID of the node, but 
+						std::istringstream(s)>>ind;
+						std::string romanId=_nodeNames.at(ind);
+						
+						//If case made to take the first number as the ID of the node, the other being the ID of the neighbour
+						if(count<1){
+							currentNode=romanId;
+							
+							
+							std::cout<<"currNode"<<romanId<<std::endl;
+						}
+						else{
+							neighbours.push_back(romanId);
+							std::cout<<romanId<<std::endl;
+						}
+						std::cout<<neighbours.size()<<"|";
+						count++;
+					}
+					std::cout<<std::endl;
+					_node2Neighbours.insert(std::pair<std::string,std::vector<std::string>>(currentNode,neighbours));
+					
+				}
+				std::cout<<"---"<<std::endl;
+				
+			}
+			myfile.close();
+			write();
+		}
+		
+		else{
+			std::cout << "Unable to network configuration file for "<<_name<<std::endl; 
+			exit(0);
+		}
+		
+		
+	}
+
 	Network::Network(std::vector< std::string > nodes, std::string type, std::string name, std::map< std::string, double > param)
 	{
 
@@ -192,7 +273,6 @@ namespace Epnet
 		edge<<"edgedef>node1 VARCHAR,node2 VARCHAR\n";
 		
 		for ( std::map< std::string, std::vector< std::string > >::iterator it = _node2Neighbours.begin(); it != _node2Neighbours.end();it++){
-			
 			node<<it->first<<"\n";
 			std::vector< std::string > nb = it->second;
 			for(std::vector< std::string >::iterator i = nb.begin() ; i!=nb.end();i++)
