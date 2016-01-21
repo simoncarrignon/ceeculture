@@ -6,6 +6,14 @@ import networkx as nx
 from numpy import logspace
 from xml.etree import ElementTree as et
 
+def adj_list_to_file(G,file_name):
+    f = open(file_name, "w")
+    for n in G.nodes():
+        f.write(str(n) + ' ')
+        for neighbor in G.neighbors(n):
+            f.write(str(neighbor) + ' ')
+        f.write('\n')
+
 #Parsing of the config file for the experience
 #xmldoc = minidom.parse('../config.xml')
 xmldoc= et.parse('config.xml').getroot()
@@ -90,5 +98,5 @@ for i in range(rep):
 
     
     path='networks/g'+str(i)+'.txt'
-    nx.write_adjlist(G.to_undirected(),path)
+    adj_list_to_file(G.to_undirected(),path)
 
