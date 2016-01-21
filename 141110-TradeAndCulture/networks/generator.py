@@ -90,5 +90,5 @@ for i in range(rep):
 
     
     path='networks/g'+str(i)+'.txt'
-    nx.write_adjlist(G,path)
+    nx.write_adjlist(G.to_undirected(),path)
 

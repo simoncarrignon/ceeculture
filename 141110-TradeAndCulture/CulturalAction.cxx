@@ -66,14 +66,14 @@ namespace Epnet
 
 			std::string producedGood =std::get<0>(romanAgent.getProducedGood());
 
-// 			std::cout<<romanAgent.getId()<<": "<<producedGood;
+//  			std::cout<<romanAgent.getId()<<", "<<producedGood<<"will try to copy:"<<std::endl;
 			while(it!= nb.end() && !reproductionDone )
 			{
 				
 				if(*it != romanAgent.getId()){//this limitation should appears given how the cultural networks are done
 					
 					Roman & r= (Roman&)(*world->getAgent(*it));
-// 					std::cout<<", "<<r.getId()<<":"<<std::get<0>(r.getProducedGood());
+//  					std::cout<<"\t "<<r.getId()<<" that "<<std::get<0>(r.getProducedGood())<<std::endl;
 					
 					//should be good : they are all from same producedgood
 					//moreover this limit should be removed in an ideal case where every body can copy price of everybody
@@ -96,7 +96,7 @@ namespace Epnet
 				
 				
 			}
-// 			std::cout<<std::endl;
+//  			std::cout<<"----"<<std::endl;
 
 		}
 

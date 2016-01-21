@@ -82,7 +82,7 @@ namespace Epnet
 		//for( std::vector<std::string>::iterator it = _nodeNames.begin();it != _nodeNames.end();it++){
 		//	_node2Neighbours.insert(std::pair<std::string,std::vector<std::string>>(*it,_nodeNames));
 		//}
-		std::cout<<"network config read from file"<<std::endl;
+// 		std::cout<<"network config read from file"<<std::endl;
 		
 		std::ifstream myfile;
 		std::ostringstream ossb;
@@ -98,10 +98,10 @@ namespace Epnet
 			{
 				std::istringstream iss(line);
 				std::string s;
-				std::cout<<"line:"<<std::endl;
-				std::cout<<line<<std::endl;
-				std::cout<<line[0]<<std::endl;
-				std::cout<<"---first"<<std::endl;
+// 				std::cout<<"line:"<<std::endl;
+// 				std::cout<<line<<std::endl;
+// 				std::cout<<line[0]<<std::endl;
+// 				std::cout<<"---first"<<std::endl;
 				if(line[0]!= '#'){ //skip comments
 					int count=0;
 					std::string currentNode;
@@ -110,7 +110,7 @@ namespace Epnet
 					//1- convert them into theire equivalent Roman-id in the current cultural group
 					//2-put the first as a independant name (the current node) and the other as the neighbor list
 					
-					std::cout<<"line :"<<line<<std::endl;
+// 					std::cout<<"line :"<<line<<std::endl;
 					std::istringstream sline(line);
 					while(std::getline(sline,s,' ')){
 						int ind; //ind is the integer give the ID of the node, but 
@@ -122,20 +122,20 @@ namespace Epnet
 							currentNode=romanId;
 							
 							
-							std::cout<<"currNode"<<romanId<<std::endl;
+// 							std::cout<<"currNode"<<romanId<<std::endl;
 						}
 						else{
 							neighbours.push_back(romanId);
-							std::cout<<romanId<<std::endl;
+// 							std::cout<<romanId<<std::endl;
 						}
-						std::cout<<neighbours.size()<<"|";
+// 						std::cout<<neighbours.size()<<"|";
 						count++;
 					}
 					std::cout<<std::endl;
 					_node2Neighbours.insert(std::pair<std::string,std::vector<std::string>>(currentNode,neighbours));
 					
 				}
-				std::cout<<"---"<<std::endl;
+// 				std::cout<<"---"<<std::endl;
 				
 			}
 			myfile.close();
@@ -143,7 +143,7 @@ namespace Epnet
 		}
 		
 		else{
-			std::cout << "Unable to network configuration file for "<<_name<<std::endl; 
+			std::cout << "Unable to open network configuration file for groupe "<<_name<<std::endl; 
 			exit(0);
 		}
 		

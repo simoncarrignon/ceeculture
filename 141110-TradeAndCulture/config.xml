@@ -4,7 +4,7 @@
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
 	<numSteps value="10000" serializeResolution="30"/>
 	<size width="1800" height="1"/>
-	<numAgents value="90"/>
+	<numAgents value="9"/>
 	<controller type="basic" >
 		<good type="random"/>
 		<culture transmission="trade" innovation="trade" mutation=".04"/>
