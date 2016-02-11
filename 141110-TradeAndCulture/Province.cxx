@@ -48,14 +48,18 @@ namespace Epnet
 		std::stringstream logName;
 		logName << "agents_" << getId();
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-
-			double all_needs=0.0;
+		
+		double all_needs=0.0;
+		double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+		
 
 		//initialize some usefull stuff to know about good : the different types that exist and the their associated need value
 		if(provinceConfig._goodsParam== "random"){
 			for (int i = 0; i < provinceConfig._numGoods ; i++)
 			{
-		  		double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+		  		//double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+		  		double tneed=bneed * (i+1.0);
+				
 				all_needs += tneed;
 				std::ostringstream sgoodType;
 				sgoodType << "g"<< i;				
@@ -91,7 +95,7 @@ namespace Epnet
 			  
 		}	
 		
-		bool prop=false ;
+		bool prop=true ;
 			if( prop){
 			
 			  for (auto it = _needs.begin(); it != _needs.end() ; it++){

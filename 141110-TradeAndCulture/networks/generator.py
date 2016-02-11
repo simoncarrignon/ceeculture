@@ -98,5 +98,6 @@ for i in range(rep):
 
     
     path='networks/g'+str(i)+'.txt'
+    print(path)
     adj_list_to_file(G.to_undirected(),path)
 
