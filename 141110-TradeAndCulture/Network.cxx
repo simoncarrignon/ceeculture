@@ -131,7 +131,7 @@ namespace Epnet
 // 						std::cout<<neighbours.size()<<"|";
 						count++;
 					}
-					std::cout<<std::endl;
+				//	std::cout<<std::endl;
 					_node2Neighbours.insert(std::pair<std::string,std::vector<std::string>>(currentNode,neighbours));
 					
 				}
