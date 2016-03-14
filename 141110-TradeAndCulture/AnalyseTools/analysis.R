@@ -371,8 +371,8 @@ getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,lis
 	work=read.csv(file,sep=";")
 	work=work[work$timeStep %% timestep == 0,]
 	toBind=tapply(work$scores,work[,c("timeStep","p_good")],fun)
-	
-#	m=getPropFromXml(folder,"network","m")
+
+	#	m=getPropFromXml(folder,"network","m")
 	#v=getPropFromXml(folder,"network","v")
 	#network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
 	all=rbind(all,cbind(t(toBind)))#,m,network))
@@ -985,14 +985,97 @@ xmltest<-function(){
     print(xmlAttrs(net))
     print(xmlElementsByTagName(net,"prop0"))
     print(xmlChildren(net))
-#    for( u in 1:xmlSize(net)){
-#	attri=xmlAttrs(net[[u]]);
-#	attri[["id"]]
-#	paramValue=c(paramValue,as.numeric(attri[["value"]]))
-#	#paramName=c(param,attri[0
-#    }
-#    print(paramValue)
+    #    for( u in 1:xmlSize(net)){
+    #	attri=xmlAttrs(net[[u]]);
+    #	attri[["id"]]
+    #	paramValue=c(paramValue,as.numeric(attri[["value"]]))
+    #	#paramName=c(param,attri[0
+    #    }
+    #    print(paramValue)
 }
+
+
+    plotDerive=function(setnet,...){
+
+	plot(apply(setnet[[1]],2,mean),type="n",...)
+	print(seq_along(setnet))
+	sapply(seq_along(setnet),function(x){
+	       u=apply(setnet[[x]],2,function(l)l[1:(length(l)-1)]-l[2:length(l)])
+	       points(apply(u,2,mean),type="l",col=x)
+	       #   arrows(x0=seq_along(apply(u,2,mean)),
+	       #	  y0=apply(u,2,mean)-apply(u,2,sd),
+	       #	  x1=seq_along(apply(u,2,mean)),
+	       #	  y1=apply(u,2,mean)+apply(u,2,sd),
+	       #	  ylim=c(0,30),col=x,lty=1,code=3,angle=90,length=.01)
+	       } )
+	legend("topleft",legend=names(setnet),col=seq_along(setnet),lty=1)
+
+    }
+
+    createTable <- function(seqnet){
+	res=data.frame()
+	for( x in seq_along(seqnet)){
+	    tmp=	cbind.data.frame(     
+					 names(seqnet[[x]]),
+					 apply(seqnet[[x]],2,mean),
+					 apply(seqnet[[x]],2,sd),
+					 names(seqnet)[x])
+	    colnames(tmp)=c("timestep","mean","sd","net")
+	    res= rbind.data.frame(res,tmp)
+	}
+	return(res)
+    }
+
+
+	   plotDeriveOfMean=function(setnet,...){
+
+	       plot(apply(setnet[[1]],2,mean),type="n",...)
+	       sapply(seq_along(setnet),function(x){
+		      l=apply(setnet[[x]],2,mean)
+		      u=(l[1:(length(l)-100)]-l[100:length(l)])/100
+		      print(rbind(l,u))
+
+		      points(u,type="l",col=x)
+})
+	       legend("topleft",legend=names(setnet),col=seq_along(setnet),lty=1)
+
+	   }
+	   #This function use a folder with set of network to create a list... baah is complicated
+	   makeListWithAllFolder=function(homrep){
+	       allG=c()
+	       for(g in list.files(homrep)){
+		   print(paste(homrep,g,sep=""))
+		   allG[[g]] = getAllMeanScore(paste(homrep,g,"/",sep=""))
+		   allG[[g]] = allG[[g]][complete.cases(allG[[g]]),]
+	       }
+	       return(allG);
+	   }
+
+	   plotMeanSd=function(setnet){
+
+	       plot(apply(setnet[[1]],2,mean),col=1,type="n")
+	       sapply(seq_along(setnet),function(x){
+		      print(x)
+		      points(apply(setnet[[x]],2,mean),col=x,type="l")
+		      arrows(x0=seq_along(apply(setnet[[x]],2,mean)),
+			     y0=apply(setnet[[x]],2,mean)-apply(setnet[[x]],2,sd),
+			     x1=seq_along(apply(setnet[[x]],2,mean)),
+			     y1=apply(setnet[[x]],2,mean)+apply(setnet[[x]],2,sd),
+			     ylim=c(0,30),col=x,lty=1,code=3,angle=90,length=.01)
+} )
+	       legend("topright",legend=names(setnet),col=seq_along(setnet),lty=1)
+	   }
+
+	   plotFun=function(setnet,fun=mean,...){
+
+	       plot(apply(setnet[[1]],2,fun),col=1,type="n",...)
+	       sapply(seq_along(setnet),function(x){
+		      print(x)
+		      points(apply(setnet[[x]],2,fun),col=x,type="l")
+} )
+	       legend("topright",legend=names(setnet),col=seq_along(setnet),lty=1)
+	   }
+
 
 test<-function(){
     uSF=read.csv("../agents.csv",sep=";")
@@ -1003,210 +1086,134 @@ test<-function(){
     boxplot(30 - uSW$scores ~ uSW$timeStep,ylim=c(0,30),outline=F)    
     plotAllClassMean(uSW) 
     ####G1-4
-resG1=getAllMeanScore("~/result/6Net_test/g1/")
-resG2=getAllMeanScore("~/result/6Net_test/g2/")
-resG3=getAllMeanScore("~/result/6Net_test/g3/")
-resG4=getAllMeanScore("~/result/6Net_test/g4/")
-resG5=getAllMeanScore("~/result/6Net_test/g5/")
-resG6=getAllMeanScore("~/result/6Net_test/g6/")
-allG=rbind(
-	   cbind(resG1,net="G1"),
-	   cbind(resG1,net="G2"),
-	   cbind(resG1,net="G3"),
-	   cbind(resG1,net="G4"))
-allG=rbind(
-	   cbind(timestep=colnames(resG1),mean=apply(resG1,2,mean),sd=apply(resG1,2,sd),net="G1"),
-	   cbind(timestep=colnames(resG2),mean=apply(resG2,2,mean),sd=apply(resG2,2,sd),net="G2"),
-	   cbind(timestep=colnames(resG3),mean=apply(resG3,2,mean),sd=apply(resG3,2,sd),net="G3"),
-	   cbind(timestep=colnames(resG4),mean=apply(resG4,2,mean),sd=apply(resG4,2,sd),net="G4"))
+    resG1=getAllMeanScore("~/result/6Net_test/g1/")
+    resG2=getAllMeanScore("~/result/6Net_test/g2/")
+    resG3=getAllMeanScore("~/result/6Net_test/g3/")
+    resG4=getAllMeanScore("~/result/6Net_test/g4/")
+    resG5=getAllMeanScore("~/result/6Net_test/g5/")
+    resG6=getAllMeanScore("~/result/6Net_test/g6/")
+    allG=rbind(
+	       cbind(resG1,net="G1"),
+	       cbind(resG1,net="G2"),
+	       cbind(resG1,net="G3"),
+	       cbind(resG1,net="G4"))
+    allG=rbind(
+	       cbind(timestep=colnames(resG1),mean=apply(resG1,2,mean),sd=apply(resG1,2,sd),net="G1"),
+	       cbind(timestep=colnames(resG2),mean=apply(resG2,2,mean),sd=apply(resG2,2,sd),net="G2"),
+	       cbind(timestep=colnames(resG3),mean=apply(resG3,2,mean),sd=apply(resG3,2,sd),net="G3"),
+	       cbind(timestep=colnames(resG4),mean=apply(resG4,2,mean),sd=apply(resG4,2,sd),net="G4"))
 
     interaction.plot( allG$net,allG$mean,allG$timestep) 
-allG=data.frame(allG)
-homrep="~/result/4Net_test/"
-homrep="~/result/6Net_test/"
-allrep=sapply(list.files(homrep),function(x) paste(homrep,x,sep=""))
-dataFiles6=sapply(allrep,function(x) paste(x,list.files(x),"agents.csv",sep="/"))
+    allG=data.frame(allG)
+    homrep="~/result/4Net_test/"
+    homrep="~/result/6Net_test/"
+    allrep=sapply(list.files(homrep),function(x) paste(homrep,x,sep=""))
+    dataFiles6=sapply(allrep,function(x) paste(x,list.files(x),"agents.csv",sep="/"))
 
-allData=lapply(dataFiles,function(x) sapply(x,read.csv,sep=";"))
-g1=dataFiles$g1
+    allData=lapply(dataFiles,function(x) sapply(x,read.csv,sep=";"))
+    g1=dataFiles$g1
 
-d1=lapply(names(dataFiles),function(x){ 
-	  print(x) ; 
-	  sapply(dataFiles[[x]][1:2],function(y){ cbind(read.csv(y,sep=";"),x)})
-})
+    d1=lapply(names(dataFiles),function(x){ 
+	      print(x) ; 
+	      sapply(dataFiles[[x]][1:2],function(y){ cbind(read.csv(y,sep=";"),x)})
+	       })
 
-net6=makeListWithAllFolder("~/result/6Net_test/")
-net6Rp=makeListWithAllFolder("~/result/6Net_testRandomPrice//")
-net4=makeListWithAllFolder("~/result/4Net_test/")
-net4Rp=makeListWithAllFolder("~/result/4Net_testRandomPrice/")
-plotMeanSd(net6)
-boxplot(net6[[1]][1,]-net6[[1]][1,seq_along(net6[[1]][1,])]+1])
-plotDerive(net6Rp,ylim=c(-0.05,0.05))
-png("checkMDeriv.png")
-plotDeriveOfMean(net6,ylim=c(-0.,.1))
-dev.off()
-png("checkM.png")
-plotFun(net6)
+    net6=makeListWithAllFolder("~/result/6Net_test/")
+    net15=makeListWithAllFolder("~/result/15Net_test/")
+    net6Rp=makeListWithAllFolder("~/result/6Net_testRandomPrice//")
+    net4=makeListWithAllFolder("~/result/4Net_test/")
+    net4Rp=makeListWithAllFolder("~/result/4Net_testRandomPrice/")
+    plotMeanSd(net15)
+    #boxplot(net6[[1]][1,]-net6[[1]][1,seq_along(net6[[1]][1,])]+1])
+    plotDerive(net15,ylim=c(-0.05,0.05))
+    png("checkMDeriv.png")
+    plotDeriveOfMean(net6,ylim=c(-0.,.1))
+    dev.off()
+    png("checkM.png")
+    plotFun(net15)
 
-conpl$new(net6[[1]][2:length(net6[[1]])])
-x=1:300
-points(x,u$xmin+x^(-u$pars),type="l")
-fit1 <- lm( y~offset(x) -1 )
-fit2 <- lm( y~x )
-fit3 <- lm( y~poly(x,3) )
-fit4 <- lm( y~poly(x,9) )
-library(splines)
-fit5 <- lm( y~ns(x, 3) )
-fit6 <- lm( y~ns(x, 9) )
-fit7 <- lm( y ~ x + cos(x*pi) )
+    conpl$new(net6[[1]][2:length(net6[[1]])])
+    x=1:300
+    points(x,u$xmin+x^(-u$pars),type="l")
+    fit1 <- lm( y~offset(x) -1 )
+    fit2 <- lm( y~x )
+    fit3 <- lm( y~poly(x,3) )
+    fit4 <- lm( y~poly(x,9) )
+    library(splines)
+    fit5 <- lm( y~ns(x, 3) )
+    fit6 <- lm( y~ns(x, 9) )
+    fit7 <- lm( y ~ x + cos(x*pi) )
 
-xx <- x
-lines(xx, predict(fit1, data.frame(x=xx)), col='blue')
-lines(xx, predict(fit2, data.frame(x=xx)), col='green')
-lines(xx, predict(fit3, data.frame(x=xx)), col='red')
-points(xx, predict(fit4, data.frame(x=xx)), col='purple')
-lines(xx, predict(fit5, data.frame(x=xx)), col='orange')
-points(xx, predict(fit6, data.frame(x=xx)), col='grey')
-lines(xx, predict(fit7, data.frame(x=xx)), col='black')
-
-res=c()
-allFit=c()
-for( net in 1:6){
-y=apply(net6[[net]],2,mean)
-y=y[2:length(y)]
-x=1:length(y)
-model=nls(y~(i*x^-z+k),data=data.frame(x=x,y=y))
-allFit[[net]]=model
-res=rbind(res,model[["m"]]$getPars())
-}
-res=as.data.frame(res)
+    xx <- x
+    lines(xx, predict(fit1, data.frame(x=xx)), col='blue')
+    lines(xx, predict(fit2, data.frame(x=xx)), col='green')
+    lines(xx, predict(fit3, data.frame(x=xx)), col='red')
+    points(xx, predict(fit4, data.frame(x=xx)), col='purple')
+    lines(xx, predict(fit5, data.frame(x=xx)), col='orange')
+    points(xx, predict(fit6, data.frame(x=xx)), col='grey')
+    lines(xx, predict(fit7, data.frame(x=xx)), col='black')
 
 
 
-dataRead=read.csv( "~/Downloads/G1-6.csv")
-
-pdf("meanCurveAndFit.pdf",width=8,height=8)
-layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
-plotFun(net6)
-mtext("Fitted model : y ~ i * x ^ -z+k",side=1,line=4)
-plot(dataRead$average_path,res$z,col=1:6,ylab="z",xlab="average_path")   
-text(label=paste("G",1:6,sep=""),x=dataRead$average_path,y=res$z-0.002,col=1:6)   
-plot(dataRead$dens,res$i,col=1:6,ylab="i",xlab="dens")   
-text(label=paste("G",1:6,sep=""),x=dataRead$dens,y=res$i-0.03,col=1:6)   
-dev.off()
-plot(res$z,res$i,col=1:6,xlab="z",ylab="i")
-
-
-lines(predict(nls1),col="red")
-plot(data.frame(x=x,y=y))
-
-dev.off()
-net6[[5]]=net6[[5]][complete.cases(net6[[5]]),]
-all=createTable(net6)
-utest=sapply(net6,function(net){
-       u=apply(net,2,mean);
-       fi=lm(y ~ x , list(y=u,x=as.numeric(names(u))));
-})
+    dataRead=read.csv( "~/Downloads/G1-6.csv")
+    dataRead=read.csv( "G1-15.csv")
+    res=fitting(net15)
+    pdf("meanCurveAndFit.pdf",width=9,height=10)
+    layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
+    plotFun(net15)
+    mtext("Fitted model : y ~ i * x ^ -z+k",side=1,line=4)
+    plot(dataRead$average_dist,res$z,col=1:15,ylab="z",xlab="average_path")   
+    text(label=dataRead$network,x=dataRead$average_dist,y=res$z-0.002,col=1:15)   
+    plot(dataRead$density,res$i,col=1:15,ylab="i",xlab="dens")   
+    text(label=dataRead$network,x=dataRead$density,y=res$i-0.03,col=1:15)   
+    dev.off()
+    plot(res$z,res$i,col=1:6,xlab="z",ylab="i")
 
 
+    lines(predict(nls1),col="red")
+    plot(data.frame(x=x,y=y))
 
-plotDerive=function(setnet,...){
+    dev.off()
+    net6[[5]]=net6[[5]][complete.cases(net6[[5]]),]
+    all=createTable(net6)
+   all15=createTable(net15)
+    utest=sapply(net6,function(net){
+		 u=apply(net,2,mean);
+		 fi=lm(y ~ x , list(y=u,x=as.numeric(names(u))));
+	       })
 
-    plot(apply(setnet[[1]],2,mean),type="n",...)
-    print(seq_along(setnet))
-    sapply(seq_along(setnet),function(x){
-	   u=apply(setnet[[x]],2,function(l)l[1:(length(l)-1)]-l[2:length(l)])
-	   points(apply(u,2,mean),type="l",col=x)
-	#   arrows(x0=seq_along(apply(u,2,mean)),
-	#	  y0=apply(u,2,mean)-apply(u,2,sd),
-	#	  x1=seq_along(apply(u,2,mean)),
-	#	  y1=apply(u,2,mean)+apply(u,2,sd),
-	#	  ylim=c(0,30),col=x,lty=1,code=3,angle=90,length=.01)
-} )
-    legend("topleft",legend=names(setnet),col=seq_along(setnet),lty=1)
+
+	   l=net6[[1]][1,]
+	   boxplot()
+	   plotMeanSd(net4)
+	   plotFun(net6,fun=sd)
+
+
+
+
+	   dev.off()
+
+
+
+
+	   test=read.csv("~/result/4Net_test/g2/run_0001/agents.csv",sep=";")
+	   plotAllClassMean(test) 
 
 }
 
-createTable <- function(seqnet){
-    res=data.frame()
-    for( x in seq_along(seqnet)){
-	   tmp=	cbind.data.frame(     
-					names(seqnet[[x]]),
-					apply(seqnet[[x]],2,mean),
-					apply(seqnet[[x]],2,sd),
-					paste("G",x,sep=""))
-	   colnames(tmp)=c("timestep","mean","sd","net")
-res= rbind.data.frame(res,tmp)
+
+fitting=function(idata){
+    res=c()
+    allFit=c()
+    for( net in 1:length(idata)){
+	y1=apply(idata[[net]],2,mean)
+	y1=y1[2:length(y1)]
+	x1=1:length(y1)
+	model=nls(y~(i*(x^-z)),data=data.frame(x=x1,y=y1))
+	allFit[[net]]=model
+	res=rbind(res,model[["m"]]$getPars())
     }
+    res=as.data.frame(res)
     return(res)
 }
 
-sapply(net6
-
-plotDeriveOfMean=function(setnet,...){
-
-    plot(apply(setnet[[1]],2,mean),type="n",...)
-    sapply(seq_along(setnet),function(x){
-	   l=apply(setnet[[x]],2,mean)
-	   u=(l[1:(length(l)-100)]-l[100:length(l)])/100
-	   print(rbind(l,u))
-	   
-	   points(u,type="l",col=x)
-	})
-    legend("topleft",legend=names(setnet),col=seq_along(setnet),lty=1)
-
-}
-
-
-l=net6[[1]][1,]
-boxplot()
-plotMeanSd(net4)
-plotFun(net6,fun=sd)
-
-#This function use a folder with set of network to create a list... baah is complicated
-makeListWithAllFolder=function(homrep){
-    allG=c()
-    for(g in list.files(homrep)){
-	print(paste(homrep,g,sep=""))
-	allG[[g]] = getAllMeanScore(paste(homrep,g,"/",sep=""))
-	allG[[g]] = allG[[g]][complete.cases(allG[[g]]),]
-    }
-    return(allG);
-}
-
-plotMeanSd=function(setnet){
-
-plot(apply(setnet[[1]],2,mean),col=1,type="n")
-sapply(seq_along(setnet),function(x){
-       print(x)
-	points(apply(setnet[[x]],2,mean),col=x,type="l")
-arrows(x0=seq_along(apply(setnet[[x]],2,mean)),
-       y0=apply(setnet[[x]],2,mean)-apply(setnet[[x]],2,sd),
-       x1=seq_along(apply(setnet[[x]],2,mean)),
-       y1=apply(setnet[[x]],2,mean)+apply(setnet[[x]],2,sd),
-       ylim=c(0,30),col=x,lty=1,code=3,angle=90,length=.01)
-} )
-legend("topright",legend=names(setnet),col=seq_along(setnet),lty=1)
-}
-
-plotFun=function(setnet,fun=mean,...){
-
-plot(apply(setnet[[1]],2,fun),col=1,type="n",...)
-sapply(seq_along(setnet),function(x){
-       print(x)
-	points(apply(setnet[[x]],2,fun),col=x,type="l")
-} )
-legend("topright",legend=names(setnet),col=seq_along(setnet),lty=1)
-}
-
-
-
-dev.off()
-
-
-
-
-test=read.csv("~/result/4Net_test/g2/run_0001/agents.csv",sep=";")
-    plotAllClassMean(test) 
-	
-}
