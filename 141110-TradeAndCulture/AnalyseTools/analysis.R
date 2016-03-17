@@ -1,4 +1,5 @@
 if(require("plyr")){library(plyr)}
+if(require("vioplot")){library(vioplot)}
 if(require("RColorBrewer")){library(RColorBrewer)}
 if(require("poweRlaw")){library(poweRlaw)}
 if(require("XML")){library(XML)}
@@ -1121,16 +1122,17 @@ test<-function(){
     net6=makeListWithAllFolder("~/result/6Net_test/")
     net15=makeListWithAllFolder("~/result/15Net_test/")
     net6Rp=makeListWithAllFolder("~/result/6Net_testRandomPrice//")
+    netLast=makeListWithAllFolder("~/result/lastNet/")
     net4=makeListWithAllFolder("~/result/4Net_test/")
     net4Rp=makeListWithAllFolder("~/result/4Net_testRandomPrice/")
     plotMeanSd(net15)
     #boxplot(net6[[1]][1,]-net6[[1]][1,seq_along(net6[[1]][1,])]+1])
     plotDerive(net15,ylim=c(-0.05,0.05))
     png("checkMDeriv.png")
-    plotDeriveOfMean(net6,ylim=c(-0.,.1))
+    plotDeriveOfMean(netLast,ylim=c(-0.,.1))
     dev.off()
     png("checkM.png")
-    plotFun(net15)
+    plotFun(a)
 
     conpl$new(net6[[1]][2:length(net6[[1]])])
     x=1:300
@@ -1154,18 +1156,19 @@ test<-function(){
     lines(xx, predict(fit7, data.frame(x=xx)), col='black')
 
 
+    boxplot(u$mean[u$timestep > 2000] ~ u$net[u$timestep > 2000])         
 
     dataRead=read.csv( "~/Downloads/G1-6.csv")
     dataRead=read.csv( "G1-15.csv")
     res=fitting(net15)
     pdf("meanCurveAndFit.pdf",width=9,height=10)
     layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
-    plotFun(net15)
+    plotFun(netLast)
     mtext("Fitted model : y ~ i * x ^ -z+k",side=1,line=4)
     plot(dataRead$average_dist,res$z,col=1:15,ylab="z",xlab="average_path")   
     text(label=dataRead$network,x=dataRead$average_dist,y=res$z-0.002,col=1:15)   
-    plot(dataRead$density,res$i,col=1:15,ylab="i",xlab="dens")   
-    text(label=dataRead$network,x=dataRead$density,y=res$i-0.03,col=1:15)   
+    plot(dataRead$density,res$k,col=1:15,ylab="i",xlab="dens")   
+    text(label=dataRead$network,x=dataRead$density,y=res$k-0.03,col=1:15)   
     dev.off()
     plot(res$z,res$i,col=1:6,xlab="z",ylab="i")
 
@@ -1177,6 +1180,24 @@ test<-function(){
     net6[[5]]=net6[[5]][complete.cases(net6[[5]]),]
     all=createTable(net6)
    all15=createTable(net15)
+   allLas=createTable(netLast)
+   alla=createTable(a)
+
+    sparsities=c(0,900,940,980)
+   sapply(names(a),function(g){
+	a[[g]] = cbind(G 
+	       }
+    sapply(alla,function(i){
+	   pdf(paste("tmp/100/agentwrtK_D-",formatC(1000-i,width=4,format="d",flag="0"),".pdf",sep=""),pointsize=14)
+	   t_comp=getLastIt(alld100WOUT[alld100WOUT$Sparsity ==i,])
+	   plot(1,1,xlim=c(.5,6.5),ylim=c(0,100),type="n",xaxt="n",ylab="number of active agents",xlab="tournament size",main=paste("Evolution of #agents for different tournament size\n and density of ",(1000-i)/1000 ,sep=""))
+	   axis(1,at=seq_along(tsize),labels=sort(tsize))
+	   sapply(seq_along(tsize),function(k){
+		  vioplot(t_comp$alive[t_comp$t_size == sort(tsize)[k]],at=k,add=T,col="white")})
+	   dev.off()
+	})
+
+
     utest=sapply(net6,function(net){
 		 u=apply(net,2,mean);
 		 fi=lm(y ~ x , list(y=u,x=as.numeric(names(u))));
@@ -1217,3 +1238,78 @@ fitting=function(idata){
     return(res)
 }
 
+
+caaGraph=fucntion(){
+    
+sdMean=tapply(alla$mean,alla$timestep,sd)
+	bestTime=names(sort(sdMean)[length(sdMean)])
+	bestTimeB=as.numeric(bestTime)+90
+	bestTimeC=as.numeric(bestTime)-90
+	lastTime=names(sdMean[length(sdMean)])
+	speed=alla[alla$timestep==bestTime,]
+	ending=alla[alla$timestep==lastTime,]
+
+	lim=c(.005,0.25)
+	pdf(paste("tmp/speedDist.pdf",sep=""),pointsize=14)
+	plot(1,1,xlim=lim,ylim=c(0,30),type="n",xaxt="n",ylab="Score",xlab="Density",main=paste("Distribution of Score at timestep:",lastTime))
+	sapply(names(a),function(x){
+	       u=a[[x]]
+	       u=u[[lastTime]]
+	       vioplot(u,at=fit$dens[fit$network == x],add=T,col="white",wex=0.05,xlim=lim)
+	      })
+	dev.off()
+
+	lim=c(3,80)
+	pdf(paste("tmp/speedDist.pdf",sep=""),pointsize=14)
+	sapply(names(a),function(x){
+	       u=a[[x]]
+	       u=u[[bestTime]]
+	       vioplot(u,at=fit$dist[fit$network == x],add=T,col="white",xlim=lim)
+	      })
+	dev.off()
+
+	bestTime=900
+	for(bestTime in names(a[[1]])[seq(2,134,2)]){
+	    #pdf(paste("tmp/scoreComp",bestTime,".pdf",sep=""),pointsize=14,width=10,height=7)
+	    png(paste("tmp/scoreComp",formatC(as.numeric(bestTime), width = 5, format = "d", flag = "0"),".png",sep=""),pointsize=14,width=1000,height=600)
+	    plot(1,1,xlim=c(0,length(seq_along(fit$dist))+1),ylim=c(1,20),type="n",xaxt="n",ylab="Average Shortest Path Length",xlab="Score",main=paste("Score for all setup at timestep=",bestTime ,sep=""))
+	    axis(1,at=seq_along(fit$dist),labels=sort(fit$dist),las=3)
+	    sapply(names(a),function(x){
+		   u=a[[x]]
+		   u=u[[bestTime]]
+		   print(fit$dist[fit$network == x])
+		   print(match(fit$dist[fit$network == x],fit$dist))
+		   vioplot(u,at=match(fit$dist[fit$network == x],fit$dist),add=T,col="white",xlim=lim)
+	      })
+	    dev.off()
+	}
+
+
+	bestTime="9900"
+	for(bestTime in names(a[[1]])[seq(2,134,2)]){
+	    pdf(paste("tmp/scoreComp",bestTime,".pdf",sep=""),pointsize=14,width=7,height=7)
+	    #png(paste("tmp/scoreCompDen",formatC(as.numeric(bestTime), width = 5, format = "d", flag = "0"),".png",sep=""),pointsize=14,width=1000,height=600)
+	    plot(1,1,xlim=c(0,max(fit$dens)+.011),ylim=c(1,20),type="n",xaxt="n",ylab="Density",xlab="Score",main=paste("Score for all setup at timestep=",bestTime ,sep=""))
+	    axis(1,at=fit$dens,labels=sort(fit$dens),las=3)
+	    sapply(names(a),function(x){
+		   u=a[[x]]
+		   u=u[[bestTime]]
+		   print(fit$dens[fit$network == x])
+		   print(match(fit$dens[fit$network == x],fit$dens))
+		   vioplot(u,at=fit$dens[fit$network == x],add=T,col="white",xlim=lim,wex=.1)
+	      })
+	    dev.off()
+	}
+
+	
+
+fit=read.csv("~/Dropbox/trade/python/complete/fits.csv") 
+
+
+
+    full=getAllMeanScore("~/result/testFull/")
+
+
+
+
+}
