@@ -199,8 +199,8 @@ namespace Epnet
 			std::string type = provinceConfig._networkType; 
 			
 			
-			//Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
-			Network n = Network(groupOfproducer,type,it->first,true);
+			Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
+			//Network n = Network(groupOfproducer,type,it->first,true);
 			n.write();
 			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
 
