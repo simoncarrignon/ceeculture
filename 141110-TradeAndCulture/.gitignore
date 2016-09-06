@@ -45,3 +45,5 @@ mpiCode
 *.pdf
 *.csv
 *.png
+
+config.xml
