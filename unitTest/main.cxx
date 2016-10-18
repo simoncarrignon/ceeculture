@@ -1145,7 +1145,7 @@ BOOST_AUTO_TEST_CASE( AddTypeGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 
 	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
@@ -1164,8 +1164,8 @@ BOOST_AUTO_TEST_CASE( AddTwoTimesTypeGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
-	myAgent0->addGoodType("A",99.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
+	myAgent0->addGoodType("A",99.0,0.0,0.0,0.0);
 
 	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
@@ -1184,8 +1184,8 @@ BOOST_AUTO_TEST_CASE( AddTwoDifferentTypeGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
-	myAgent0->addGoodType("B",50.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
+	myAgent0->addGoodType("B",50.0,0.0,0.0,0.0);
 
 	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 2);
@@ -1207,8 +1207,8 @@ BOOST_AUTO_TEST_CASE( RemoveTypeGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
-	myAgent0->addGoodType("B",50.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
+	myAgent0->addGoodType("B",50.0,0.0,0.0,0.0);
 	myAgent0->removeGoodType("A");
 
 	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
@@ -1228,7 +1228,7 @@ BOOST_AUTO_TEST_CASE( RemoveNoneExistingGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->removeGoodType("B");
 
 	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
@@ -1249,7 +1249,7 @@ BOOST_AUTO_TEST_CASE( AddGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
 	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
@@ -1269,7 +1269,7 @@ BOOST_AUTO_TEST_CASE( AddTooMuchGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 	myAgent0->addGood("A",98.1);
 
@@ -1290,7 +1290,7 @@ BOOST_AUTO_TEST_CASE( AddGoodToNotKnownType )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("B",2.0);
 
 	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
@@ -1310,7 +1310,7 @@ BOOST_AUTO_TEST_CASE( RemoveGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",50.0);
 	myAgent0->removeGood("A",2.0);
 
@@ -1331,7 +1331,7 @@ BOOST_AUTO_TEST_CASE( RemoveTooMuchGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",10.0);
 	myAgent0->removeGood("A",20.0);
 
@@ -1352,7 +1352,7 @@ BOOST_AUTO_TEST_CASE( RemoveGoodNotKnown )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",10.0);
 	myAgent0->removeGood("B",20.0);
 
@@ -1373,7 +1373,7 @@ BOOST_AUTO_TEST_CASE( GetGood )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
 	std::tuple<double, double, double, double> goods = myAgent0->getGood("A");
@@ -1391,7 +1391,7 @@ BOOST_AUTO_TEST_CASE( GetGoodUnknwon )
 	RomanTest* myAgent0 = new RomanTest("agent_0","random");
 	myWorld.addAgent(myAgent0);
 	myAgent0->setRandomPosition();
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
 	std::tuple<double, double, double, double> goods = myAgent0->getGood("B");
@@ -1422,9 +1422,9 @@ BOOST_AUTO_TEST_CASE( SendGoodToReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","A",15);
 
@@ -1454,9 +1454,9 @@ BOOST_AUTO_TEST_CASE( SendUnknownGood )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","B",15);
 
@@ -1486,11 +1486,11 @@ BOOST_AUTO_TEST_CASE( SendGoodUnknownToReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent0->addGoodType("B",100.0,0.0,0.0);
+	myAgent0->addGoodType("B",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("B",20.0);
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","B",15);
 
@@ -1520,9 +1520,9 @@ BOOST_AUTO_TEST_CASE( SendGoodWithoutConnection )
 	myAgent0->setRandomPosition();
 	myAgent1->setRandomPosition();
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","A",15);
 
@@ -1552,8 +1552,8 @@ BOOST_AUTO_TEST_CASE( SendGoodToSender )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("A",20.0);
 
 	myAgent1->sendGoodTo("agent_0","A",15);
@@ -1584,9 +1584,9 @@ BOOST_AUTO_TEST_CASE( SendSaturatingGood )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",100.0);
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("A",20.0);
 
 	myAgent0->sendGoodTo("agent_1","A",90);
@@ -1617,9 +1617,9 @@ BOOST_AUTO_TEST_CASE( SendGoodNotInStock )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 
 	myAgent0->sendGoodTo("agent_1","A",30);
 
@@ -1653,10 +1653,10 @@ BOOST_AUTO_TEST_CASE( GetListAllTrades )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
@@ -1694,10 +1694,10 @@ BOOST_AUTO_TEST_CASE( GetListProposedTradesFromSource )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
@@ -1733,12 +1733,12 @@ BOOST_AUTO_TEST_CASE( TradeGoods )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
@@ -1783,12 +1783,12 @@ BOOST_AUTO_TEST_CASE( RefuseTrade )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
@@ -1830,7 +1830,7 @@ BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToSender )
 	myAgent0->setRandomPosition();
 	myAgent1->setRandomPosition();
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
 
@@ -1877,7 +1877,7 @@ BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
@@ -1919,12 +1919,12 @@ BOOST_AUTO_TEST_CASE( TradeGoodsWhenNoNetworkLink )
 	myAgent0->setRandomPosition();
 	myAgent1->setRandomPosition();
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
@@ -1968,12 +1968,12 @@ BOOST_AUTO_TEST_CASE( TradeGoodsWithLinkInWrongDirection )
 	myAgent1->proposeConnectionTo("agent_0");
 	myAgent0->acceptConnectionFrom("agent_1");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
@@ -2018,12 +2018,12 @@ BOOST_AUTO_TEST_CASE( AcceptNonExistingTrade )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
@@ -2067,12 +2067,12 @@ BOOST_AUTO_TEST_CASE( NotEnoughCurrencyInReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
@@ -2117,11 +2117,11 @@ BOOST_AUTO_TEST_CASE( TradeGoodNotInStock )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
@@ -2166,12 +2166,12 @@ BOOST_AUTO_TEST_CASE( NotEnoughStorageSpaceInReceiver )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("A",95.0);
 	myAgent1->addGood("currency",50.0);
@@ -2217,12 +2217,12 @@ BOOST_AUTO_TEST_CASE( NotEnoughSpaceInSender )
 	myAgent0->proposeConnectionTo("agent_1");
 	myAgent1->acceptConnectionFrom("agent_0");
 
-	myAgent0->addGoodType("A",100.0,0.0,0.0);
+	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("currency",100.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",95.0);
 
-	myAgent1->addGoodType("A",100.0,0.0,0.0);
+	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent1->addGoodType("currency",100.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 

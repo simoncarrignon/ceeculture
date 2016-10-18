@@ -1,4 +1,4 @@
-##python code to generate netwokr given a pandora config file. 
+##This python code generates networks given a pandora config file. 
 #Maybe we should integrate it to the C++ code in the Network Class
 #But maybe not
 

@@ -1,4 +1,3 @@
-
 ############# TEMPLATE FOR MODELS  ###################
 ######################################################
 ######################################################
@@ -6,13 +5,13 @@
 ##### please fill with information about your model ##
 ######################################################
 
-nameProgram = 'unitTests'
+nameProgram = 'province'
 
 agents = ['Roman']
 world = 'Province'
 namespaceAgents = ['Epnet']
 
-srcFiles = Split('main.cxx ProvinceConfig.cxx Roman.cxx RomanTest.cxx Province.cxx ProvinceTest.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx ProposeTradeAction.cxx ControllerFactory.cxx RandomController.cxx MacmillanController.cxx')
+srcFiles = Split('main.cxx Roman.cxx Province.cxx ProvinceConfig.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx ProposeTradeAction.cxx RandomController.cxx BasicController.cxx ControllerFactory.cxx MacmillanController.cxx ProductionAction.cxx TradeAction.cxx ConsumptionAction.cxx CulturalAction.cxx Network.cxx')
 
 ###################################################
 ########## END OF CUSTOM INFORMATION  #############
@@ -38,13 +37,13 @@ generateMPICodeBuilder = Builder(action=generateMpi.execute)
 env.Append( BUILDERS = {'GenerateMPICode' : generateMPICodeBuilder})
 
 env.Append(LINKFLAGS = '-fopenmp')
-env.Append(LIBS = 'boost_unit_test_framework tinyxml pthread mpl'.split())
 env.Append(CCFLAGS = '-std=c++0x -DTIXML_USE_STL'.split())
 if env['debug'] == True:
     env.Append(CCFLAGS = '-g -O0 -Wall -DPANDORADEBUG'.split())
     if env['edebug']==True:
         env.Append(CCFLAGS = '-DPANDORAEDEBUG')
-    env.Append(LIBS = 'pandorad')
+    #env.Append(LIBS = 'pandorad')
+    env.Append(LIBS = 'pandora')
 else:
     env.Append(CCFLAGS = '-Ofast'.split())
     env.Append(LIBS = 'pandora')
