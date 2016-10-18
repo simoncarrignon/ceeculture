@@ -2,9 +2,10 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="5000" serializeResolution="30"/>
+	<numSteps value="10000" serializeResolution="30"/>
 	<size width="1800" height="1"/>
-	<numAgents value="600"/>
+	<numAgents value="200"/>
+	<market size=".5"/>
 	<controller type="basic" >
 		<good type="random"/>
 		<culture transmission="trade" innovation="trade" mutation=".04"/>
@@ -16,14 +17,14 @@
 	    	<prop1 id="p" value= ".1"/>
 	</network>
 	-->
+	<!--
 	<network type="sf" nparam="1">
 	    	<prop0 id="m" value= "3"/>
 	</network>
-	<!--
+	-->
 	<network type="full" nparam="1">
 	    	<prop0 id="p" value= ".2"/>
 	</network>
-	-->
 
 	<goods num="3">
 		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1.0"	productionRate="0"/>

@@ -25,6 +25,8 @@ void ProvinceConfig::loadParams()
 	_innovationProcess= getParamStr( "controller/culture", "innovation");	
 
 	_mutationRate= getParamFloat( "controller/culture", "mutation");
+
+	_marketSize= getParamFloat( "market", "size");
 	_goodsParam= getParamStr( "controller/good", "type");
 	_networkType= getParamStr( "network", "type");
 	

@@ -28,6 +28,7 @@ class ProvinceConfig : public Engine::Config
 	std::map<std::string,double> _networkParam;
 	float _mutationRate;
 	std::string _innovationProcess;
+	float _marketSize;
 
 public:
 	ProvinceConfig( const std::string & xmlFile );

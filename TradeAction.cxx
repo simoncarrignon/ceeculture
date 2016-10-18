@@ -41,8 +41,10 @@ namespace Epnet
 			std::string goodWanted = *it;
 			if(goodWanted != offererProducedGood){
 
-				std::vector< std::string > exchangeNetwork =offerer.getValidRcvConnections();
-				std::random_shuffle(exchangeNetwork.begin(),exchangeNetwork.end());
+				//std::vector< std::string > exchangeNetwork =offerer.getValidRcvConnections();
+
+				std::vector< std::string > exchangeNetwork =provinceWorld.getListOfProd(goodWanted);
+				std::random_shuffle(exchangeNetwork.begin(),exchangeNetwork.end()); //random the network of 
 
 				std::vector< std::string >::iterator itO=exchangeNetwork.begin();
 
@@ -57,8 +59,9 @@ namespace Epnet
 
 				int noffer=0;
 				bool tradeDone = 0;
-
-				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=100){
+				int noffer_max=exchangeNetwork.size()*provinceWorld.getMarketSize();//if noffer_max is < numagents/ngoods, it means that we limite the research of the agent in the markert
+				//std::cout<<"size net:"<<exchangeNetwork.size()<<", size limite:"<<provinceWorld.getMarketSize()<<", then:"<<noffer_max<<std::endl;
+				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=noffer_max){
 					noffer++;
 					Roman & responder = (Roman&)(*world->getAgent(*itO));
 
@@ -92,6 +95,7 @@ namespace Epnet
 					}
 					itO++;		    
 				}
+				//std::cout<<noffer<<std::endl;
 
 				if(std::get<0>(bestTrade) != ""){
 

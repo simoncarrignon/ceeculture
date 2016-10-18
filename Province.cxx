@@ -50,17 +50,17 @@ namespace Epnet
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		
 		double all_needs=0.0;
-		double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+		double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
 		
 
-		//initialize some usefull stuff to know about good : the different types that exist and the their associated need value
+		//initialize knowledge about the n goods in our economy: what are the different types, what is their absolute value
 		if(provinceConfig._goodsParam== "random"){
 			for (int i = 0; i < provinceConfig._numGoods ; i++)
 			{
-		  		//double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+		  		//double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; for totally random absolute value, initialize here
 		  		double tneed=bneed * (i+1.0);
 				
-				all_needs += tneed;
+				all_needs += tneed; //tneeds is the sum of all value. It could be use to normalize the privec
 				std::ostringstream sgoodType;
 				sgoodType << "g"<< i;				
 				std::string goodType = sgoodType.str();
@@ -75,6 +75,7 @@ namespace Epnet
 		else
 		{
 			//In that case each good and the properties of thoses good have to be manually set by the user in the config file
+			//I have never used that possibility..
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 			{
 			  	double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
@@ -96,15 +97,15 @@ namespace Epnet
 		}	
 		
 		bool prop=true ;
-			if( prop){
-			
-			  for (auto it = _needs.begin(); it != _needs.end() ; it++){
-			    double p = std::get<1>(*it);
-			    *it=std::make_tuple(std::get<0>(*it),p/all_needs);
-			       
-			  }
+		//used to normalised the needs such as sum(needs(i))=1
+		if( prop){ 
+
+			for (auto it = _needs.begin(); it != _needs.end() ; it++){
+				double p = std::get<1>(*it);
+				*it=std::make_tuple(std::get<0>(*it),p/all_needs);
 			}
-			  
+		}
+
 
 		for(int i=0; i<provinceConfig._numAgents; i++)
 		{
@@ -376,7 +377,20 @@ namespace Epnet
 		std::cout<<std::endl;
 		
 	}
-	
+
+	//return the list of all agent producing the good "s"
+	std::vector<std::string> Province::getListOfProd(std::string s){
+
+		std::vector<std::string> allprod= _good2Producers[s];
+		return(allprod);
+
+	}
+	float Province::getMarketSize(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return provinceConfig._marketSize;
+	}
+
 	void Province::printAllCulturalNerwork(){
 		
 		for(std::map< std::string, Network >::iterator it= _good2CulturalNetwork.begin();it!=_good2CulturalNetwork.end();it++)
