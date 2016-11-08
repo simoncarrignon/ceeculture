@@ -70,7 +70,7 @@ namespace Epnet
 			while(it!= nb.end() && !reproductionDone )
 			{
 				
-				if(*it != romanAgent.getId()){//this limitation should appears given how the cultural networks are done
+				if(*it != romanAgent.getId()){//this test has to appears given how the cultural networks are design 
 					
 					Roman & r= (Roman&)(*world->getAgent(*it));
 //  					std::cout<<"\t "<<r.getId()<<" that "<<std::get<0>(r.getProducedGood())<<std::endl;
@@ -89,8 +89,10 @@ namespace Epnet
 							romanAgent.copyPriceFrom(r.getId());
 							
 						}
-						// 					}
 					}
+					else
+						std::cout<<"ça viens de chier dans la colle man"<<std::endl;
+
 				}
 				it++;
 				

@@ -46,7 +46,7 @@ namespace Epnet
 		if(timestep%3 == 0 && _selectionProcess == "trade" )actions.push_back(new ProductionAction());
 		if(timestep%3 == 1 && _selectionProcess == "trade" )actions.push_back(new TradeAction());
 		if(timestep%3 == 2 && _selectionProcess == "trade" )actions.push_back(new ConsumptionAction());
-		if(timestep%30 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess));
+		if(timestep%3 * 20 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess)); //TODO 20 => a variable of  ProvinceConfig
 
 		return actions;
 	}

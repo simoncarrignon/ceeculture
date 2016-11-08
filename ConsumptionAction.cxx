@@ -31,7 +31,7 @@ namespace Epnet
 		{
 			std::string good=std::get<0>(*it);
  			if(good == std::get<0>(romanAgent.getProducedGood())) 
- 				romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the estimated value for its the production's good
+ 				romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
 //  				romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimated value for its the production's good
 				
 			//fit= |a-b|/euclideDist(a,b) my favorite one

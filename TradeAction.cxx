@@ -54,8 +54,9 @@ namespace Epnet
 
 
 				double requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
-
-				double proposedQuantity = requestedQuantity*requestedQuantity/offerer.getPrice(offererProducedGood);
+				//if(requestedQuantity != offerer.getPrice(goodWanted)) std::cout<<"thats kind of shit happen??!?!?!?"<<std::endl;
+				//double proposedQuantity = requestedQuantity*requestedQuantity/offerer.getPrice(offererProducedGood);
+				double proposedQuantity = requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
 
 				int noffer=0;
 				bool tradeDone = 0;
@@ -71,7 +72,7 @@ namespace Epnet
 					if(responderProducedGood == goodWanted ){ 
 
 						double responderTradeWill =  responder.getPrice(offererProducedGood)-responder.getQuantity(offererProducedGood); 
-						double responderTradCounter= responderTradeWill*responderTradeWill/(responder.getPrice(goodWanted)); 
+						double responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
 
 						if(
@@ -81,7 +82,10 @@ namespace Epnet
 						  responderTradCounter >= requestedQuantity				//the quantity asked is less that the value estimated by the responder
 						  )
 						{
-							if(responderTradeWill<=proposedQuantity)proposedQuantity=responderTradeWill;
+							if(responderTradeWill<proposedQuantity){
+								proposedQuantity=responderTradeWill;
+								//if(requestedQuantity>responderTradCounter) requestedQuantity = responderTradCounter;
+							}
 
 							if(std::get<2>(bestTrade) <= requestedQuantity){ 
 								bestTrade=std::make_tuple(*itO,requestedQuantity,proposedQuantity);
@@ -93,6 +97,10 @@ namespace Epnet
 
 
 					}
+					else{
+						std::cout<<"ça narrive pluusuus"<<std::endl;
+					}
+
 					itO++;		    
 				}
 				//std::cout<<noffer<<std::endl;
