@@ -14,14 +14,15 @@ class BasicController : public AgentController
 
 private:
   
-double _mutationRate;  
-std::string _selectionProcess;  
-    std::string _innovationProcess;
+	double _mutationRate;  
+	std::string _selectionProcess;  
+	std::string _innovationProcess;
+	int  _culturalStep;
 
   
 public:
 	BasicController();
-	BasicController(double mutationRate, std::string selectionProcess, std::string innovationProcess);
+	BasicController(double mutationRate, std::string selectionProcess, std::string innovationProcess,int culturalStep);
 	virtual ~BasicController();
 	
 	virtual void updateState();

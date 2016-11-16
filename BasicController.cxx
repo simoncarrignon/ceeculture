@@ -20,11 +20,12 @@ namespace Epnet
 	{
 	}
 
-	BasicController::BasicController(double mutationRate,std::string selectionProcess,std::string innovationProcess)
+	BasicController::BasicController(double mutationRate,std::string selectionProcess,std::string innovationProcess,int culturalStep)
 	{  
 	  _mutationRate = mutationRate;
 	  _selectionProcess = selectionProcess;
 	  _innovationProcess = innovationProcess;
+	  _culturalStep = culturalStep;
 	}
 
 	
@@ -46,7 +47,8 @@ namespace Epnet
 		if(timestep%3 == 0 && _selectionProcess == "trade" )actions.push_back(new ProductionAction());
 		if(timestep%3 == 1 && _selectionProcess == "trade" )actions.push_back(new TradeAction());
 		if(timestep%3 == 2 && _selectionProcess == "trade" )actions.push_back(new ConsumptionAction());
-		if(timestep%3 * 20 == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess)); //TODO 20 => a variable of  ProvinceConfig
+
+		if( timestep% (3 * _culturalStep) == 0)actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess)); 
 
 		return actions;
 	}

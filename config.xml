@@ -2,13 +2,14 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="10000" serializeResolution="15"/>
+	<numSteps value="1000" serializeResolution="30"/> 
+	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="1"/>
-	<numAgents value="200"/>
-	<market size="1"/>
+	<numAgents value="400"/>
+	<market size="20"/>
 	<controller type="basic" >
 		<good type="random"/>
-		<culture transmission="trade" innovation="trade" mutation=".04"/>
+		<culture transmission="trade" innovation="trade" mutation=".04" step="10"/>
 	</controller>
 
 	<!--

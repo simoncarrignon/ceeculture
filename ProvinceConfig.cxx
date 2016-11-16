@@ -23,6 +23,7 @@ void ProvinceConfig::loadParams()
 	_controllerType = getParamStr( "controller", "type");
 	_selectionProcess= getParamStr( "controller/culture", "transmission");	
 	_innovationProcess= getParamStr( "controller/culture", "innovation");	
+	_culturalStep= getParamInt( "controller/culture", "step");	
 
 	_mutationRate= getParamFloat( "controller/culture", "mutation");
 

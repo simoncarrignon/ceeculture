@@ -32,9 +32,9 @@ namespace Epnet
 			std::string good=std::get<0>(*it);
  			if(good == std::get<0>(romanAgent.getProducedGood())) 
  				romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
-//  				romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimated value for its the production's good
-				
-			//fit= |a-b|/euclideDist(a,b) my favorite one
+//  			//	romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimated value for its the production's good
+			//	
+			////fit= |a-b|/euclideDist(a,b) my favorite one
  			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)))utilityFunction+=0; //undefined fitness function for 0
 			else utilityFunction+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
 			
@@ -42,6 +42,14 @@ namespace Epnet
 			// 	double cur=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)))/romanAgent.getNeed(good);
 			// 	  if(cur>1)cur=1;
 			// 	 utilityFunction+=cur;
+
+
+			//////////////////////
+			//high debugging (to check if work in perfect case)
+			//romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
+			//utilityFunction+=1-std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
+			//////////////////////
+
 			it++;
 		}
 
