@@ -64,7 +64,7 @@ plotDensities <- function(path,param,epsilon){
 #	   abline(v=mean(densities[[i]]$x),col=htcol[names(densities)[i]])
 #	   text(mean(densities[[i]]$x),0,names(densities)[i],col=htcol[names(densities)[i]])
 	})
-    legend("topleft",legend=epsilon,lwd=1,col=htcol)
+    legend("topleft",legend=epsilon,lwd=1,col=htcol,title="epsilon")
 }
 
 
@@ -78,8 +78,11 @@ main <- function(){
     uuu0=read.csv("~/share_res/full/result_0.46.csv",sep= ";", header=F)
     uuu4=read.csv("~/share_res/full/result_0.44.csv",sep= ";", header=F)
 
-    path="~/share_res/lounes/"
-    plotDensities(path,"cstep",c("10.00","2.71","0.74","0.20"))
+    path="~/share_res/testAg/"
+    plotDensities(path,"mu",c("2000.00","0.20"))
+
+    path="~/share_res/noNegat//"
+    plotDensities(path,"mu",c("2000.00","0.20"))
 
     #Devrait pouvoir etre assz utile de faire une fonction qui genere cce graphe de façon auto en fonction de deux variable
     plot(density(uuu$V3),xlim=range(c(density(uuu2$V3)$x,density(uuu1$V3)$x,density(uuu0$V3)$x)),ylim=range(c(density(uuu2$V3)$y,density(uuu1$V3)$y,density(uuu0$V3)$y)),)
