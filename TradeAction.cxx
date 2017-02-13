@@ -20,8 +20,8 @@ namespace Epnet
 	void TradeAction::execute(Engine::Agent& agent)
 	{
 	  
-	       std::clock_t    start;
-		start = std::clock();
+	//       std::clock_t    start;
+	//	start = std::clock();
 		Roman & offerer = (Roman&)agent;
 		Engine::World * world = agent.getWorld();
 		Province & provinceWorld = (Province&) *world;

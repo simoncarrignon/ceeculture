@@ -57,8 +57,10 @@ namespace Epnet
 		romanAgent.setScore(score);
 		
 
+		//Update province min and max score to compute relative selections probabilites
 		if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
 		if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
+
 
 
 	}
