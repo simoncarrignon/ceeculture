@@ -54,8 +54,7 @@ namespace Epnet
 		
 
 		//initialize knowledge about the n goods in our economy: what are the different types, what is their absolute value
-		switch(provinceConfig._goodsParam){
-		    case "random":
+		if(provinceConfig._goodsParam == "random"){
 			for (int i = 0; i < provinceConfig._numGoods ; i++)
 			{
 			    //double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; for totally random absolute value, initialize here
@@ -72,8 +71,27 @@ namespace Epnet
 			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
 			    //				_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
 			}	  
-			break;
-		    default:
+		}
+		else if(provinceConfig._goodsParam == "gintis07"){
+			for (int i = 0; i < provinceConfig._numGoods ; i++)
+			{
+
+			    //In Gintis 2007 there is no need for a "needs" (utility are then computed only based on personnal value
+			    //We set up -1 to help debugging
+
+			    std::ostringstream sgoodType;
+			    sgoodType << "g"<< i;				
+			    std::string goodType = sgoodType.str();
+			    _needs.push_back(std::make_tuple(goodType,-1));  
+			    _maxscore.push_back(std::make_tuple(goodType,0.0));
+			    _minscore.push_back(std::make_tuple(goodType,0.0));
+			    _typesOfGood.push_back(goodType);
+			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+			    //				_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
+			}	  
+
+		}
+		else {
 			//In that case each good and the properties of thoses good have to be manually set by the user in the config file
 			//I have never used that possibility..
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
@@ -91,9 +109,6 @@ namespace Epnet
 
 
 			}
-			break;
-
-
 
 		}
 		
