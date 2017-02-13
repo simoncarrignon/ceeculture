@@ -7,7 +7,9 @@ if(require("XML")){library(XML)}
 
 
 
-fitness<-function(p1,b1){1-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
+fitness<-function(p1,b1){
+	return(1-abs(p1-b1)/sqrt(abs(p1^2-b1^2)))
+}
 mariofit<-function(p1,b1=.5){
     if(p1>=b1)
 	return(0)
@@ -20,7 +22,7 @@ mariofit<-function(p1,b1=.5){
 
 plotFitness=function(p1,b1){
     print(b1)
-    plot(fitness(p1,b1)~p1,ylim=c(-.05,1),xlab="price for x",ylab="score for one step",type="l",main="Score of an Agent \n for one good depending on some needs for this good" )
+    plot(fitness(p1,b1)~p1,ylim=c(-.05,1),xlab="quantity of x",ylab="score for one step",type="l",main="Score of an Agent \n for one good depending on some needs for this good" )
     abline(v=b1,col="red")
     text(b1,-0.08,paste("need(x)=",b1),srt=90,cex=.95,pos=4,col="red")
 }
@@ -171,7 +173,7 @@ plotAllClassMean=function(datas,timeStep=1,...){
     allgoods=levels(datas$p_good)
     ngoods=length(allgoods)
     j=0
-    plot(c(0,max(datas$timeStep)),c(1,1),ylim=c(0,ngoods*10),type="n")
+    plot(c(0,max(datas$timeStep)),c(1,1),ylim=c(0,ngoods*10),type="n",...)
     for( i in allgoods){
 	oneClass=datas[datas$timeStep %% timeStep == 0 & datas$p_good == i,]
 	avg=	tapply(10*ngoods-oneClass$scores,oneClass$timeStep,mean)
@@ -292,7 +294,7 @@ createEverything<-function(expeDir,timeA=0,timeB=0){
 getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 
     all=data.frame()
-    files=list.files(expeDir,pattern="run_*")
+    files=list.files(expeDir,pattern="*")
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
@@ -301,10 +303,10 @@ getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 	print(file)
 	work=read.csv(file,sep=";")
 	toBind=getMeanRatio2(work,timestep,timeA=timeA,timeB=timeB)
-	p=getPropFromXml(folder,"network","p")
-	v=getPropFromXml(folder,"network","v")
+	#p=getPropFromXml(folder,"network","p")
+	#v=getPropFromXml(folder,"network","v")
 	network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
-	all=rbind(all,cbind(t(toBind),p,v,network))
+	all=rbind(all,cbind(t(toBind)))#,p,v,network))
 	sim=sim+1
     }
     return(all)
@@ -313,7 +315,7 @@ getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,listOfXmlValue=c(),fun=mean){
 
     all=data.frame()
-    files=list.files(expeDir,pattern="run_*")
+    files=list.files(expeDir,pattern="*")
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
@@ -828,7 +830,7 @@ main <- function(){
     boxplot((30-a$scores)~a$timeStep,outline=F,ylim=c(0,30))
     dev.off()
     pdf("meanEachGroup.pdf")
-    plotAllClassMean(a,3,100)
+    plotAllClassMean(tt2,3,100)
     dev.off()
     rat=getAllMeanRatio(expeDir,3,timestep=100)
     pdf("meanRatio.pdf")
@@ -1259,7 +1261,6 @@ fit=read.csv("~/Dropbox/trade/python/complete/fits.csv")
 
 
     full=getAllMeanScore("~/result/testFull/")
-
 
 
 

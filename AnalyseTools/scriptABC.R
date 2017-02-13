@@ -46,33 +46,39 @@ getSetOfResu <- function(pat){
 }
 
 
-plotDensities <- function(path,param,epsilon){
-    htcol=heat.colors(length(epsilon),alpha=1)
+plotDensities <- function(path,param,epsilon,from,to,...){
+    htcol=topo.colors(length(epsilon),alpha=1)
     names(htcol)=epsilon
-    htcolF=heat.colors(length(epsilon),alpha=.5)
+    #htcolF=topo.colors(length(epsilon),alpha=.5)
+    htcolF=c(rgb(34, 139, 34,127.5,maxColorValue=255),rgb(178, 255, 255,127.5,maxColorValue=255))
     names(htcolF)=epsilon
     listParticles=lapply(epsilon,function(eps){print(eps);cbind(read.csv(paste(path,"result_",eps,".csv",sep="") ),epsilon=eps)})
     names(listParticles)=epsilon
     print(listParticles)
-    densities=lapply(listParticles,function(i){density(i[,param])})
+    densities=lapply(listParticles,function(i){density(i[,param],from=from,to=to)})
     names(densities)=epsilon
     rangex=range(lapply(densities,function(i)range(i$x)))
     rangey=range(lapply(densities,function(i)range(i$y)))
-    plot(density(listParticles[[1]][,param]),xlim=rangex,ylim=rangey,type="n",xlab=param)
+    par(mar=c(5,5,1,1))
+    plot(density(listParticles[[1]][,param]),ylim=rangey,type="n",main="", xlab=expression(mu),...)
     lapply(seq_along(densities),function(i){
-	   polygon(densities[[i]],col=htcolF[names(densities)[i]],lwd=2)#,density=20,angle=45*i,border=htcol[names(densities)[i]])
+	   polygon(c(0,densities[[i]]$x,to),c(0,densities[[i]]$y,0),col=htcolF[names(densities)[i]],lwd=2)#,density=20,angle=45*i,border=htcol[names(densities)[i]])
 #	   abline(v=mean(densities[[i]]$x),col=htcol[names(densities)[i]])
 #	   text(mean(densities[[i]]$x),0,names(densities)[i],col=htcol[names(densities)[i]])
 	})
-    legend("topleft",legend=epsilon,lwd=1,col=htcol,title="epsilon")
+    text(.65,1.2,expression(prior:mu %~% italic(u)(0,1)))
+    legend("topright",legend=c("prior","posterior"),fill=htcolF)
 }
 
 
 main <- function(){
+
     uuu2=read.csv("~/share_res/result_1.00.csv")
-    uuu=read.csv("~/share_res/luv/resousou")
+    uuu=read.csv("~/share_res/luv/")
     uuu=read.csv("~/share_res/result_0.20.csv")
-    epsilon=seq(.44,.48,.02)
+
+    path="~/share_res/luv/"
+    epsilon=c("0.30","0.20","0.10")
     uuu2=read.csv("~/share_res/full/result_0.50.csv",sep= ";", header=F)
     uuu1=read.csv("~/share_res/full/result_0.48.csv",sep= ";", header=F)
     uuu0=read.csv("~/share_res/full/result_0.46.csv",sep= ";", header=F)
@@ -81,18 +87,62 @@ main <- function(){
     path="~/share_res/testAg/"
     plotDensities(path,"mu",c("2000.00","0.20"))
 
+    plotDensities(path,"mu",epsilon)
+
     path="~/share_res/noNegat//"
     plotDensities(path,"mu",c("2000.00","0.20"))
 
+    pathBig="~/share_res/biggerThanPhat/"
+    plotDensities(pathBig,"cstep",c("3000.00","0.20"))
+    tt=read.csv("~/share_res/testMu/3_100_0.6_20_0.124471348764/agents.csv",sep=";")
+    tt2=read.csv("~/share_res/testMu/3_100_0.6_20_0.832957020173/agents.csv",sep=";")
+
+    alltt=rbind(tt,tt2)
+
+    alltt=alltt[alltt$timeStep >= 6000,]
+
+    tt=read.csv("~/share_res/biggerThanPhat/2_199_0.508440976643_33_0.967006910121/agents.csv",sep=";")
+    tt2=read.csv("~/share_res/biggerThanPhat/3_387_0.827853613564_24_0.214588177227/agents.csv",sep=";")
+
+    mean(tt$score[tt$timeStep == max(tt$timeStep)])/(33*1)
+    mean(tt2$score[tt2$timeStep == max(tt2$timeStep)])/(24*2)
+
+    alltt=rbind(tt,tt2)
+
+    boxplot(alltt$score~ alltt$mu)
+    getPropFromXml("~/share_res/testMu/3_100_0.6_20_0.124471348764/","controller","step")
+    getPropFromXml("~/share_res//3_100_0.6_20_0.124471348764/","controller","step")
+
+    path="~/share_res/smallTight/"
+    plotDensities(path,"cstep",c("3000.00","0.05"))
+
+    path="~/share_res/testMuBisWider/"
+    tt2=read.csv("~/share_res/testMuBisWider/3_50_0.6_10_0.000590196537098/agents.csv",sep=";")
+    tt2=getAllMeanScore("~/share_res/testMuBisWider/")
+    pposteriorlotDensities(path,"mu",c("3000.00","0.25"))
     #Devrait pouvoir etre assz utile de faire une fonction qui genere cce graphe de façon auto en fonction de deux variable
     plot(density(uuu$V3),xlim=range(c(density(uuu2$V3)$x,density(uuu1$V3)$x,density(uuu0$V3)$x)),ylim=range(c(density(uuu2$V3)$y,density(uuu1$V3)$y,density(uuu0$V3)$y)),)
 
     lines(density(uuu1$V1),col="orange")
     lines(density(uuu0$V3),col="red")
 
-
+    pdf("../../../doc/conferences/20170127_YSLRWinterWorkshop/img/ABC.pdf")
+    par(mar=c(5,4,1,1))
+     plotDensities(path,"mu",c("3000.00","0.25"),from=0,to=1,xlim=c(0,1))
+    dev.off()
 
 }
 
 
+
+manualABC<-function(){
+	allr=read.csv("~/share_res/results_big.csv")
+	allr$nscore= allr$score / (allr$cstep * allr$ngoods)
+	allr=na.omit(allr)
+	prior=allr
+	posterior=allr[allr$nscore < .08693,]
+	hist(prior$nag_good,freq=F)
+	lines(density(prior$nag_good))
+	lines(density(posterior$nag_good))
+}
 
