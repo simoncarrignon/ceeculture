@@ -7,7 +7,9 @@ if(require("XML")){library(XML)}
 
 
 
-fitness<-function(p1,b1){1-abs(p1-b1)/sqrt(abs(p1^2-b1^2))}
+fitness<-function(p1,b1){
+	return(1-abs(p1-b1)/sqrt(abs(p1^2-b1^2)))
+}
 mariofit<-function(p1,b1=.5){
     if(p1>=b1)
 	return(0)
@@ -20,7 +22,7 @@ mariofit<-function(p1,b1=.5){
 
 plotFitness=function(p1,b1){
     print(b1)
-    plot(fitness(p1,b1)~p1,ylim=c(-.05,1),xlab="price for x",ylab="score for one step",type="l",main="Score of an Agent \n for one good depending on some needs for this good" )
+    plot(fitness(p1,b1)~p1,ylim=c(-.05,1),xlab="quantity of x",ylab="score for one step",type="l",main="Score of an Agent \n for one good depending on some needs for this good" )
     abline(v=b1,col="red")
     text(b1,-0.08,paste("need(x)=",b1),srt=90,cex=.95,pos=4,col="red")
 }
@@ -29,55 +31,6 @@ pointFitness=function(p1,b1){
     points(fitness(p1,b1)~p1,type="l")
     abline(v=b1,col="red")
     text(b1,-0.09,paste("n(g)=",b1,sep=""),srt=90,cex=1.2,pos=4,col="red")
-}
-
-###Thsi fuction read a csv and add the propertie associeted to a elelment find in the xml config file
-##Warning : do it just for "network" pro, should be extend to put a list of properties.
-readAddProp<-function(docname,...){
-    res=read.csv(paste(docname,"/agents.csv",sep=""),sep=";")
-
-    i=xmlTreeParse(paste(docname,"/config.xml",sep=""))
-    i=xmlRoot(i)
-    net=i[["network"]]
-    print(net)
-    for( u in 1:xmlSize(net)){
-	attri=xmlAttrs(net[[u]])
-	if(length(attri)>0){
-	    paramId=attri[["id"]]
-	    paramValue=as.numeric(attri[["value"]])
-	    newCol=rep(paramValue,nrow(res))
-	    res=cbind(res,newCol)
-	    names(res)[length(res)]=paramId
-	}
-
-    }
-    return(res)
-}
-
-
-###This return aa properties in an XML config file.
-##the XML file shoudl be on the form:
-## <type>
-##	<XXX id=propId value=valeureturned/>
-## </type>
-getPropFromXml <- function(expeDir,type,propId,format=as.numeric){
-    filename=paste(expeDir,"/config.xml",sep="")
-    i=xmlTreeParse(filename)
-    i=xmlRoot(i)
-    net=i[[type]]
-    if(length(net)<1){
-	print(paste("Object\'",type,"\' not defined in the XML file",filename))
-	return(NULL)
-    }
-    child=xmlChildren(net)
-    for(j in child){
-	a=xmlAttrs(j)
-	print(propId)
-	if(a["id"]==propId)
-	    return(format(a["value"]))
-    }
-    print(paste("Property \'", propId, "\' not defined in the XML file",filename))
-    return(NULL)
 }
 
 allCPhDlass<-function(datas,ngoods,g){
@@ -220,7 +173,7 @@ plotAllClassMean=function(datas,timeStep=1,...){
     allgoods=levels(datas$p_good)
     ngoods=length(allgoods)
     j=0
-    plot(c(0,max(datas$timeStep)),c(1,1),ylim=c(0,ngoods*10),type="n")
+    plot(c(0,max(datas$timeStep)),c(1,1),ylim=c(0,ngoods*10),type="n",...)
     for( i in allgoods){
 	oneClass=datas[datas$timeStep %% timeStep == 0 & datas$p_good == i,]
 	avg=	tapply(10*ngoods-oneClass$scores,oneClass$timeStep,mean)
@@ -341,7 +294,7 @@ createEverything<-function(expeDir,timeA=0,timeB=0){
 getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 
     all=data.frame()
-    files=list.files(expeDir,pattern="run_*")
+    files=list.files(expeDir,pattern="*")
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
@@ -350,10 +303,10 @@ getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 	print(file)
 	work=read.csv(file,sep=";")
 	toBind=getMeanRatio2(work,timestep,timeA=timeA,timeB=timeB)
-	p=getPropFromXml(folder,"network","p")
-	v=getPropFromXml(folder,"network","v")
+	#p=getPropFromXml(folder,"network","p")
+	#v=getPropFromXml(folder,"network","v")
 	network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
-	all=rbind(all,cbind(t(toBind),p,v,network))
+	all=rbind(all,cbind(t(toBind)))#,p,v,network))
 	sim=sim+1
     }
     return(all)
@@ -362,7 +315,7 @@ getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,listOfXmlValue=c(),fun=mean){
 
     all=data.frame()
-    files=list.files(expeDir,pattern="run_*")
+    files=list.files(expeDir,pattern="*")
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
@@ -877,7 +830,7 @@ main <- function(){
     boxplot((30-a$scores)~a$timeStep,outline=F,ylim=c(0,30))
     dev.off()
     pdf("meanEachGroup.pdf")
-    plotAllClassMean(a,3,100)
+    plotAllClassMean(tt2,3,100)
     dev.off()
     rat=getAllMeanRatio(expeDir,3,timestep=100)
     pdf("meanRatio.pdf")
@@ -1308,7 +1261,6 @@ fit=read.csv("~/Dropbox/trade/python/complete/fits.csv")
 
 
     full=getAllMeanScore("~/result/testFull/")
-
 
 
 
