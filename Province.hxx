@@ -3,7 +3,6 @@
 
 #include <World.hxx>
 #include <Roman.hxx>
-#include <GRoman.hxx>
 #include <Network.hxx>
 
 namespace Epnet

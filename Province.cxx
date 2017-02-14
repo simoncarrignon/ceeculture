@@ -125,176 +125,132 @@ namespace Epnet
 		for(int i=0; i<provinceConfig._numAgents; i++)
 		{
 
-		    if((i%getNumTasks())==getId())
-		    {
-			if(provinceConfig._goodsParam== "random" || provinceConfig._goodsParam== "randn")
+			if((i%getNumTasks())==getId())
 			{
+				std::ostringstream oss;
+				oss << "Roman_" << i;
+				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep);
+				addAgent(agent);
+				//position is actually not interesting
+				agent->setRandomPosition();
+				//currency is not interesting in itself. that may be changed
+				//currency has no price by itself
+				if(provinceConfig._goodsParam== "random" || provinceConfig._goodsParam== "randn")
+				{
 
-			    std::ostringstream oss;
-			    oss << "Roman_" << i;
-			    Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep);
-			    addAgent(agent);
-			    //position is actually not interesting
-			    agent->setRandomPosition();
-			    //currency is not interesting in itself. that may be changed
-			    //currency has no price by itself
+					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
+					for (int g = 0; g < provinceConfig._numGoods ; g++)
+					{
 
-			    std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
-			    for (int g = 0; g < provinceConfig._numGoods ; g++)
-			    {
+						std::ostringstream sgoodType;
+						sgoodType << "g"<< g;				
+						std::string goodType = sgoodType.str();
+						//id, maxQuantity, price, need and production rate of the good
+						agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood));
+						//add init quantity to new good
+						agent->addGood(goodType,std::get<1>(protoGood));
+						//the protoGood is used to calibrate all other goods. 
 
-				std::ostringstream sgoodType;
-				sgoodType << "g"<< g;				
-				std::string goodType = sgoodType.str();
-				//id, maxQuantity, price, need and production rate of the good
-				agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood));
-				//add init quantity to new good
-				agent->addGood(goodType,std::get<1>(protoGood));
-				//the protoGood is used to calibrate all other goods. 
+						//set a random properties for each goods
+						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
+						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
-				//set a random properties for each goods
-				if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
-				if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
-				if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
-
-				//---------------/*
-				//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
-				agent->setNeed(goodType,std::get<1>(_needs[g]));
-			    }			
-
-
-
-			    //Set producedGood as a modulo of the agent ID
-			    int randg = i%provinceConfig._numGoods;
-			    std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
-			    agent->setProductionRate(std::get<0>(producedGood),1.0);
-			    _good2Producers[std::get<0>(producedGood)].push_back(oss.str());
-
-
-			    log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
-
-
-			    //loop for initialize the commercial connection of the current agent with all previously created agents.
-			    for(int j=(i-1); j>=0; j--)
-			    {
-				std::ostringstream ossb;
-				ossb << "Roman_" << j;
-				this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
-
-			    }
-			}
-			else if(provinceConfig._goodsParam== "gintis07" )
-			{
-
-
-			    std::ostringstream oss;
-			    oss << "GRoman_" << i;
-			    GRoman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep);
-			    addAgent(agent);
-			    //position is actually not interesting
-			    agent->setRandomPosition();
-			    //currency is not interesting in itself. that may be changed
-			    //currency has no price by itself
-
-
-			    std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
-			    for (int g = 0; g < provinceConfig._numGoods ; g++)
-			    {
-
-				std::ostringstream sgoodType;
-				sgoodType << "g"<< g;				
-				std::string goodType = sgoodType.str();
-				//id, maxQuantity, price, need and production rate of the good
-				agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood));
-				//add init quantity to new good
-				agent->addGood(goodType,std::get<1>(protoGood));
-				//the protoGood is used to calibrate all other goods. 
-
-				//set a random properties for each goods
-				if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
-				if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
-				if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
-
-				//---------------/*
-				//set the need value for each good. Remember: not usued with gintis07 (need should be -1)
-				agent->setNeed(goodType,std::get<1>(_needs[g]));
-			    }			
-
-			    //in gintis 2007, the last good has unit price
-			    int last = provinceConfig._numGoods-1;
-			    std::ostringstream sgoodType;
-			    sgoodType << "g"<< last;				
-			    std::string goodType = sgoodType.str();
-			    agent->setPrice(goodType,1.0);
-			    //---------------/*
+						//---------------/*
+						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
+						agent->setNeed(goodType,std::get<1>(_needs[g]));
+					}			
 
 
 
-			    //Set producedGood as a modulo of the agent ID
-			    int randg = i%provinceConfig._numGoods;
-			    std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
-			    agent->setProductionRate(std::get<0>(producedGood),1.0);
-			    _good2Producers[std::get<0>(producedGood)].push_back(oss.str());
+					//Set producedGood as a modulo of the agent ID
+					int randg = i%provinceConfig._numGoods;
+					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
+					agent->setProductionRate(std::get<0>(producedGood),1.0);
+					_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
-			    log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
-
-
-			    //loop for initialize the commercial connection of the current agent with all previously created agents.
-			    for(int j=(i-1); j>=0; j--)
-			    {
-				std::ostringstream ossb;
-				ossb << "GRoman_" << j;
-				this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
-
-			    }
-			}
-			else{
-			    std::ostringstream oss;
-			    oss << "Roman_" << i;
-			    Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep);
-			    addAgent(agent);
-			    //position is actually not interesting
-			    agent->setRandomPosition();
-			    //currency is not interesting in itself. that may be changed
-			    //currency has no price by itself
-
-			    std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
-			    for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
-			    {
-				//id, maxQuantity, price, need and production rate of the good
-				agent->addGoodType(std::get<0>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it),std::get<5>(*it));
-
-				//add init quantity to new good
-				agent->addGood(std::get<0>(*it),std::get<1>(*it));
-
-				//set a random price for each goods
-
-				agent->setPrice(std::get<0>(*it),(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0); //TODO:demiurge's job
-
-
-				//---------------
-				//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
-				std::vector<std::tuple<std::string,double> >::iterator need = std::find_if(_needs.begin(), _needs.end(), [=](const std::tuple<std::string,double>& good) {return std::get<0>(good) == std::get<0>(*it);});
-
-				if ( need != _needs.end() )
-				{				  
-				    agent->setNeed(std::get<0>(*it),std::get<1>(*need));
 				}
-			    }			
+				else if(provinceConfig._goodsParam== "gintis07" )
+				{
+				    	
+					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
+					for (int g = 0; g < provinceConfig._numGoods ; g++)
+					{
 
-			    log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
+						std::ostringstream sgoodType;
+						sgoodType << "g"<< g;				
+						std::string goodType = sgoodType.str();
+						//id, maxQuantity, price, need and production rate of the good
+						agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood));
+						//add init quantity to new good
+						agent->addGood(goodType,std::get<1>(protoGood));
+						//the protoGood is used to calibrate all other goods. 
+
+						//set a random properties for each goods
+						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
+						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
+
+						//---------------/*
+						//set the need value for each good. Remember: not usued with gintis07 (need should be -1)
+						agent->setNeed(goodType,std::get<1>(_needs[g]));
+					}			
+
+					//in gintis 2007, the last good has unit price
+					int last = provinceConfig._numGoods-1;
+					std::ostringstream sgoodType;
+					sgoodType << "g"<< last;				
+					std::string goodType = sgoodType.str();
+					agent->setPrice(goodType,1.0);
+					//---------------/*
 
 
-			    //loop for initialize the commercial connection of the current agent with all previously created agents.
-			    for(int j=(i-1); j>=0; j--)
-			    {
-				std::ostringstream ossb;
-				ossb << "Roman_" << j;
-				this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
+					agent->initSegments();
 
-			    }
+					//Set producedGood as a modulo of the agent ID
+					int randg = i%provinceConfig._numGoods;
+					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
+					agent->setProductionRate(std::get<0>(producedGood),1.0);
+					_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
+
+				}
+				else{
+					for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
+					{
+						//id, maxQuantity, price, need and production rate of the good
+						agent->addGoodType(std::get<0>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it),std::get<5>(*it));
+
+						//add init quantity to new good
+						agent->addGood(std::get<0>(*it),std::get<1>(*it));
+
+						//set a random price for each goods
+
+						agent->setPrice(std::get<0>(*it),(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0); //TODO:demiurge's job
+
+
+						//---------------
+						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
+						std::vector<std::tuple<std::string,double> >::iterator need = std::find_if(_needs.begin(), _needs.end(), [=](const std::tuple<std::string,double>& good) {return std::get<0>(good) == std::get<0>(*it);});
+
+						if ( need != _needs.end() )
+						{				  
+							agent->setNeed(std::get<0>(*it),std::get<1>(*need));
+						}
+					}			
+
+				}
+				log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
+
+
+				//loop for initialize the commercial connection of the current agent with all previously created agents.
+				for(int j=(i-1); j>=0; j--)
+				{
+					std::ostringstream ossb;
+					ossb << "Roman_" << j;
+					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
+					
+				}
 			}
-		    }
 		}
 		
 		for (std::map< std::string, std::vector< std::string > >::iterator it = _good2Producers.begin(); it != _good2Producers.end();it++) {

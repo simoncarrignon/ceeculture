@@ -46,7 +46,7 @@ void ProvinceConfig::loadParams()
 
 	_numGoods = getParamInt( "goods", "num");
 	
-	if(_goodsParam== "random" ||_goodsParam== "randn" ){
+	if(_goodsParam== "random" ||_goodsParam== "randn"||_goodsParam== "gintis07" ){
 		std::ostringstream name;
 		name << "goods/good";
 		std::string id = getParamStr(name.str(),"id");

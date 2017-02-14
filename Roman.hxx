@@ -42,6 +42,11 @@ namespace Epnet
 
 		std::vector<int> _culturalNetwork;
 
+		std::vector<int> _segSize;
+		std::vector<double> _segWeight;
+		std::vector<std::vector<double>> _alphas;
+		int _numSeg;
+
 
 		std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
 		std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades;
@@ -139,6 +144,8 @@ namespace Epnet
 
 		std::vector<std::tuple<std::string,double,double,double,double,double> >  getListGoodsFrom(std::string target);
 		void printInventory();
+
+		void initSegments();
 
 		//sending goods
 		void sendGoodTo(std::string target, std::string type, double value);
