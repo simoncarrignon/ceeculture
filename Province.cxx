@@ -17,7 +17,79 @@ namespace Epnet
 
 	Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, false)
 	{
-		// _maxscore=0.0;
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		
+		double all_needs=0.0;
+		double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
+		
+
+		//initialize knowledge about the n goods in our economy: what are the different types, what is their absolute value
+		//Maybe that should go in the constructor
+		if(provinceConfig._goodsParam == "random" ||provinceConfig._goodsParam == "randn" ){
+		    for (int i = 0; i < provinceConfig._numGoods ; i++)
+		    {
+			//double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; for totally random absolute value, initialize here
+			double tneed=bneed * (i+1.0);
+
+			all_needs += tneed; //tneeds is the sum of all value. It could be use to normalize the privec
+			std::ostringstream sgoodType;
+			sgoodType << "g"<< i;				
+			std::string goodType = sgoodType.str();
+			_needs.push_back(std::make_tuple(goodType,tneed));  
+			_maxscore.push_back(std::make_tuple(goodType,0.0));
+			_minscore.push_back(std::make_tuple(goodType,0.0));
+			_typesOfGood.push_back(goodType);
+			_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+			//				_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
+		    }	  
+		    //used to normalised the needs such as sum(needs(i))=1
+		    if(provinceConfig._goodsParam == "randn"){
+			for (auto it = _needs.begin(); it != _needs.end() ; it++){
+			    double p = std::get<1>(*it);
+			    *it=std::make_tuple(std::get<0>(*it),p/all_needs);
+			}
+		    }
+		}
+		else if(provinceConfig._goodsParam == "gintis07"){
+			for (int i = 0; i < provinceConfig._numGoods-1 ; i++)
+			{
+
+			    //In Gintis 2007 there is no need for a "needs" (utility are then computed only based on personnal value
+			    //We set up -1 to help debugging
+
+			    std::ostringstream sgoodType;
+			    sgoodType << "g"<< i;				
+			    std::string goodType = sgoodType.str();
+			    _needs.push_back(std::make_tuple(goodType,-1));  
+			    _maxscore.push_back(std::make_tuple(goodType,0.0));
+			    _minscore.push_back(std::make_tuple(goodType,0.0));
+			    _typesOfGood.push_back(goodType);
+			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+			    //_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
+			}	  
+
+		}
+		else {
+			//In that case each good and the properties of thoses good have to be manually set by the user in the config file
+			//I have never used that possibility..
+			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
+			{
+			    double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+
+			    all_needs += tneed;
+
+			    _needs.push_back(std::make_tuple(std::get<0>(*it),tneed));  
+			    _maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
+			    _minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
+			    _typesOfGood.push_back(std::get<0>(*it));
+			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(std::get<0>(*it),{}));
+
+			}
+
+		}
+
+
+		
 	}
 
 	Province::~Province()
@@ -49,79 +121,7 @@ namespace Epnet
 		logName << "agents_" << getId();
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		
-		double all_needs=0.0;
-		double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
 		
-
-		//initialize knowledge about the n goods in our economy: what are the different types, what is their absolute value
-		if(provinceConfig._goodsParam == "random"){
-			for (int i = 0; i < provinceConfig._numGoods ; i++)
-			{
-			    //double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; for totally random absolute value, initialize here
-			    double tneed=bneed * (i+1.0);
-
-			    all_needs += tneed; //tneeds is the sum of all value. It could be use to normalize the privec
-			    std::ostringstream sgoodType;
-			    sgoodType << "g"<< i;				
-			    std::string goodType = sgoodType.str();
-			    _needs.push_back(std::make_tuple(goodType,tneed));  
-			    _maxscore.push_back(std::make_tuple(goodType,0.0));
-			    _minscore.push_back(std::make_tuple(goodType,0.0));
-			    _typesOfGood.push_back(goodType);
-			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
-			    //				_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
-			}	  
-		}
-		else if(provinceConfig._goodsParam == "gintis07"){
-			for (int i = 0; i < provinceConfig._numGoods ; i++)
-			{
-
-			    //In Gintis 2007 there is no need for a "needs" (utility are then computed only based on personnal value
-			    //We set up -1 to help debugging
-
-			    std::ostringstream sgoodType;
-			    sgoodType << "g"<< i;				
-			    std::string goodType = sgoodType.str();
-			    _needs.push_back(std::make_tuple(goodType,-1));  
-			    _maxscore.push_back(std::make_tuple(goodType,0.0));
-			    _minscore.push_back(std::make_tuple(goodType,0.0));
-			    _typesOfGood.push_back(goodType);
-			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
-			    //				_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
-			}	  
-
-		}
-		else {
-			//In that case each good and the properties of thoses good have to be manually set by the user in the config file
-			//I have never used that possibility..
-			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
-			{
-			    double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
-
-			    all_needs += tneed;
-
-			    _needs.push_back(std::make_tuple(std::get<0>(*it),tneed));  
-			    _maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
-			    _minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
-			    _typesOfGood.push_back(std::get<0>(*it));
-			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(std::get<0>(*it),{}));
-
-
-
-			}
-
-		}
-		
-		bool prop=true ;
-		//used to normalised the needs such as sum(needs(i))=1
-		if( prop){ 
-
-			for (auto it = _needs.begin(); it != _needs.end() ; it++){
-				double p = std::get<1>(*it);
-				*it=std::make_tuple(std::get<0>(*it),p/all_needs);
-			}
-		}
-
 
 		for(int i=0; i<provinceConfig._numAgents; i++)
 		{
@@ -136,7 +136,7 @@ namespace Epnet
 				agent->setRandomPosition();
 				//currency is not interesting in itself. that may be changed
 				//currency has no price by itself
-				if(provinceConfig._goodsParam== "random")
+				if(provinceConfig._goodsParam== "random" || provinceConfig._goodsParam== "randn")
 				{
 
 					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
