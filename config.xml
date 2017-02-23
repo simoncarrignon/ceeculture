@@ -27,7 +27,7 @@
 	    	<prop0 id="p" value= ".2"/>
 	</network>
 
-	<goods num="15">
+	<goods num="4">
 		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1.0"	productionRate="0"/>
 	</goods>
 

@@ -16,6 +16,7 @@ namespace Epnet
 	_controller->setAgent(this);
 	_score=0.0;
 	_culturalNetwork={};
+	_type="";
     }
 
     Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess, std::string innovationProcess,int culturalStep) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
@@ -24,6 +25,7 @@ namespace Epnet
 	_controller->setAgent(this);
 	_score=0.0;
 	_mutationRate=mutationRate;
+	_type="";
     }
 
 
@@ -151,6 +153,46 @@ namespace Epnet
 		removeGood(std::get<0>(*it),1);
 	    }
 	}
+    }
+
+    double Roman::consume(){
+
+	int goodId=0;
+	double score=1.0;
+	//std::cout<<getId()<<std::endl;
+	for(int seg=0;seg<this->_numSeg;seg++){
+
+	    std::vector<double> curSeg=this->_alphas[seg];
+
+	    double weight =this->_segWeight[seg];
+
+	    double ces_ut=0.0;
+	    for(int a_i=0;a_i<curSeg.size();a_i++){
+		std::ostringstream sgoodType;
+		sgoodType << "g"<< goodId;				
+		std::string goodType = sgoodType.str();
+		double x_i=this->getQuantity(goodType);
+		if(x_i>0)ces_ut+= curSeg[a_i] * std::pow(x_i,this->_gamma);
+		goodId++;
+	//	std::cout<<"gama="<<this->_gamma<<";xval="<<x_i<<";ces="<<ces_ut<<";alpha= "<<curSeg[a_i]<<std::endl;
+	    }
+
+	    if(ces_ut>0)ces_ut=(double)(pow(ces_ut,1.0/double(this->_gamma)));
+	    else ces_ut=1.0;
+	 //   std::cout<<"segement:"<<seg<<",weight:"<<weight<<",n_good:"<<curSeg.size()<<",contrib:"<<ces_ut<<std::endl;
+	    score *= weight * ces_ut;
+	}
+	//std::cout<<score<<std::endl;
+	
+	return(score);
+	
+    }
+    void Roman::setType(std::string type){
+	_type=type;
+    }
+
+    std::string Roman::getType(){
+	return(_type);
     }
 
     void Roman::checkDeath()
@@ -984,8 +1026,10 @@ namespace Epnet
     void Roman::initSegments()
     {
 	this->_numSeg=Engine::GeneralState::statistics().getUniformDistValue(1,(this->listGoods.size())/2); //k segement (1..ngood/2)
+	double ces=(double)(Engine::GeneralState::statistics().getUniformDistValue(300.0,2000.0)/1000.0);
+	this->_gamma= double(ces-1.0)/ces;
+	std::cout<<"ces: "<<ces<<",gamma:"<<this->_gamma<<std::endl;
 
-	int maxsize=0;
 	this->_segSize= std::vector<int>(this->_numSeg,2);
 	this->_segWeight= std::vector<double>(this->_numSeg,0);
 	std::cout<<"num seg:"<<this->_numSeg<<std::endl;

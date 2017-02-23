@@ -173,6 +173,7 @@ namespace Epnet
 				else if(provinceConfig._goodsParam== "gintis07" )
 				{
 				    	
+				    agent->setType("gintis07");
 					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
 					for (int g = 0; g < provinceConfig._numGoods ; g++)
 					{

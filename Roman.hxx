@@ -46,6 +46,7 @@ namespace Epnet
 		std::vector<double> _segWeight;
 		std::vector<std::vector<double>> _alphas;
 		int _numSeg;
+		double _gamma;
 
 
 		std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
@@ -55,12 +56,14 @@ namespace Epnet
 		void removeProposedTrade(std::string source, std::string type, double value, double currency);
 
 
+
 		void consumeEssentialResources();
 		void checkDeath();
 
 		int _maxActions;
 		int _nbTrades;
 		double _score;
+		std::string _type;
 
 
 		AgentController* _controller;
@@ -93,6 +96,9 @@ namespace Epnet
 
 
 		void copyPriceFrom(std::string replacerId);
+		double consume();
+		std::string getType();
+		void setType(std::string type);
 
 
 		// setup connections
