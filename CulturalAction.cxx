@@ -81,11 +81,20 @@ namespace Epnet
 
 				    // if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
 				    // a simple cultural exchange based on my score and the score of the other agents I know
-				    if(relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore){
+
+				    bool proba=true;
+
+				    if(_selectionProcess == "randommin"){
+					proba = relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
+				    }
+				    if(_selectionProcess == "randommax"){
+					proba = relScore > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > relScore ;
+				    }
+				    if(proba){
 					reproductionDone = 1;
 					romanAgent.copyPriceFrom(r.getId());
-
 				    }
+
 
 				}
 				it++;
