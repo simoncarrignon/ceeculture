@@ -72,26 +72,20 @@ namespace Epnet
 				
 				if(*it != romanAgent.getId()){//this test has to appears given how the cultural networks are design 
 					
-					Roman & r= (Roman&)(*world->getAgent(*it));
-//  					std::cout<<"\t "<<r.getId()<<" that "<<std::get<0>(r.getProducedGood())<<std::endl;
-					
-					//should be good : they are all from same producedgood
-					//moreover this limit should be removed in an ideal case where every body can copy price of everybody
-					if(std::get<0>(r.getProducedGood()) == producedGood ){
-						
-						double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
-						double selfRelScore = (romanAgent.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
-						
-						// if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
-						// a simple cultural exchange based on my score and the score of the other agents I know
-						if(relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore){
-							reproductionDone = 1;
-							romanAgent.copyPriceFrom(r.getId());
-							
-						}
-					}
-					else
-						std::cout<<"ça viens de chier dans la colle man"<<std::endl;
+				    Roman & r= (Roman&)(*world->getAgent(*it));
+				    //  					std::cout<<"\t "<<r.getId()<<" that "<<std::get<0>(r.getProducedGood())<<std::endl;
+
+
+				    double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
+				    double selfRelScore = (romanAgent.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
+
+				    // if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
+				    // a simple cultural exchange based on my score and the score of the other agents I know
+				    if(relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore){
+					reproductionDone = 1;
+					romanAgent.copyPriceFrom(r.getId());
+
+				    }
 
 				}
 				it++;
