@@ -66,31 +66,36 @@ namespace Epnet
 
 			std::string producedGood =std::get<0>(romanAgent.getProducedGood());
 
-//  			std::cout<<romanAgent.getId()<<", "<<producedGood<<"will try to copy:"<<std::endl;
+			//  			std::cout<<romanAgent.getId()<<", "<<producedGood<<"will try to copy:"<<std::endl;
 			while(it!= nb.end() && !reproductionDone )
 			{
-				
-				if(*it != romanAgent.getId()){//this test has to appears given how the cultural networks are design 
-					
-				    Roman & r= (Roman&)(*world->getAgent(*it));
-				    //  					std::cout<<"\t "<<r.getId()<<" that "<<std::get<0>(r.getProducedGood())<<std::endl;
+
+			    if(*it != romanAgent.getId()){//this test has to appears given how the cultural networks are design 
+
+				Roman & r= (Roman&)(*world->getAgent(*it));
+				//  					std::cout<<"\t "<<r.getId()<<" that "<<std::get<0>(r.getProducedGood())<<std::endl;
 
 
-				    double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
-				    double selfRelScore = (romanAgent.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
+				double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
+				double selfRelScore = (romanAgent.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
 
-				    // if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
-				    // a simple cultural exchange based on my score and the score of the other agents I know
+				// if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/(double)1000< _mutationRate){
+				// a simple cultural exchange based on my score and the score of the other agents I know
 
-				    bool proba=true;
+				bool proba=false;
 
-				    if(_selectionProcess == "randommin"){
-					proba = relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
+			//	proba = relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
+				std::cout<<"otherrel:"<< relScore <<"myrel:"<<  selfRelScore <<std::endl;
+				//std::cout<<"probain:"<< (relScore < selfRelScore) <<std::endl;
+
+				    if(_selectionProcess == "copymin"){
+					proba = relScore < selfRelScore; //&&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
 				    }
-				    if(_selectionProcess == "randommax"){
-					proba = relScore > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > relScore ;
+				    else if(_selectionProcess == "copymax"){
+					proba = relScore > selfRelScore; //&&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > relScore ;
 				    }
 				    if(proba){
+					//std::cout<<"soudo"<<std::endl;
 					reproductionDone = 1;
 					romanAgent.copyPriceFrom(r.getId());
 				    }
