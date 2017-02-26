@@ -85,7 +85,7 @@ namespace Epnet
 				bool proba=false;
 
 			//	proba = relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
-				std::cout<<"otherrel:"<< relScore <<"myrel:"<<  selfRelScore <<std::endl;
+				//std::cout<<"otherrel:"<< relScore <<"myrel:"<<  selfRelScore <<std::endl;
 				//std::cout<<"probain:"<< (relScore < selfRelScore) <<std::endl;
 
 				    if(_selectionProcess == "copymin"){
