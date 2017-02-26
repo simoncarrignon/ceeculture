@@ -187,6 +187,55 @@ namespace Epnet
 	return(score);
 	
     }
+    double Roman::setDemand(){
+
+	int goodId=0;
+	double score=1.0;
+	std::cout<<getId()<<std::endl;
+	for(int seg=0;seg<this->_numSeg;seg++){
+
+	    std::vector<double> curSeg=this->_alphas[seg];
+
+	    double weight =this->_segWeight[seg];
+
+	    double segPow=1*weight;
+	    for(int a_i=0;a_i<curSeg.size();a_i++){
+		double x_i=0.0;
+		std::ostringstream sgoodType;
+		sgoodType << "g"<< goodId;				
+		std::string goodType = sgoodType.str();
+		double p_i=this->getPrice(goodType);
+		std::cout<<goodType<<", with price:"<<p_i<<std::endl;
+		if(std::abs(this->_gamma) < .0001){
+		    x_i=segPow * curSeg[a_i]/p_i;
+		  std::cout<<"Cobb douglas"<<std::endl;
+		}
+		else{
+
+		    double den=0.0;
+		    for(int a_j=0;a_j<curSeg.size();a_j++){
+			int goodIdJ = goodId - a_i + a_j;
+			std::ostringstream jgoodType;
+			jgoodType << "g"<< goodIdJ;				
+			std::string goodTypeJ = jgoodType.str();
+			double p_j =this->getPrice(goodTypeJ);
+			double theta = (p_i * curSeg[a_j]) / (p_j * curSeg[a_i]);
+			den+= p_j * std::pow(theta, 1/(1 - this->_gamma));
+			std::cout<<"combine with  "<<goodTypeJ<<", price:"<<p_j<<std::endl;
+		    }
+		    x_i=segPow/den;
+		}
+		goodId++;
+		std::cout<<"quantité =>"<<x_i<<std::endl;
+		this->setNeed(goodType,x_i);
+	    }
+	}
+
+	
+	return(score);
+	
+    }
+
     void Roman::setType(std::string type){
 	_type=type;
     }
@@ -1027,18 +1076,19 @@ namespace Epnet
     {
 	this->_numSeg=Engine::GeneralState::statistics().getUniformDistValue(1,(this->listGoods.size())/2); //k segement (1..ngood/2)
 	double ces=(double)(Engine::GeneralState::statistics().getUniformDistValue(300.0,2000.0)/1000.0);
+
 	this->_gamma= double(ces-1.0)/ces;
-	std::cout<<"ces: "<<ces<<",gamma:"<<this->_gamma<<std::endl;
 
 	this->_segSize= std::vector<int>(this->_numSeg,2);
 	this->_segWeight= std::vector<double>(this->_numSeg,0);
-	std::cout<<"num seg:"<<this->_numSeg<<std::endl;
+
+	std::cout<<getId() << "has ces: "<<ces<<",and gamma:"<<this->_gamma<<"and num seg:"<<this->_numSeg<<std::endl;
 	double totalW=0.0; //used to normalized the weight (power) of each sector (f_i in gintis 2007) in order that sum(weight)=1 ie the agent split is Wealth between all segments
 
 	for(int i=0; i<(this->listGoods.size()-(2*this->_numSeg)); i++){ //method to split all goods in n segments of size min=2, from Gintis 2007
 		int rand =Engine::GeneralState::statistics().getUniformDistValue(0,(this->_numSeg-1)); //randomly choose the index of one segment
 		this->_segSize[rand]++;
-		std::cout<<"before norma: segment["<<rand<<"] of size:"<<this->_segSize[rand]<<" weight:"<<this->_segWeight[rand]<<std::endl;
+	//	std::cout<<"before norma: segment["<<rand<<"] of size:"<<this->_segSize[rand]<<" weight:"<<this->_segWeight[rand]<<std::endl;
 	}
 
 	_alphas=std::vector<std::vector<double>> (this->_numSeg);
@@ -1050,18 +1100,18 @@ namespace Epnet
 		for(int j=0; j<this->_segSize[i]; j++){
 		    this->_alphas[i][j]=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
 		    totalA+=this->_alphas[i][j];
-		    std::cout<<"alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
+	//	    std::cout<<"alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
 		}
 
 		for(int j=0; j<this->_segSize[i]; j++){
 		    this->_alphas[i][j]=this->_alphas[i][j]/totalA;//normalize the weight of each good for the ith segment to 1
-		    std::cout<<"norm alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
+	//	    std::cout<<"norm alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
 		}
 		
 	}
 	for(int i=0; i<this->_numSeg; i++){ //normalize the zeight of each segment to 1
 		this->_segWeight[i]=this->_segWeight[i]/totalW;
-		std::cout<<"after norma segment["<<i<<"] of size:"<<this->_segSize[i]<<" weight:"<<this->_segWeight[i]<<std::endl;
+	//	std::cout<<"after norma segment["<<i<<"] of size:"<<this->_segSize[i]<<" weight:"<<this->_segWeight[i]<<std::endl;
 	}
 
     }

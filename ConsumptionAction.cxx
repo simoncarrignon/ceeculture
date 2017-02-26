@@ -26,8 +26,12 @@ namespace Epnet
 		double utilityFunction=0.0;
 
 		if(romanAgent.getType() == "gintis07"){
+		    //in this experiment the idea is different: the utility function IS NOT the consumption function. The utility function is used to know the amount of good wanted.
 
-		    utilityFunction = romanAgent.consume();
+		    romanAgent.setDemand();
+		    utilityFunction = romanAgent.consume(); //in that case this is then meaningless? or not?
+	
+		    //std::cout<<utilityFunction<<std::endl;
 
 		}
 		else{
