@@ -193,7 +193,7 @@ namespace Epnet
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
 						//---------------/*
-						//set the need value for each good. Remember: not usued with gintis07 (need should be -1)
+						//set the need value for each good. Remember: this is actualised every timestep in gintis07 (need should be -1 at initialisation).
 						agent->setNeed(goodType,std::get<1>(_needs[g]));
 					}			
 
