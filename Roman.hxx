@@ -96,6 +96,7 @@ namespace Epnet
 
 
 		void copyPriceFrom(std::string replacerId);
+		double setDemand();
 		double consume();
 		std::string getType();
 		void setType(std::string type);
