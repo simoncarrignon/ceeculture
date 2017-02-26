@@ -52,11 +52,17 @@ namespace Epnet
 
 				//qt is the quantity that of is own produced good the agent is willing to exchange
 
+				double requestedQuantity=0;
+				double proposedQuantity =0;
+				if(offerer.getType()=="gintis07"){
+				    requestedQuantity= offerer.getNeed(goodWanted)-offerer.getQuantity(goodWanted);
+				    proposedQuantity=requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
+				}
+				else{
+				    requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
+				    proposedQuantity=requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
+				}
 
-				double requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
-				//if(requestedQuantity != offerer.getPrice(goodWanted)) std::cout<<"thats kind of shit happen??!?!?!?"<<std::endl;
-				//double proposedQuantity = requestedQuantity*requestedQuantity/offerer.getPrice(offererProducedGood);
-				double proposedQuantity = requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
 
 				int noffer=0;
 				bool tradeDone = 0;
@@ -71,8 +77,16 @@ namespace Epnet
 
 					if(responderProducedGood == goodWanted ){ 
 
-						double responderTradeWill =  responder.getPrice(offererProducedGood)-responder.getQuantity(offererProducedGood); 
-						double responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
+					    double responderTradeWill =  0;
+					    double responderTradCounter =  0;
+					    if(responder.getType()=="gintis07"){
+						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
+						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
+					    }
+					    else{
+						responderTradeWill =  responder.getPrice(offererProducedGood)-responder.getQuantity(offererProducedGood); 
+						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
+					    }
 
 
 						if(
