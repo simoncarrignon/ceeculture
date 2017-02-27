@@ -96,8 +96,8 @@ namespace Epnet
 
 
 		void copyPriceFrom(std::string replacerId);
-		double setDemand();
-		double consume();
+		void setDemand();
+		double personalUtility();
 		std::string getType();
 		void setType(std::string type);
 
@@ -172,6 +172,7 @@ namespace Epnet
 		void killTradesFrom(std::string source);
 		void setListOfCulturalNeighbours(std::vector<std::string> neighbours );
 		std::vector<std::string> getListOfCulturalNeighbours();
+		std::string intToGoodType(int goodId);
 
 		////////////////////////////////////////////////
 		// This code has been automatically generated //

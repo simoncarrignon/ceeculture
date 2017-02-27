@@ -155,10 +155,11 @@ namespace Epnet
 	}
     }
 
-    double Roman::consume(){
+    double Roman::personalUtility(){ //personal utility function should be use to print result
 
 	int goodId=0;
 	double score=1.0;
+	//
 	//std::cout<<getId()<<std::endl;
 	for(int seg=0;seg<this->_numSeg;seg++){
 
@@ -168,9 +169,9 @@ namespace Epnet
 
 	    double ces_ut=0.0;
 	    for(int a_i=0;a_i<curSeg.size();a_i++){
-		std::ostringstream sgoodType;
-		sgoodType << "g"<< goodId;				
-		std::string goodType = sgoodType.str();
+
+		std::string goodType = intToGoodType(goodId);
+
 		double x_i=this->getQuantity(goodType);
 		if(x_i>0)ces_ut+= curSeg[a_i] * std::pow(x_i,this->_gamma);
 		goodId++;
@@ -187,11 +188,15 @@ namespace Epnet
 	return(score);
 	
     }
-    double Roman::setDemand(){
+
+    //function used in gintis07 case: it compute the optimal x_i for each goods givent the utility function and the price of each agents
+    //this is obtenaid by solving the equation defined in consume
+    void Roman::setDemand(){
 
 	int goodId=0;
-	double score=1.0;
-	std::cout<<getId()<<std::endl;
+
+	std::cout<<getId()<<std::endl;//output of the id of the agent
+
 	for(int seg=0;seg<this->_numSeg;seg++){
 
 	    std::vector<double> curSeg=this->_alphas[seg];
@@ -199,41 +204,43 @@ namespace Epnet
 	    double weight =this->_segWeight[seg];
 
 	    double segPow=1*weight;
-	    for(int a_i=0;a_i<curSeg.size();a_i++){
+
+	    for(int a_i=0;a_i<curSeg.size();a_i++){ //check all segment
+
+
 		double x_i=0.0;
-		std::ostringstream sgoodType;
-		sgoodType << "g"<< goodId;				
-		std::string goodType = sgoodType.str();
-		double p_i=this->getPrice(goodType);
-		std::cout<<goodType<<", with price:"<<p_i<<std::endl;
-		if(std::abs(this->_gamma) < .0001){
+
+		std::string goodType = intToGoodType(goodId);
+		double p_i=this->getPrice(goodType); //get the price of the good
+
+		//std::cout<<goodType<<", with price:"<<p_i<<std::endl;
+		if(std::abs(this->_gamma) < .0001){ //in case gamma is low, simplify as cobb douglas function
 		    x_i=segPow * curSeg[a_i]/p_i;
-		  std::cout<<"Cobb douglas"<<std::endl;
+		    std::cout<<"Cobb douglas"<<std::endl;
 		}
 		else{
-
+		//if not
 		    double den=0.0;
-		    for(int a_j=0;a_j<curSeg.size();a_j++){
+
+		    for(int a_j=0;a_j<curSeg.size();a_j++){ //compute denominator of the function (7) in gintis 2007
 			int goodIdJ = goodId - a_i + a_j;
-			std::ostringstream jgoodType;
-			jgoodType << "g"<< goodIdJ;				
-			std::string goodTypeJ = jgoodType.str();
+
+			std::string goodTypeJ = intToGoodType(goodIdJ);
+
 			double p_j =this->getPrice(goodTypeJ);
 			double theta = (p_i * curSeg[a_j]) / (p_j * curSeg[a_i]);
 			den+= p_j * std::pow(theta, 1/(1 - this->_gamma));
-			std::cout<<"combine with  "<<goodTypeJ<<", price:"<<p_j<<std::endl;
+			//std::cout<<"combine with  "<<goodTypeJ<<", price:"<<p_j<<std::endl;
 		    }
 		    x_i=segPow/den;
 		}
 		goodId++;
-		std::cout<<"quantité =>"<<x_i<<std::endl;
+		//std::cout<<"quantité =>"<<x_i<<std::endl;
+		//
 		this->setNeed(goodType,x_i);
 	    }
 	}
 
-	
-	return(score);
-	
     }
 
     void Roman::setType(std::string type){
@@ -1114,6 +1121,13 @@ namespace Epnet
 	//	std::cout<<"after norma segment["<<i<<"] of size:"<<this->_segSize[i]<<" weight:"<<this->_segWeight[i]<<std::endl;
 	}
 
+    }
+
+    std::string Roman::intToGoodType(int goodId){
+		std::ostringstream sgoodType;		
+		sgoodType << "g"<< goodId;				
+		std::string goodType = sgoodType.str();
+		return goodType;
     }
 
 
