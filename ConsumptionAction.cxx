@@ -39,6 +39,8 @@ namespace Epnet
 		    if(romanAgent.getType() == "gintis07"){
 			if(good == std::get<0>(romanAgent.getProducedGood())) 
 			    romanAgent.setQuantity(good,0); //use the optimal value for its the production's good
+			double val=romanAgent.getQuantity(good);
+			if(romanAgent.getQuantity(good) > romanAgent.getNeed(good))val=romanAgent.getNeed(good);
 			consumptionScore+=romanAgent.getQuantity(good)*romanAgent.getPrice(good);
 			//std::cout<<consumptionScore<<std::endl;
 		    }
