@@ -1129,12 +1129,14 @@ namespace Epnet
     void Roman::initSegments()
     {
 	this->_numSeg=Engine::GeneralState::statistics().getUniformDistValue(1,(this->listGoods.size())/2); //k segement (1..ngood/2)
+
 	double ces=(double)(Engine::GeneralState::statistics().getUniformDistValue(300.0,2000.0)/1000.0);
 
-	this->_gamma= double(ces-1.0)/ces;
+	this->_gamma= double(ces-1.0)/ces; //gamma is build from a random value between [.3, 2]
 
-	this->_segSize= std::vector<int>(this->_numSeg,2);
-	this->_segWeight= std::vector<double>(this->_numSeg,0);
+	this->_segSize= std::vector<int>(this->_numSeg,2);  //vector with the size of every segment. Initialized at 2 using from gintis method to be sure that we can create betw n/2 to 1 segment of size that is at least 2 goods 
+
+	this->_segWeight= std::vector<double>(this->_numSeg,0); //vector with the weight of every segment
 
 	double totalW=0.0; //used to normalized the weight (power) of each sector (f_i in gintis 2007) in order that sum(weight)=1 ie the agent split is Wealth between all segments
 
@@ -1142,7 +1144,6 @@ namespace Epnet
 	for(int i=0; i<(this->listGoods.size()-(2*this->_numSeg)); i++){ //method to split all goods in n segments of size min=2, from Gintis 2007
 		int rand =Engine::GeneralState::statistics().getUniformDistValue(0,(this->_numSeg-1)); //randomly choose the index of one segment
 		this->_segSize[rand]++;
-	//	std::cout<<"before norma: segment["<<rand<<"] of size:"<<this->_segSize[rand]<<" weight:"<<this->_segWeight[rand]<<std::endl;
 	}
 
 	_alphas=std::vector<std::vector<double>> (this->_numSeg);
@@ -1158,18 +1159,15 @@ namespace Epnet
 		    while(alpha == 0.0)alpha= (double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
 		    this->_alphas[i][j]=alpha;
 		    totalA+=alpha;
-		    std::cout<<"alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
 		}
 
 		for(int j=0; j<this->_segSize[i]; j++){
 		    this->_alphas[i][j]=this->_alphas[i][j]/totalA;//normalize the weight of each good for the ith segment to 1
-		    std::cout<<"norm alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
 		}
 		
 	}
 	for(int i=0; i<this->_numSeg; i++){ //normalize the zeight of each segment to 1
 		this->_segWeight[i]=this->_segWeight[i]/totalW;
-	//	std::cout<<"after norma segment["<<i<<"] of size:"<<this->_segSize[i]<<" weight:"<<this->_segWeight[i]<<std::endl;
 	}
 
     }
