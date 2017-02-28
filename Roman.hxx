@@ -99,6 +99,7 @@ namespace Epnet
 		void setDemand();
 		double personalUtility();
 		std::string getType();
+		double optimalUtility();
 		void setType(std::string type);
 
 
@@ -153,6 +154,7 @@ namespace Epnet
 		void printInventory();
 
 		void initSegments();
+		std::string getSegmentsProp();
 
 		//sending goods
 		void sendGoodTo(std::string target, std::string type, double value);

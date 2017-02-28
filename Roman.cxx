@@ -181,7 +181,7 @@ namespace Epnet
 	    if(ces_ut>0)ces_ut=(double)(pow(ces_ut,1.0/double(this->_gamma)));
 	    else ces_ut=1.0;
 	 //   std::cout<<"segement:"<<seg<<",weight:"<<weight<<",n_good:"<<curSeg.size()<<",contrib:"<<ces_ut<<std::endl;
-	    score *= weight * ces_ut;
+	    score *= weight * ces_ut; //the utility is the prodyuct of the utility of each
 	}
 	//std::cout<<score<<std::endl;
 	
@@ -189,13 +189,47 @@ namespace Epnet
 	
     }
 
+
+    double Roman::optimalUtility(){ //personal utility function should be use to print result
+
+	int goodId=0;
+	double score=1.0;
+	//
+	//std::cout<<getId()<<std::endl;
+	for(int seg=0;seg<this->_numSeg;seg++){
+
+	    std::vector<double> curSeg=this->_alphas[seg];
+
+	    double weight =this->_segWeight[seg];
+
+	    double ces_ut=0.0;
+	    for(int a_i=0;a_i<curSeg.size();a_i++){
+
+		std::string goodType = intToGoodType(goodId);
+
+		double x_i=this->getQuantity(goodType);
+		if(x_i>0)ces_ut+= curSeg[a_i] * std::pow(x_i,this->_gamma);
+		goodId++;
+	//	std::cout<<"gama="<<this->_gamma<<";xval="<<x_i<<";ces="<<ces_ut<<";alpha= "<<curSeg[a_i]<<std::endl;
+	    }
+
+	    if(ces_ut>0)ces_ut=(double)(pow(ces_ut,1.0/double(this->_gamma)));
+	    else ces_ut=1.0;
+	 //   std::cout<<"segement:"<<seg<<",weight:"<<weight<<",n_good:"<<curSeg.size()<<",contrib:"<<ces_ut<<std::endl;
+	    score *= weight * ces_ut; //the utility is the prodyuct of the utility of each
+	}
+	//std::cout<<score<<std::endl;
+	
+	return(score);
+	
+    }
     //function used in gintis07 case: it compute the optimal x_i for each goods givent the utility function and the price of each agents
     //this is obtenaid by solving the equation defined in consume
     void Roman::setDemand(){
 
 	int goodId=0;
 
-	std::cout<<getId()<<std::endl;//output of the id of the agent
+	//std::cout<<getId()<<std::endl;//output of the id of the agent
 
 	for(int seg=0;seg<this->_numSeg;seg++){
 
@@ -1079,6 +1113,19 @@ namespace Epnet
 	return _culturalNeighbours;
     }
 
+    //Return a string with all information about the consumption segments of the agent.
+    std::string Roman::getSegmentsProp(){
+	std::ostringstream segProp;		
+	segProp<<getId() << "gamma="<<this->_gamma<<" with "<<this->_numSeg<<" segs"<<std::endl;
+	for(int i=0; i<this->_numSeg; i++){
+	    segProp<<"\tf(seg["<<i<<"])="<<_segWeight[i]<<",length(seg["<<i<<"])="<<this->_segSize[i]<<"; alphas=[";
+	    for(int j=0; j<(this->_segSize[i]-1); j++)
+		segProp<<this->_alphas[i][j]<<",";
+	    segProp<<this->_alphas[i][this->_segSize[i]-1]<<"]"<<std::endl;
+	}
+	return segProp.str();
+    }
+
     void Roman::initSegments()
     {
 	this->_numSeg=Engine::GeneralState::statistics().getUniformDistValue(1,(this->listGoods.size())/2); //k segement (1..ngood/2)
@@ -1089,9 +1136,9 @@ namespace Epnet
 	this->_segSize= std::vector<int>(this->_numSeg,2);
 	this->_segWeight= std::vector<double>(this->_numSeg,0);
 
-	std::cout<<getId() << "has ces: "<<ces<<",and gamma:"<<this->_gamma<<"and num seg:"<<this->_numSeg<<std::endl;
 	double totalW=0.0; //used to normalized the weight (power) of each sector (f_i in gintis 2007) in order that sum(weight)=1 ie the agent split is Wealth between all segments
 
+	std::cout<<getId()<<std::endl;
 	for(int i=0; i<(this->listGoods.size()-(2*this->_numSeg)); i++){ //method to split all goods in n segments of size min=2, from Gintis 2007
 		int rand =Engine::GeneralState::statistics().getUniformDistValue(0,(this->_numSeg-1)); //randomly choose the index of one segment
 		this->_segSize[rand]++;
@@ -1100,19 +1147,23 @@ namespace Epnet
 
 	_alphas=std::vector<std::vector<double>> (this->_numSeg);
 	for(int i=0; i<this->_numSeg; i++){
-		this->_segWeight[i]=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+	    	double segW = 0.0;
+		while(segW == 0.0)segW= (double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+		this->_segWeight[i]=segW;
 		totalW+=this->_segWeight[i];
-		double totalA=0; //used to normalized the alphas in order that sum(alpha)=1 
+		double totalA=0.0; //used to normalized the alphas in order that sum(alpha)=1 
 		this->_alphas[i]=std::vector<double>(_segSize[i],0);
 		for(int j=0; j<this->_segSize[i]; j++){
-		    this->_alphas[i][j]=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
-		    totalA+=this->_alphas[i][j];
-	//	    std::cout<<"alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
+		    double alpha=0.0;
+		    while(alpha == 0.0)alpha= (double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+		    this->_alphas[i][j]=alpha;
+		    totalA+=alpha;
+		    std::cout<<"alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
 		}
 
 		for(int j=0; j<this->_segSize[i]; j++){
 		    this->_alphas[i][j]=this->_alphas[i][j]/totalA;//normalize the weight of each good for the ith segment to 1
-	//	    std::cout<<"norm alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
+		    std::cout<<"norm alpha["<<i<<"]["<<j<<"] "<<this->_alphas[i][j]<<std::endl;
 		}
 		
 	}

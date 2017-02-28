@@ -240,7 +240,7 @@ namespace Epnet
 					}			
 
 				}
-				log_INFO(logName.str(), getWallTime() << " new agent: " << agent);
+				log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
 
 
 				//loop for initialize the commercial connection of the current agent with all previously created agents.
