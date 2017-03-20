@@ -315,7 +315,7 @@ getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,listOfXmlValue=c(),fun=mean){
 
     all=data.frame()
-    files=list.files(expeDir,pattern="*")
+    files=list.files(expeDir,pattern="exp*")
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
@@ -882,14 +882,8 @@ prodOpt <- function(np,ni){
     return(sum(ni*ni)/(length(ni)*np))
 }
 
-getSumPrice<-function(data,nRess){
-
-    res=0
-    for ( j in 0:(nRess-1)){
-	ressource=paste("g",j,"_n",sep="")
-	res=res+unique(data[,ressource])
-    }
-    return (res)
+getSumPrice<-function(data,type="n",fun=sum){
+    apply(sapply(levels(data$p_good),function(i)data[,paste(i,"_",type,sep="")]),1,fun)
 }
 
 
@@ -1138,8 +1132,7 @@ test<-function(){
 
     sparsities=c(0,900,940,980)
    sapply(names(a),function(g){
-	a[[g]] = cbind(G 
-	       }
+	a[[g]] = cbind(G )       })
     sapply(alla,function(i){
 	   pdf(paste("tmp/100/agentwrtK_D-",formatC(1000-i,width=4,format="d",flag="0"),".pdf",sep=""),pointsize=14)
 	   t_comp=getLastIt(alld100WOUT[alld100WOUT$Sparsity ==i,])
@@ -1192,7 +1185,7 @@ fitting=function(idata){
 }
 
 
-caaGraph=fucntion(){
+caaGraph=function(){
     
 sdMean=tapply(alla$mean,alla$timestep,sd)
 	bestTime=names(sort(sdMean)[length(sdMean)])
@@ -1264,4 +1257,18 @@ fit=read.csv("~/Dropbox/trade/python/complete/fits.csv")
 
 
 
+}
+
+
+
+getOf <- function(dats,elt="n",fun=sum){
+    ngoods=length(levels(dats$p_good))
+    clns=paste("g",0:(ngoods-1),"_",elt,sep="")
+    t(sapply(levels(dats$agent),function(i)apply(dats[dats$agent == i , clns],1,fun)))
+}
+
+getAllOf <- function(dats,elt="n"){
+    ngoods=length(levels(dats$p_good))
+    clns=paste("g",0:(ngoods-1),"_",elt,sep="")
+    sapply(levels(dats$agent),function(i)dats[dats$agent == i , clns])
 }
