@@ -27,7 +27,7 @@ namespace Epnet
 
 		if(romanAgent.getType() == "gintis07")
 		    //in this experiment the idea is different: the utility function IS NOT the consumption function. The utility function is used to know the amount of good wanted.
-		    romanAgent.setDemand();
+		    romanAgent.setDemand(false);
 		    //consumptionScore = romanAgent.consume(); //in that case this is then meaningless? or not?
 
 		std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= romanAgent.getListGoods();
@@ -38,10 +38,11 @@ namespace Epnet
 		    std::string good=std::get<0>(*it);
 		    if(romanAgent.getType() == "gintis07"){
 			if(good == std::get<0>(romanAgent.getProducedGood())) 
-			    romanAgent.setQuantity(good,0); //use the optimal value for its the production's good
+			    romanAgent.setQuantity(good,romanAgent.getOptNeed(good)); //use the optimal value for its the production's good
 			double val=romanAgent.getQuantity(good);
 			if(romanAgent.getQuantity(good) > romanAgent.getNeed(good))val=romanAgent.getNeed(good);
 			consumptionScore+=romanAgent.getQuantity(good)*romanAgent.getPrice(good);
+			romanAgent.setUtility(false);
 			//std::cout<<consumptionScore<<std::endl;
 		    }
 
