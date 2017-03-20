@@ -35,6 +35,9 @@ namespace Epnet
 		//type, quantity, maxQuantity, price, need, productionRate
 		std::vector<std::tuple<std::string,double,double,double,double,double> > listGoods;
 
+		//type, utility, optUtility, optNeed
+		std::vector<std::tuple<std::string,double,double,double> > goodsUtilities;
+
 		int receiveGoodFrom(std::string source, std::string type, double value);
 
 
@@ -45,8 +48,12 @@ namespace Epnet
 		std::vector<int> _segSize;
 		std::vector<double> _segWeight;
 		std::vector<std::vector<double>> _alphas;
+		std::vector<double> _optNeed;
 		int _numSeg;
 		double _gamma;
+
+		double _optUtility;
+		double _curUtility;
 
 
 		std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades;
@@ -96,10 +103,9 @@ namespace Epnet
 
 
 		void copyPriceFrom(std::string replacerId);
-		void setDemand();
-		double personalUtility();
+		void setDemand(bool opt); //set the demand for a good given the utility function from gintis 2007. If bool == true set the optimal demande.
+		double setUtility(bool opt);
 		std::string getType();
-		double optimalUtility();
 		void setType(std::string type);
 
 
@@ -132,6 +138,7 @@ namespace Epnet
 		std::vector<std::tuple<std::string,double,double,double,double,double> > getListGoods() { return listGoods;};
 		std::tuple<double,double,double,double,double> getGood(std::string type);
 
+
 		void addGood(std::string type,double value);
 		void removeGood(std::string type,double value);
 
@@ -143,7 +150,12 @@ namespace Epnet
 		double getQuantity(std::string type){ return std::get<0>(getGood(type));};
 		double getPrice(std::string type){ return std::get<2>(getGood(type));};
 		double getNeed(std::string type){ return std::get<3>(getGood(type));};
+		double getUtility(std::string type){ return std::get<1>(getGood(type));};
 		double getProductionRate(std::string type){ return std::get<4>(getGood(type));};
+
+		//double getUtility(std::string type){ return std::get<1>(getOptGood(type));};
+		//double getOptUtility(std::string type){ return std::get<2>(getOptGood(type));};
+		//double getOptNeed(std::string type){ return std::get<3>(getOptGood(type));};
 
 		void setPrice(std::string type,double value);
 		void setQuantity(std::string type, double value);
