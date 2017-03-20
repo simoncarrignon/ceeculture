@@ -54,7 +54,7 @@ namespace Epnet
 			for (int i = 0; i < provinceConfig._numGoods ; i++)
 			{
 
-			    //In Gintis 2007 there is no need for a "needs" (utility are then computed only based on personnal value
+			    //In Gintis 2007 there is no need for a "needs" (utility are then computed only based on personnal value <= false
 			    //We set up -1 to help debugging
 
 			    std::ostringstream sgoodType;
@@ -207,6 +207,8 @@ namespace Epnet
 
 
 					agent->initSegments();
+					agent->setDemand(true);
+					agent->setUtility(true);
 
 					//Set producedGood as a modulo of the agent ID
 					int randg = i%provinceConfig._numGoods;
