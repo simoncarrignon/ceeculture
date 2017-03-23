@@ -146,9 +146,10 @@ namespace Epnet
 						romanAgent.setPrice(ressource,oldPrice+Engine::GeneralState::statistics().getUniformDistValue(0,50)/1000.0 );
 					else
 						romanAgent.setPrice(ressource,oldPrice-(Engine::GeneralState::statistics().getUniformDistValue(0,50))/1000.0);
-					if(romanAgent.getPrice(ressource)<0)romanAgent.setPrice(ressource,0.0);
+					while(romanAgent.getPrice(ressource)<=0.0)romanAgent.setPrice(ressource,oldPrice+Engine::GeneralState::statistics().getUniformDistValue(0,50)/1000.0);
 				}				   
 			}
+			//std::cout<<"DURING COPY "<<ressource<<", price:"<<romanAgent.getPrice(ressource)<<std::endl;
 
 		}  
 		romanAgent.setScore(0.0);

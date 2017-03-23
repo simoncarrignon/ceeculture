@@ -150,7 +150,7 @@ namespace Epnet
 		double getQuantity(std::string type){ return std::get<0>(getGood(type));};
 		double getPrice(std::string type){ return std::get<2>(getGood(type));};
 		double getNeed(std::string type){ return std::get<3>(getGood(type));};
-		double getUtility(std::string type){ return std::get<1>(getGood(type));};
+		double getMaxQuantity(std::string type){ return std::get<1>(getGood(type));};
 		double getProductionRate(std::string type){ return std::get<4>(getGood(type));};
 
 		//double getUtility(std::string type){ return std::get<1>(getOptGood(type));};

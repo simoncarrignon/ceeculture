@@ -171,7 +171,7 @@ namespace Epnet
 	}
     }
 
- double Roman::setUtility(bool opt){ //personal utility function should be use to print result
+ double Roman::setUtility(bool opt){ //personal utility function. if opt is true, this is the optimal utility of the agents given her consumptions segemnts.
 
 	int goodId=0;
 	double score=1.0;
@@ -230,6 +230,10 @@ namespace Epnet
 		double x_i=0.0;
 		std::string goodType = intToGoodType(goodId);
 		double p_i=this->getPrice(goodType); //get the price of the good
+
+		if(p_i<0.000001){
+		    std::cout<<"problem"<<std::endl;
+		}	    
 
 		//std::cout<<goodType<<", with price:"<<p_i<<std::endl;
 		if(std::abs(this->_gamma) < .0001){ //in case gamma is low, simplify as cobb douglas function
@@ -718,6 +722,11 @@ namespace Epnet
 	if ( it != listGoods.end() )
 	{
 	    std::get<3>(*it) = value;
+	    if(value < 0.00001){
+		std::cout<<"WARNINGS Set Price"<<std::endl;
+		std::cout<<"agent"<<getId()<<std::endl;
+		printInventory();
+	    }
 	}
     }
 
@@ -729,6 +738,12 @@ namespace Epnet
 	if ( it != listGoods.end() )
 	{
 	    std::get<1>(*it) = value;
+	    if(value > 10000){
+		std::cout<<"WARNINGS Set Value"<<std::endl;
+		std::cout<<"agent"<<getId()<<std::endl;
+		printInventory();
+	    }
+		
 	}
     }
 
@@ -792,6 +807,7 @@ namespace Epnet
 	std::cout<<"-------------------------------"<<std::endl;
 	std::cout<<"Inventory of :"<<_id<<" with score "<<_score<<std::endl;
 
+	std::cout<<"Good Id\t quantity \t max quantity\tPrice\tDemand\tProduction rate"<<std::endl;
 	for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = this->listGoods.begin() ; it != this->listGoods.end() ; it++)
 	{
 	    std::cout<<std::get<0>(*it)<<"\t"<<std::get<1>(*it)<<"\t"<<std::get<2>(*it)<<"\t"<<std::get<3>(*it)<<"\t"<<std::get<4>(*it)<<"\t"<<std::get<5>(*it)<<std::endl;
