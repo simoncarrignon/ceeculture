@@ -33,17 +33,25 @@ namespace Epnet
 		std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= romanAgent.getListGoods();
 		std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = allGood.begin();
 
+		//std::cout<<"Consumption (fitness) value of agent" << romanAgent << std::endl;
 		while(it!=allGood.end())
 		{
 		    std::string good=std::get<0>(*it);
 		    if(romanAgent.getType() == "gintis07"){
-			if(good == std::get<0>(romanAgent.getProducedGood())) 
-			    romanAgent.setQuantity(good,romanAgent.getOptNeed(good)); //use the optimal value for its the production's good
+			//if(good == std::get<0>(romanAgent.getProducedGood())){
+			//    double curNeedForMyGood = romanAgent.getNeed(good);
+			//    if(curNeedForMyGood > 10000){ 
+			//	std::cout<<"plot whats appening here"<< std::get<0>(romanAgent.getProducedGood())<<std::endl;
+			//    }
+			//    romanAgent.setQuantity(good,std::min(curNeedForMyGood,1.0)); //this should use the optimal value for its the production's good
+			//}
+
 			double val=romanAgent.getQuantity(good);
-			if(romanAgent.getQuantity(good) > romanAgent.getNeed(good))val=romanAgent.getNeed(good);
-			consumptionScore+=romanAgent.getQuantity(good)*romanAgent.getPrice(good);
+			if(romanAgent.getQuantity(good) > romanAgent.getNeed(good))val=romanAgent.getNeed(good); //if we have collected more than what we need, we consume only what we need
+			else val=romanAgent.getQuantity(good);
+			consumptionScore+=val*romanAgent.getPrice(good);
 			romanAgent.setUtility(false);
-			//std::cout<<consumptionScore<<std::endl;
+		//	std::cout<<consumptionScore<<std::endl;
 		    }
 
 		    else{
