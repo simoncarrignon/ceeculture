@@ -322,15 +322,19 @@ getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,lis
 	folder=	paste(expeDir,i,sep="")
 	file=	paste(expeDir,i,"/agents.csv",sep="")
 	print(file)
-	work=read.csv(file,sep=";")
-	work=work[work$timeStep %% timestep == 0,]
-	toBind=tapply(work$scores,work[,c("timeStep","p_good")],fun)
+	work=try(read.csv(file,sep=";"))
+	if(is.data.frame(work)){
+	    work=work[work$timeStep %% timestep == 0,]
+	    toBind=tapply(work$scores,work[,c("timeStep","p_good")],fun)
 
-	#	m=getPropFromXml(folder,"network","m")
-	#v=getPropFromXml(folder,"network","v")
-	#network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
-	all=rbind(all,cbind(t(toBind)))#,m,network))
-	sim=sim+1
+	    #	m=getPropFromXml(folder,"network","m")
+	    #v=getPropFromXml(folder,"network","v")
+	    #network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
+	    all=rbind(all,cbind(t(toBind)))#,m,network))
+	    sim=sim+1
+	}
+	else
+	    print(paste("Fodler",folder,"doesn't contains the agents.csv file"))
     }
     return(all)
 }
@@ -882,7 +886,7 @@ prodOpt <- function(np,ni){
     return(sum(ni*ni)/(length(ni)*np))
 }
 
-getSumPrice<-function(data,type="n",fun=sum){
+getSumOf<-function(data,type="n",fun=sum){
     apply(sapply(levels(data$p_good),function(i)data[,paste(i,"_",type,sep="")]),1,fun)
 }
 
