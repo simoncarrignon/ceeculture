@@ -16,6 +16,12 @@ testG=read.csv("~/share_res/gintRandom/exp_100/agents.csv",sep=";")
 testH=read.csv("~/share_res/gintCopyma/exp_10/agents.csv",sep=";")
 test6G=read.csv("~/share_res/gintCopyma6G/exp_200/agents.csv",sep=";")
 test6GN=read.csv("~/share_res/gintCopyma6G/exp_200/agents.csv",sep=";")
+test6GNLong=read.csv("~/share_res/gintCopymaNEW6G45000/exp_104/agents.csv",sep=";")
+testCons=read.csv("~/share_res/consProd.csv",sep=";")
+testCons2G=read.csv("~/share_res/gintCopyma2G13500OPT/exp_100/agents.csv",sep=";")
+testConsb2G=read.csv("~/share_res/gintCopyma2G34500OPT/exp_160/agents.csv",sep=";")
+plot(testConsb2G$g0_q[testConsb2G$p_good == "g0"])   
+plot(testConsb2G$g1_q[testConsb2G$p_good == "g1"])   
 
 testG1
 plot(unique(testR$timeStep),abs(9-apply(getSumOf(testR,"n"),2,mean,na.rm=T)),type="l", ylim=c(0,20))
@@ -23,6 +29,9 @@ plot(unique(testR$timeStep),apply(getSumOf(testR,"p"),2,mean,na.rm=T),type="l")
 boxplot(abs(4-getSumOf(testR,"n")),ylim=c(0,10),outline=F)
 boxplot(getOf(testR,"p"))
 boxplot(testR$g3_q ~testR$timeStep)
+plot(getSumOf(test6GN,"q", sum)~getSumPrice(test6GN,"n", sum),ylim=c(0,10))
+plot(getSumOf(test6GNLong,"p", sum),ylim=c(0.1,10))
+
 
 testscore=getAllMeanScore("~/share_res/goodTiming/")
 ginran=getAllMeanScore("~/share_res/gintRandom//")
@@ -31,11 +40,15 @@ ginranC=getAllMeanAlgo("~/share_res/gintRandom//",fun="median")
 gincopmax6G=getAllMeanAlgo("~/share_res/gintCopyma6G/",fun="median")
 gincopmax6GN=getAllMeanAlgo("~/share_res/gintCopyma6G/",fun="median")
 gincopmax6GNC=getAllMeanScore("~/share_res/gintCopyma6G/")
-gincopmax6GC=getAllMeanScore("~/share_res/gintCopyma6G/")
+gincopmax6GNCLong=getAllMeanScore("~/share_res/gintCopymaNEW6G45000/")
+gincopmax6GNLong=getAllMeanAlgo("~/share_res/gintCopymaNEW6G45000/",fun=median)
 gincopmax=getAllMeanScore("~/share_res/gintCopyma/")
 gincopmaxB=getAllMeanAlgo("~/share_res/gintCopyma/")
-gincopmaxC=getAllMeanAlgo("~/share_res/gintCopyma/",fun="median")
-boxplot(testscore)
+gincopmax2C=getAllMeanAlgo("~/share_res/gintCopyma2G13500OPT/",fun="median")
+gincopmax2=getAllMeanScore("~/share_res/gintCopyma2G13500OPT/")
+gincopmaxb2C=getAllMeanAlgo("~/share_res/gintCopyma2G34500OPT/",fun="median")
+gincopmaxb2=getAllMeanScore("~/share_res/gintCopyma2G34500OPT/")
+
 randn=getAllMeanScore("~/share_res/randn/")
 randn4=getAllMeanScore("~/share_res/randn4/")
 boxplot(randn4)
@@ -44,10 +57,21 @@ boxplot(random4)
 rand=getAllMeanScore("~/share_res/random/")
 randomSel=getAllMeanScore("~/share_res/testSelf/")
 boxplot(random4)
+
+autFoldTest("gintCopyma2G13500OPT")
+autFoldTest("gintCopyma2G34500OPT")
+autFoldTest("gintCopyma2G12250OPT")
+autFoldTest("gintCopyma2G12250OPTwoP")
+autFoldTest("gintRand2G12250OPTwoP")
+autFoldTest("gintCopymax2G13500OPTwoP")
+autFoldTest("gintCopymax3G40500OPTwoP")
+autFoldTest("gintCopymax6G40500OProd")
+autFoldTest("gintRand3G40500OProd")
+autFoldTest("gintRand3G600ag40500O")
 	
 
-testH$g1_qua
 
+plot(unique(test6GN$timeStep),apply(getSumOf(test6GN,"p"),2,mean,na.rm=T),type="l")
 
 
 u=c()
@@ -67,16 +91,80 @@ getAllMeanAlgo<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,list
 	folder=	paste(expeDir,i,sep="")
 	file=	paste(expeDir,i,"/agents.csv",sep="")
 	print(file)
-	work=read.csv(file,sep=";")
-	work=work[work$timeStep %% timestep == 0,]
-	#toBind=tapply(work$scores,work$timeStep,fun)
-	toBind=tapply(work$u/work$opt_u,work$timeStep,fun)
+	work=try(read.csv(file,sep=";"))
+    	if(is.data.frame(work)){
+	    work=work[work$timeStep %% timestep == 0,]
+	    #toBind=tapply(work$scores,work$timeStep,fun)
+	    toBind=tapply(work$u/work$opt_u,work$timeStep,fun)
 
-	#	m=getPropFromXml(folder,"network","m")
-	#v=getPropFromXml(folder,"network","v")
-	#network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
-	all=rbind(all,cbind(t(toBind)))#,m,network))
-	sim=sim+1
+	    #	m=getPropFromXml(folder,"network","m")
+	    #v=getPropFromXml(folder,"network","v")
+	    #network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
+	    all=rbind(all,cbind(t(toBind)))#,m,network))
+	    sim=sim+1
+	}
+	else
+	    print(paste("Fodler",folder,"doesn't contains the agents.csv file"))
     }
     return(all)
+}
+autFoldTest<-function(folder){
+thisfol=paste("~/share_res/",folder,"/",sep="")
+gincopmaxb2C=getAllMeanAlgo(thisfol,fun="median")
+gincopmaxb2=getAllMeanScore(thisfol)
+testCons2G=read.csv(paste(thisfol,"/exp_92/agents.csv",sep=""),sep=";")
+testCons2Gb=read.csv(paste(thisfol,"/exp_93/agents.csv",sep=""),sep=";")
+pdf(paste("~/results",folder,".pdf",sep=""))
+boxplot(gincopmaxb2,main="score")
+boxplot(gincopmaxb2C,main="ratio")
+
+sapply(levels(testCons2G$p_good),function(i){
+       oneprod=testCons2G[testCons2G$p_good == i,]
+       plot(oneprod$g0_p,main=paste("prices prod",i))   
+       points(oneprod$g1_p,col="blue")   
+       points(oneprod$g2_p,col="green")   
+       legend("topleft",c("g0","g1","g2"),fill=c(1,"blue","green"))
+})
+sapply(levels(testCons2G$p_good),function(i){
+       oneprod=testCons2G[testCons2G$p_good == i,]
+       plot(oneprod$g0_q,main=paste("quantities prod",i))   
+       points(oneprod$g1_q,col="blue")   
+       points(oneprod$g2_q,col="green")   
+       legend("topleft",c("g0","g1","g2"),fill=c(1,"blue","green"))
+})
+sapply(levels(testCons2G$p_good),function(i){
+       oneprod=testCons2G[testCons2G$p_good == i,]
+       plot(oneprod$g0_n,main=paste("need prod",i),ylim=c(.00001,1000),log="y")   
+       points(oneprod$g1_n,col="blue")   
+       points(oneprod$g2_n,col="green")   
+       legend("topleft",c("g0","g1","g2"),fill=c(1,"blue","green"))
+})
+
+sapply(levels(testCons2G$p_good),function(i){
+       oneprod=testCons2G[testCons2G$p_good == i,]
+       plot(oneprod$g0_q/oneprod$g0_n,main=paste("quantity vs curneed prod",i),ylim=c(-1,1.5))#,log="y")   
+       points(oneprod$g1_q/oneprod$g1_n,col="blue")   
+       points(oneprod$g2_q/oneprod$g2_n,col="green")   
+       legend("topleft",c("g0","g1","g2"),fill=c(1,"blue","green"))
+})
+
+sapply(levels(testCons2G$p_good),function(i){
+       oneprod=testCons2G[testCons2G$p_good == i,]
+       plot(oneprod$g0_q/oneprod$g0_on,main=paste("quantity vs optneed prod",i),ylim=c(-1,1.5))#,log="y")   
+       points(oneprod$g1_q/oneprod$g1_on,col="blue")   
+       points(oneprod$g2_q/oneprod$g2_on,col="green")   
+       legend("topleft",c("g0","g1","g2"),fill=c(1,"blue","green"))
+})
+
+plot(getSumOf(testCons2G,"q", sum)~getSumOf(testCons2G,"n", sum),main="t1")
+plot(getSumOf(testCons2Gb,"q", sum)~getSumOf(testCons2G,"n", sum),main="t2")
+plot(getSumOf(testCons2G,"q", sum)~getSumOf(testCons2G,"on", sum),main="t1")
+plot(getSumOf(testCons2Gb,"q", sum)~getSumOf(testCons2G,"on", sum),main="t2")
+plot(getSumOf(testCons2G,"p", sum),main="t1 price")
+plot(getSumOf(testCons2Gb,"p", sum),main="t2 price")
+plot(getSumOf(testCons2G,"q", sum),main="t1 quantity")
+plot(getSumOf(testCons2Gb,"q", sum),main="t2 quatity")
+plot(getSumOf(testCons2G,"n", sum),main="t1 need",ylim=c(.00001,1000),log="y")
+plot(getSumOf(testCons2Gb,"n", sum),main="t2 need",ylim=c(.00001,1000),log="y")
+dev.off()
 }

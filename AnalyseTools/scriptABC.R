@@ -117,8 +117,9 @@ main <- function(){
     plotDensities(path,"cstep",c("3000.00","0.05"))
 
     path="~/share_res/testMuBisWider/"
+    path="~/share_res/testMutRand200/"
     tt2=read.csv("~/share_res/testMuBisWider/3_50_0.6_10_0.000590196537098/agents.csv",sep=";")
-    tt2=getAllMeanScore("~/share_res/testMuBisWider/")
+    tt2=getAllMeanScore("~/share_res/testMu/")
     pposteriorlotDensities(path,"mu",c("3000.00","0.25"))
     #Devrait pouvoir etre assz utile de faire une fonction qui genere cce graphe de façon auto en fonction de deux variable
     plot(density(uuu$V3),xlim=range(c(density(uuu2$V3)$x,density(uuu1$V3)$x,density(uuu0$V3)$x)),ylim=range(c(density(uuu2$V3)$y,density(uuu1$V3)$y,density(uuu0$V3)$y)),)
@@ -126,9 +127,10 @@ main <- function(){
     lines(density(uuu1$V1),col="orange")
     lines(density(uuu0$V3),col="red")
 
-    pdf("../../../doc/conferences/20170127_YSLRWinterWorkshop/img/ABC.pdf")
+    #pdf("../../../doc/conferences/20170127_YSLRWinterWorkshop/img/ABC.pdf")
+    pdf("~/resultsABC.pdf")
     par(mar=c(5,4,1,1))
-     plotDensities(path,"mu",c("3000.00","0.25"),from=0,to=1,xlim=c(0,1))
+     plotDensities(path,"mu",c("3000.00","0.90"),from=0,to=1,xlim=c(0,1))
     dev.off()
 
 }
