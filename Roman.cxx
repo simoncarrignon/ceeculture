@@ -53,10 +53,12 @@ namespace Epnet
 	    name=ossc.str();
 	    registerFloatAttribute(name);
 
-	    std::ostringstream ossd;
-	    ossd <<std::get<0>(*it) << "_on";
-	    name=ossd.str();
-	    registerFloatAttribute(name);
+	    if(_type == "gintis07"){
+		std::ostringstream ossd;
+		ossd <<std::get<0>(*it) << "_on";
+		name=ossd.str();
+		registerFloatAttribute(name);
+	    }
 
 
 
@@ -74,8 +76,10 @@ namespace Epnet
 	//	registerIntAttribute("nbAchievedTrades");
 	registerStringAttribute("p_good");
 
-	registerFloatAttribute("u");
-	registerFloatAttribute("opt_u");
+	if(_type == "gintis07"){
+	    registerFloatAttribute("u");
+	    registerFloatAttribute("opt_u");
+	}
 
     }
 
