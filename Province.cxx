@@ -242,6 +242,7 @@ namespace Epnet
 					}			
 
 				}
+			 if(provinceConfig._goodsParam == "gintis07")
 				log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
 
 

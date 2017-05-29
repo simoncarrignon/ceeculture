@@ -104,10 +104,12 @@ namespace Epnet
 	    value =(float)getNeed(std::get<0>(*it));
 	    serializeAttribute(name,value); 
 
-	    std::ostringstream ossd;
-	    ossd <<std::get<0>(*it) << "_on";
-	    name=ossd.str();
-	    serializeAttribute(name,(float)this->_optNeed[id]); 
+	    if(_type == "gintis07"){
+		std::ostringstream ossd;
+		ossd <<std::get<0>(*it) << "_on";
+		name=ossd.str();
+		serializeAttribute(name,(float)this->_optNeed[id]); 
+	    }
 
 	    /*			std::ostringstream ossb;
 				oss <<std::get<0>(*it) << "_q";
@@ -119,8 +121,10 @@ namespace Epnet
 	    id++;
 	}
 	serializeAttribute("p_good", std::get<0>(getProducedGood()));
-	serializeAttribute("u", (float)_curUtility);
-	serializeAttribute("opt_u", (float)_optUtility);
+	if(_type == "gintis07"){
+	    serializeAttribute("u", (float)_curUtility);
+	    serializeAttribute("opt_u", (float)_optUtility);
+	}
 
 	//serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
 	//serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
