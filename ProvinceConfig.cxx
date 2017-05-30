@@ -1,4 +1,5 @@
 #include <ProvinceConfig.hxx>
+#include <Exception.hxx>
 
 #include <iostream>
 
@@ -30,6 +31,16 @@ void ProvinceConfig::loadParams()
 	_marketSize= getParamFloat( "market", "size");
 	_goodsParam= getParamStr( "controller/good", "type");
 	_networkType= getParamStr( "network", "type");
+
+	try{
+	    _networkOut = getParamStr( "network", "output");
+	}
+	catch(const Engine::Exception & e){
+	    //Create a load_config log file?
+	    std::cerr<<e.what()<<std::endl;
+	    std::cerr<<"Network wont be recorded"<<std::endl;
+	    _networkOut = "false";
+	}
 	
 	int nParam = getParamInt("network","nparam");
 	std::cout<<"Reseau "<<_networkType<<std::endl;

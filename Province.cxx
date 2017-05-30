@@ -265,7 +265,8 @@ namespace Epnet
 			
 			Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
 			//Network n = Network(groupOfproducer,type,it->first,true);
-			n.write();
+			if(provinceConfig._networkOut == "true")
+			    n.write();
 			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
 
 			for (std::vector<std::string>::iterator producer = groupOfproducer.begin(); producer != groupOfproducer.end(); producer++){
