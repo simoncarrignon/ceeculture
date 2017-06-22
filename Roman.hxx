@@ -80,6 +80,7 @@ namespace Epnet
 		public:
 		Roman( const std::string & id, std::string controllerType );
 		Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess,std::string innovationProcess,int culturalStep);
+		Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess,std::string innovationProcess,int culturalStep,std::string agentType);
 
 		virtual ~Roman();
 
@@ -153,6 +154,7 @@ namespace Epnet
 		double getUtility(std::string type){ return std::get<1>(getGood(type));};
 		double getProductionRate(std::string type){ return std::get<4>(getGood(type));};
 
+		double getIncome();
 		//double getUtility(std::string type){ return std::get<1>(getOptGood(type));};
 		//double getOptUtility(std::string type){ return std::get<2>(getOptGood(type));};
 		//double getOptNeed(std::string type){ return std::get<3>(getOptGood(type));};

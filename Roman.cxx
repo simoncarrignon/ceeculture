@@ -28,6 +28,15 @@ namespace Epnet
 	_type="";
     }
 
+    Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess, std::string innovationProcess,int culturalStep,std::string agentType) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
+    {
+	_controller = ControllerFactory::get().makeController(controllerType,mutationRate,selectionProcess,innovationProcess,culturalStep);
+	_controller->setAgent(this);
+	_score=0.0;
+	_mutationRate=mutationRate;
+	_type=agentType;
+    }
+
 
 
     Roman::~Roman()

@@ -20,7 +20,7 @@ namespace Epnet
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		
 		double all_needs=0.0;
-		double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
+		//double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
 		
 
 		//initialize knowledge about the n goods in our economy: what are the different types, what is their absolute value
@@ -28,8 +28,8 @@ namespace Epnet
 		if(provinceConfig._goodsParam == "random" ||provinceConfig._goodsParam == "randn" ){
 		    for (int i = 0; i < provinceConfig._numGoods ; i++)
 		    {
-			//double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; for totally random absolute value, initialize here
-			double tneed=bneed * (i+1.0);
+			double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //for totally random absolute value, initialize here
+			//double tneed=bneed * (i+1.0);
 
 			all_needs += tneed; //tneeds is the sum of all value. It could be use to normalize the privec
 			std::ostringstream sgoodType;
@@ -129,7 +129,7 @@ namespace Epnet
 			{
 				std::ostringstream oss;
 				oss << "Roman_" << i;
-				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep);
+				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep,provinceConfig._aType);
 				addAgent(agent);
 				//position is actually not interesting
 				agent->setRandomPosition();
@@ -173,7 +173,6 @@ namespace Epnet
 				else if(provinceConfig._goodsParam== "gintis07" )
 				{
 				    	
-				    agent->setType("gintis07");
 					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
 					for (int g = 0; g < provinceConfig._numGoods ; g++)
 					{

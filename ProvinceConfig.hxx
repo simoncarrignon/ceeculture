@@ -27,6 +27,7 @@ class ProvinceConfig : public Engine::Config
 	std::string _goodsParam;
 	std::string _networkType;
 	std::string _networkOut;
+	std::string _aType;
 	std::map<std::string,double> _networkParam;
 	float _mutationRate;
 	std::string _innovationProcess;

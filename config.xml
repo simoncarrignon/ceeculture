@@ -2,14 +2,15 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="10000" serializeResolution="45"/> 
+	<numSteps value="30000" serializeResolution="450"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="1"/>
-	<numAgents value="100"/>
-	<market size=".6"/>
+	<numAgents value="500"/>
+	<market size=".1"/>
 	<controller type="basic" >
-	    <good type="gintis07"/> <!-- could be : random,randn,manual,gintis07--> 
-		<culture transmission="trade" innovation="trade" mutation=".18" step="15"/>
+	    <good type="randn"/> <!-- could be : random,randn,manual,gintis07--> 
+	    <agent type="gintis06"/> <!-- could be : custom,gintis07,gintis06--> 
+	    <culture transmission="copymax" innovation="trade" mutation=".18" step="15"/>
 	</controller>
 
 	<!--
@@ -27,7 +28,7 @@
 	    	<prop0 id="p" value= ".2"/>
 	</network>
 
-	<goods num="4">
+	<goods num="5">
 		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1.0"	productionRate="0"/>
 	</goods>
 

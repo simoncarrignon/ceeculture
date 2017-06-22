@@ -56,12 +56,28 @@ namespace Epnet
 				double proposedQuantity =0;
 				if(offerer.getType()=="gintis07"){
 				    requestedQuantity= offerer.getNeed(goodWanted)-offerer.getQuantity(goodWanted);
-				    proposedQuantity=requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
+				}
+				else if (offerer.getType()=="gintis06"){
+				    double M=0.0;
+				    double N=0.0;
+				
+				    std::vector<std::string> goods= provinceWorld.getTypesOfGood();
+				    std::vector<std::string>::iterator g = goods.begin();
+				    //compute the lagrangian optmizer
+				    while(g!=goods.end()){
+					M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
+					N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+					g++;
+				    }
+
+				    double lambda=M/N;
+				    requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
 				}
 				else{
 				    requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
-				    proposedQuantity=requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
 				}
+
+				    proposedQuantity=requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
 
 
 				int noffer=0;
@@ -81,12 +97,26 @@ namespace Epnet
 					    double responderTradCounter =  0;
 					    if(responder.getType()=="gintis07"){
 						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
-						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
+					    }
+					    else if (offerer.getType()=="gintis06"){
+						double M=0.0;
+						double N=0.0;
+
+						std::vector<std::string> goods= provinceWorld.getTypesOfGood();
+						std::vector<std::string>::iterator g = goods.begin();
+						while(g!=goods.end()){
+						    M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
+						    N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+						    g++;
+						}
+
+						double lambda=M/N;
+						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
 					    }
 					    else{
-						responderTradeWill =  responder.getPrice(offererProducedGood)-responder.getQuantity(offererProducedGood); 
-						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
+						responderTradeWill= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
 					    }
+						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
 
 						if(

@@ -30,6 +30,12 @@ namespace Epnet
 		    romanAgent.setDemand(false);
 		    //consumptionScore = romanAgent.consume(); //in that case this is then meaningless? or not?
 
+		if(romanAgent.getType() == "gintis06"){
+		    std::string fgood=std::get<0>(*(romanAgent.getListGoods().begin()));
+		    //std::cout<<"First Good"<<std::endl;
+		    //std::cout<<fgood<<std::endl;
+		    consumptionScore=romanAgent.getQuantity(fgood)/romanAgent.getNeed(fgood);
+		}
 		std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= romanAgent.getListGoods();
 		std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = allGood.begin();
 
@@ -54,26 +60,31 @@ namespace Epnet
 		//	std::cout<<consumptionScore<<std::endl;
 		    }
 
+		    else if(romanAgent.getType() == "gintis06"){
+			if( (romanAgent.getQuantity(good)/romanAgent.getNeed(good)) < consumptionScore) 
+			    consumptionScore=romanAgent.getQuantity(good)/(romanAgent.getNeed(good)); //original gintis06 utility
+		    }
 		    else{
-			if(good == std::get<0>(romanAgent.getProducedGood())) 
-			    romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
+		//	if(good == std::get<0>(romanAgent.getProducedGood())) 
+		//	    romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
 			//  			//	romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimated value for its the production's good
 			//	
-			////fit= |a-b|/euclideDist(a,b) my favorite one
+			////fit= |a-b|/euclideDist(a,b) my favorite one:
 			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)))consumptionScore+=0; //undefined fitness function for 0
 			else consumptionScore+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
+			/////////
 
 			//fit= |a-b|/b : In that one I cut its too long right leg.
 			// 	double cur=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)))/romanAgent.getNeed(good);
 			// 	  if(cur>1)cur=1;
 			// 	 consumptionScore+=cur;
-
-
+			/////////
 			//////////////////////
 			//high debugging (to check if work in perfect case)
 			//romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
 			//consumptionScore+=1-std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
 			//////////////////////
+
 		    }
 
 		    it++;
