@@ -66,12 +66,12 @@ namespace Epnet
 				    //compute the lagrangian optmizer
 				    while(g!=goods.end()){
 					M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-					N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+					N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g);
 					g++;
 				    }
 
 				    double lambda=M/N;
-				    requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
+				    requestedQuantity= 1/offerer.getPrice(goodWanted)*lambda-offerer.getQuantity(goodWanted);
 				}
 				else{
 				    requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
@@ -106,12 +106,12 @@ namespace Epnet
 						std::vector<std::string>::iterator g = goods.begin();
 						while(g!=goods.end()){
 						    M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-						    N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+						    N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g);
 						    g++;
 						}
 
 						double lambda=M/N;
-						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
+						responderTradeWill =  1/responder.getPrice(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
 					    }
 					    else{
 						responderTradeWill= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
