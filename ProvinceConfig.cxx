@@ -27,6 +27,7 @@ void ProvinceConfig::loadParams()
 	_aType = getParamStr( "controller/agent", "type");	
 	_tradeType= getParamStr( "controller/trade", "type");
 	_culturalStep= getParamInt( "controller/culture", "step");	
+	_muMax= getParamFloat( "controller/culture", "mumax");	
 
 	_mutationRate= getParamFloat( "controller/culture", "mutation");
 

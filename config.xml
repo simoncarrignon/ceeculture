@@ -2,16 +2,16 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="3000" serializeResolution="45"/> 
+	<numSteps value="10000" serializeResolution="45"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="1"/>
-	<numAgents value="200"/>
+	<numAgents value="500"/>
 	<market size=".2"/>
 	<controller type="basic" >
 	    <good type="randn"/> <!-- could be : random,randn,manual,gintis07--> 
 	    <agent type="custom"/>  <!-- could be : custom,gintis07,gintis06-->
-	    <trade type="gintis06"/> <!-- could be : custom,gintis07,gintis06,gintis06-outneed -->
-	    <culture transmission="copymin" innovation="trade" mutation=".18" step="15"/>
+	    <trade type="gintis06-outneed"/> <!-- could be : custom,gintis07,gintis06,gintis06-outneed -->
+	    <culture transmission="copymin" innovation="trade" mumax="50" mutation=".18" step="15"/>
 	</controller>
 
 	<!--

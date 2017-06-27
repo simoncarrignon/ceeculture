@@ -461,6 +461,12 @@ namespace Epnet
 		return provinceConfig._tradeType;
 	}
 
+	double Province::getMuMax(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return (double) provinceConfig._muMax;
+	}
+
 	void Province::printAllCulturalNerwork(){
 		
 		for(std::map< std::string, Network >::iterator it= _good2CulturalNetwork.begin();it!=_good2CulturalNetwork.end();it++)

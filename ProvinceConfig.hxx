@@ -33,6 +33,7 @@ class ProvinceConfig : public Engine::Config
 	std::string _innovationProcess;
 	float _marketSize;
 	std::string _tradeType;
+	float _muMax;
 
 public:
 	ProvinceConfig( const std::string & xmlFile );
