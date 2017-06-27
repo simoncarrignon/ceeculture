@@ -66,6 +66,22 @@ namespace Epnet
 				    //compute the lagrangian optmizer
 				    while(g!=goods.end()){
 					M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
+					N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+					g++;
+				    }
+
+				    double lambda=M/N;
+				    requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
+				}
+				else if( provinceWorld.getTradeType() =="gintis06-outneed"){
+				    double M=0.0;
+				    double N=0.0;
+				
+				    std::vector<std::string> goods= provinceWorld.getTypesOfGood();
+				    std::vector<std::string>::iterator g = goods.begin();
+				    //compute the lagrangian optmizer
+				    while(g!=goods.end()){
+					M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
 					N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g); // as is this line is useless, in gintis06 1/getNeed(*g)
 					g++;
 				    }
@@ -98,7 +114,22 @@ namespace Epnet
 					    if(provinceWorld.getTradeType()=="gintis07"){
 						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
 					    }
-					    else if( provinceWorld.getTradeType() =="gintis06"){
+					    else if (provinceWorld.getTradeType()=="gintis06"){
+						double M=0.0;
+						double N=0.0;
+
+						std::vector<std::string> goods= provinceWorld.getTypesOfGood();
+						std::vector<std::string>::iterator g = goods.begin();
+						while(g!=goods.end()){
+						    M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
+						    N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+						    g++;
+						}
+
+						double lambda=M/N;
+						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
+					    }
+					    else if( provinceWorld.getTradeType() =="gintis06-outneed"){
 						double M=0.0;
 						double N=0.0;
 
