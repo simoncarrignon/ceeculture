@@ -69,23 +69,25 @@ namespace Epnet
 			}	  
 
 		}
-		else {
+		else if(provinceConfig._goodsParam == "manual"){
 			//In that case each good and the properties of thoses good have to be manually set by the user in the config file
-			//I have never used that possibility..
+			//At this stage each good should be already well configured by ProvinceConfig 
+			//Here we just update global variable later used to compute some metrics
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 			{
-			    double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+			    std::string goodType = std::get<0>(*it);
 
-			    all_needs += tneed;
-
-			    _needs.push_back(std::make_tuple(std::get<0>(*it),tneed));  
-			    _maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
-			    _minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
-			    _typesOfGood.push_back(std::get<0>(*it));
-			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(std::get<0>(*it),{}));
+			    _needs.push_back(std::make_tuple(goodType,std::get<4>(*it)));  
+			    _maxscore.push_back(std::make_tuple(goodType,0.0));
+			    _minscore.push_back(std::make_tuple(goodType,0.0));
+			    _typesOfGood.push_back(goodType);
+			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
 
 			}
 
+		}
+		else{
+			//error no good type
 		}
 
 
@@ -163,13 +165,6 @@ namespace Epnet
 					}			
 
 
-
-					//Set producedGood as a modulo of the agent ID
-					int randg = i%provinceConfig._numGoods;
-					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
-					agent->setProductionRate(std::get<0>(producedGood),1.0);
-					_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
-
 				}
 				else if(provinceConfig._goodsParam== "gintis07" )
 				{
@@ -210,14 +205,9 @@ namespace Epnet
 					agent->setDemand(true);
 					agent->setUtility(true);
 
-					//Set producedGood as a modulo of the agent ID
-					int randg = i%provinceConfig._numGoods;
-					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
-					agent->setProductionRate(std::get<0>(producedGood),1.0);
-					_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				}
-				else{
+				else if(provinceConfig._goodsParam == "manual"){
 					for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 					{
 						//id, maxQuantity, price, need and production rate of the good
@@ -228,23 +218,21 @@ namespace Epnet
 
 						//set a random price for each goods
 
-						agent->setPrice(std::get<0>(*it),(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0); //TODO:demiurge's job
-
-
-						//---------------
-						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
-						std::vector<std::tuple<std::string,double> >::iterator need = std::find_if(_needs.begin(), _needs.end(), [=](const std::tuple<std::string,double>& good) {return std::get<0>(good) == std::get<0>(*it);});
-
-						if ( need != _needs.end() )
-						{				  
-							agent->setNeed(std::get<0>(*it),std::get<1>(*need));
-						}
 					}			
 
 				}
-			 if(provinceConfig._goodsParam == "gintis07")
-				log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
+				else{
+				    //
+				}
+				if(provinceConfig._goodsParam == "gintis07")
+					log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
 
+				//Set producedGood as a modulo of the agent ID
+
+				int randg = i%provinceConfig._numGoods;
+				std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
+				agent->setProductionRate(std::get<0>(producedGood),1.0);
+				_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				//loop for initialize the commercial connection of the current agent with all previously created agents.
 				for(int j=(i-1); j>=0; j--)
