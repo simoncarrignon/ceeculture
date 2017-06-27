@@ -32,6 +32,7 @@ class ProvinceConfig : public Engine::Config
 	float _mutationRate;
 	std::string _innovationProcess;
 	float _marketSize;
+	std::string _tradeType;
 
 public:
 	ProvinceConfig( const std::string & xmlFile );

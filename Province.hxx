@@ -35,6 +35,8 @@ namespace Epnet
 		double getMinScore(std::string good);
 		void setMinScore(std::string good,double score);
 
+		std::string getTradeType();
+
 		void printListOfProd(std::string s);//print all producer of the good "s"
 		std::vector<std::string> getListOfProd(std::string s);
 		float getMarketSize();

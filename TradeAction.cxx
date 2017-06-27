@@ -54,10 +54,10 @@ namespace Epnet
 
 				double requestedQuantity=0;
 				double proposedQuantity =0;
-				if(offerer.getType()=="gintis07"){
+				if(provinceWorld.getTradeType() =="gintis07"){
 				    requestedQuantity= offerer.getNeed(goodWanted)-offerer.getQuantity(goodWanted);
 				}
-				else if (offerer.getType()=="gintis06"){
+				else if( provinceWorld.getTradeType() =="gintis06"){
 				    double M=0.0;
 				    double N=0.0;
 				
@@ -66,7 +66,7 @@ namespace Epnet
 				    //compute the lagrangian optmizer
 				    while(g!=goods.end()){
 					M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-					N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g);
+					N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g); // as is this line is useless, in gintis06 1/getNeed(*g)
 					g++;
 				    }
 
@@ -83,7 +83,7 @@ namespace Epnet
 				int noffer=0;
 				bool tradeDone = 0;
 				int noffer_max=exchangeNetwork.size()*provinceWorld.getMarketSize();//if noffer_max is < numagents/ngoods, it means that we limite the research of the agent in the markert
-				//std::cout<<"size net:"<<exchangeNetwork.size()<<", size limite:"<<provinceWorld.getMarketSize()<<", then:"<<noffer_max<<std::endl;
+				//std::cout<<offerer.getId()<<" requested :"<<requestedQuantity<<", proposed:"<<proposedQuantity<<", pricewanted:"<<offerer.getPrice(goodWanted)<<", priceproduce: "<<offerer.getPrice(offererProducedGood)<<std::endl;
 				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=noffer_max){
 					noffer++;
 					Roman & responder = (Roman&)(*world->getAgent(*itO));
@@ -95,10 +95,10 @@ namespace Epnet
 
 					    double responderTradeWill =  0;
 					    double responderTradCounter =  0;
-					    if(responder.getType()=="gintis07"){
+					    if(provinceWorld.getTradeType()=="gintis07"){
 						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
 					    }
-					    else if (offerer.getType()=="gintis06"){
+					    else if( provinceWorld.getTradeType() =="gintis06"){
 						double M=0.0;
 						double N=0.0;
 
@@ -118,9 +118,12 @@ namespace Epnet
 					    }
 						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
+				//std::cout<<responder.getId()<<" crequested :"<<responderTradCounter<<", cproposed:"<<responderTradeWill<<", cpricewanted:"<<responder.getPrice(goodWanted)<<", cpriceproduce: "<<responder.getPrice(offererProducedGood)<<std::endl;
 
 						if(
 						  responderTradeWill <= proposedQuantity && 				//the quantity offered is at least egual to the quantity the other estim good for him
+						  responderTradeWill > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
+						  requestedQuantity > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
 						  responder.getQuantity(goodWanted) >= requestedQuantity &&		//the quantity asked is available in the stock of the responder
 						  offerer.getQuantity(offererProducedGood) >= proposedQuantity &&	//the quantity proposed is available in the offerer stock
 						  responderTradCounter >= requestedQuantity				//the quantity asked is less that the value estimated by the responder

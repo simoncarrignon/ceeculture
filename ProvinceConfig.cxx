@@ -25,6 +25,7 @@ void ProvinceConfig::loadParams()
 	_selectionProcess= getParamStr( "controller/culture", "transmission");	
 	_innovationProcess= getParamStr( "controller/culture", "innovation");	
 	_aType = getParamStr( "controller/agent", "type");	
+	_tradeType= getParamStr( "controller/trade", "type");
 	_culturalStep= getParamInt( "controller/culture", "step");	
 
 	_mutationRate= getParamFloat( "controller/culture", "mutation");
@@ -32,6 +33,7 @@ void ProvinceConfig::loadParams()
 	_marketSize= getParamFloat( "market", "size");
 	_goodsParam= getParamStr( "controller/good", "type");
 	_networkType= getParamStr( "network", "type");
+
 
 	try{
 	    _networkOut = getParamStr( "network", "output");

@@ -2,15 +2,16 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="30000" serializeResolution="450"/> 
+	<numSteps value="3000" serializeResolution="45"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="1"/>
-	<numAgents value="500"/>
-	<market size=".1"/>
+	<numAgents value="200"/>
+	<market size=".2"/>
 	<controller type="basic" >
 	    <good type="randn"/> <!-- could be : random,randn,manual,gintis07--> 
-	    <agent type="gintis06"/> <!-- could be : custom,gintis07,gintis06--> 
-	    <culture transmission="copymax" innovation="trade" mutation=".18" step="15"/>
+	    <agent type="custom"/>  
+	    <trade type="gintis06"/> <!-- could be : custom,gintis07,gintis06-->
+	    <culture transmission="copymin" innovation="trade" mutation=".18" step="15"/>
 	</controller>
 
 	<!--
@@ -29,8 +30,18 @@
 	</network>
 
 	<goods num="5">
-		<good	id="proto"	initialQuantity="0"	maxQuantity="1000"	price="-1.0"	need="-1.0"	productionRate="0"/>
+	       	<good   id="proto"      initialQuantity="0"     maxQuantity="1000"      price="-1.0"    need="-1.0"     productionRate="0"/>
 	</goods>
+
+	<!--
+	<goods num="5">
+		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="1.10"	need="1.0"	productionRate="1"/>
+		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price="0.50"	need="2.0"	productionRate="1"/>
+		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price="0.33333"	need="3.0"	productionRate="1"/>
+		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="0.25"	need="4.0"	productionRate="1"/>
+		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="0.20"	need="5.0"	productionRate="1"/>
+	</goods>
+-->
 
 	<rasters num="3">
 		<raster0	id="currency"	min="0.0"	max="20.0"	init="20.0"/>

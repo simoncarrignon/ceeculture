@@ -455,6 +455,12 @@ namespace Epnet
 		return provinceConfig._marketSize;
 	}
 
+	std::string Province::getTradeType(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return provinceConfig._tradeType;
+	}
+
 	void Province::printAllCulturalNerwork(){
 		
 		for(std::map< std::string, Network >::iterator it= _good2CulturalNetwork.begin();it!=_good2CulturalNetwork.end();it++)
