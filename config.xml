@@ -9,8 +9,8 @@
 	<market size=".2"/>
 	<controller type="basic" >
 	    <good type="randn"/> <!-- could be : random,randn,manual,gintis07--> 
-	    <agent type="custom"/>  
-	    <trade type="gintis06"/> <!-- could be : custom,gintis07,gintis06-->
+	    <agent type="custom"/>  <!-- could be : custom,gintis07,gintis06-->
+	    <trade type="gintis06"/> <!-- could be : custom,gintis07,gintis06,gintis06-outneed -->
 	    <culture transmission="copymin" innovation="trade" mutation=".18" step="15"/>
 	</controller>
 
