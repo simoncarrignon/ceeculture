@@ -152,13 +152,14 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/10.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
 						//---------------/*
 						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
 						agent->setNeed(goodType,std::get<1>(_needs[g]));
+						//agent->setPrice(goodType,1.0/std::get<1>(_needs[g]));
 					}			
 
 
