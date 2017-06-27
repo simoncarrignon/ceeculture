@@ -28,6 +28,15 @@ namespace Epnet
 	_type="";
     }
 
+    Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess, std::string innovationProcess,int culturalStep,std::string agentType) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
+    {
+	_controller = ControllerFactory::get().makeController(controllerType,mutationRate,selectionProcess,innovationProcess,culturalStep);
+	_controller->setAgent(this);
+	_score=0.0;
+	_mutationRate=mutationRate;
+	_type=agentType;
+    }
+
 
 
     Roman::~Roman()
@@ -38,7 +47,6 @@ namespace Epnet
     {
 	registerFloatAttribute("scores");
 	registerFloatAttribute("mu");
-
 	for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 	{
 	    std::ostringstream oss;
@@ -53,6 +61,13 @@ namespace Epnet
 	    ossc <<std::get<0>(*it) << "_n";
 	    name=ossc.str();
 	    registerFloatAttribute(name);
+
+	    if(_type == "gintis07"){
+		std::ostringstream ossd;
+		ossd <<std::get<0>(*it) << "_on";
+		name=ossd.str();
+		registerFloatAttribute(name);
+	    }
 
 
 
@@ -70,12 +85,18 @@ namespace Epnet
 	//	registerIntAttribute("nbAchievedTrades");
 	registerStringAttribute("p_good");
 
+	if(_type == "gintis07"){
+	    registerFloatAttribute("u");
+	    registerFloatAttribute("opt_u");
+	}
+
     }
 
     void Roman::serialize()
     {
 	serializeAttribute("scores", (float)_score);
 	serializeAttribute("mu", (float)_mutationRate);
+	int id=0; //the need calculate using the demand function (ie the need use in gintis 07) are stored in a vector of int thus are acceesed with normal indices and notes via the more complex technics use in the other cases
 	for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 	{
 	    std::ostringstream oss;
@@ -96,6 +117,13 @@ namespace Epnet
 	    value =(float)getNeed(std::get<0>(*it));
 	    serializeAttribute(name,value); 
 
+	    if(_type == "gintis07"){
+		std::ostringstream ossd;
+		ossd <<std::get<0>(*it) << "_on";
+		name=ossd.str();
+		serializeAttribute(name,(float)this->_optNeed[id]); 
+	    }
+
 	    /*			std::ostringstream ossb;
 				oss <<std::get<0>(*it) << "_q";
 				serializeAttribute(ossb.str(), (float)getQuantity(std::get<0>(*it)));
@@ -103,8 +131,13 @@ namespace Epnet
 				oss <<std::get<0>(*it) << "_n";
 				serializeAttribute(ossc.str(), (float)getNeed(std::get<0>(*it)));
 				*/			
+	    id++;
 	}
 	serializeAttribute("p_good", std::get<0>(getProducedGood()));
+	if(_type == "gintis07"){
+	    serializeAttribute("u", (float)_curUtility);
+	    serializeAttribute("opt_u", (float)_optUtility);
+	}
 
 	//serializeAttribute("nbConnectionsRcv", (int) validRcvConnections.size());
 	//serializeAttribute("nbConnectionsSend", (int) validSendConnections.size());
@@ -155,12 +188,11 @@ namespace Epnet
 	}
     }
 
-    double Roman::personalUtility(){ //personal utility function should be use to print result
+ double Roman::setUtility(bool opt){ //personal utility function should be use to print result
 
 	int goodId=0;
 	double score=1.0;
-	//
-	//std::cout<<getId()<<std::endl;
+
 	for(int seg=0;seg<this->_numSeg;seg++){
 
 	    std::vector<double> curSeg=this->_alphas[seg];
@@ -171,11 +203,14 @@ namespace Epnet
 	    for(int a_i=0;a_i<curSeg.size();a_i++){
 
 		std::string goodType = intToGoodType(goodId);
+		double x_i=0.0;
 
-		double x_i=this->getQuantity(goodType);
+		if(opt)  x_i=_optNeed[goodId];
+
+		else x_i=this->getQuantity(goodType);
+		
 		if(x_i>0)ces_ut+= curSeg[a_i] * std::pow(x_i,this->_gamma);
 		goodId++;
-	//	std::cout<<"gama="<<this->_gamma<<";xval="<<x_i<<";ces="<<ces_ut<<";alpha= "<<curSeg[a_i]<<std::endl;
 	    }
 
 	    if(ces_ut>0)ces_ut=(double)(pow(ces_ut,1.0/double(this->_gamma)));
@@ -185,51 +220,19 @@ namespace Epnet
 	}
 	//std::cout<<score<<std::endl;
 	
+	if(opt)_optUtility=score;
+	else _curUtility=score;
 	return(score);
 	
     }
 
-
-    double Roman::optimalUtility(){ //personal utility function should be use to print result
-
-	int goodId=0;
-	double score=1.0;
-	//
-	//std::cout<<getId()<<std::endl;
-	for(int seg=0;seg<this->_numSeg;seg++){
-
-	    std::vector<double> curSeg=this->_alphas[seg];
-
-	    double weight =this->_segWeight[seg];
-
-	    double ces_ut=0.0;
-	    for(int a_i=0;a_i<curSeg.size();a_i++){
-
-		std::string goodType = intToGoodType(goodId);
-
-		double x_i=this->getQuantity(goodType);
-		if(x_i>0)ces_ut+= curSeg[a_i] * std::pow(x_i,this->_gamma);
-		goodId++;
-	//	std::cout<<"gama="<<this->_gamma<<";xval="<<x_i<<";ces="<<ces_ut<<";alpha= "<<curSeg[a_i]<<std::endl;
-	    }
-
-	    if(ces_ut>0)ces_ut=(double)(pow(ces_ut,1.0/double(this->_gamma)));
-	    else ces_ut=1.0;
-	 //   std::cout<<"segement:"<<seg<<",weight:"<<weight<<",n_good:"<<curSeg.size()<<",contrib:"<<ces_ut<<std::endl;
-	    score *= weight * ces_ut; //the utility is the prodyuct of the utility of each
-	}
-	//std::cout<<score<<std::endl;
-	
-	return(score);
-	
-    }
     //function used in gintis07 case: it compute the optimal x_i for each goods givent the utility function and the price of each agents
     //this is obtenaid by solving the equation defined in consume
-    void Roman::setDemand(){
-
+    void Roman::setDemand(bool opt){
+	if(opt)
+	    this->_optNeed=std::vector<double>(this->listGoods.size(),0.0);
 	int goodId=0;
 
-	//std::cout<<getId()<<std::endl;//output of the id of the agent
 
 	for(int seg=0;seg<this->_numSeg;seg++){
 
@@ -241,16 +244,15 @@ namespace Epnet
 
 	    for(int a_i=0;a_i<curSeg.size();a_i++){ //check all segment
 
-
 		double x_i=0.0;
-
 		std::string goodType = intToGoodType(goodId);
 		double p_i=this->getPrice(goodType); //get the price of the good
 
 		//std::cout<<goodType<<", with price:"<<p_i<<std::endl;
 		if(std::abs(this->_gamma) < .0001){ //in case gamma is low, simplify as cobb douglas function
-		    x_i=segPow * curSeg[a_i]/p_i;
-		    std::cout<<"Cobb douglas"<<std::endl;
+		    if(opt) x_i=segPow * curSeg[a_i]; 
+		    else x_i=segPow * curSeg[a_i]/p_i;
+		    //std::cout<<"Cobb douglas"<<std::endl;
 		}
 		else{
 		//if not
@@ -262,18 +264,27 @@ namespace Epnet
 			std::string goodTypeJ = intToGoodType(goodIdJ);
 
 			double p_j =this->getPrice(goodTypeJ);
-			double theta = (p_i * curSeg[a_j]) / (p_j * curSeg[a_i]);
-			den+= p_j * std::pow(theta, 1/(1 - this->_gamma));
+			double theta = 0.0;
+
+			if(opt)	theta = (curSeg[a_j]) / (curSeg[a_i]);
+			else theta = (p_i * curSeg[a_j]) / (p_j * curSeg[a_i]);
+
+			
+			if(opt) den+= std::pow(theta, 1/(1 - this->_gamma));
+			else den+= p_j * std::pow(theta, 1/(1 - this->_gamma));
 			//std::cout<<"combine with  "<<goodTypeJ<<", price:"<<p_j<<std::endl;
 		    }
 		    x_i=segPow/den;
 		}
+
+		if(opt) _optNeed[goodId]=x_i;
+		else this->setNeed(goodType,x_i);
 		goodId++;
-		//std::cout<<"quantité =>"<<x_i<<std::endl;
-		//
-		this->setNeed(goodType,x_i);
 	    }
 	}
+	//if (opt)
+	//    for(int i = 0; i<_optNeed.size();i++)
+	//	//std::cout<<"  opt["<<i<<"]="<<_optNeed[i]<<std::endl;
 
     }
 
@@ -678,6 +689,9 @@ namespace Epnet
 	}
     }
 
+
+
+    //return all the values associated to a good
     std::tuple<double,double,double,double,double> Roman::getGood(std::string type)
     {
 	//check if a good of that type exist in the list
@@ -1116,7 +1130,7 @@ namespace Epnet
     //Return a string with all information about the consumption segments of the agent.
     std::string Roman::getSegmentsProp(){
 	std::ostringstream segProp;		
-	segProp<<getId() << "gamma="<<this->_gamma<<" with "<<this->_numSeg<<" segs"<<std::endl;
+	segProp<< "gamma="<<this->_gamma<<" with "<<this->_numSeg<<" segs"<<std::endl;
 	for(int i=0; i<this->_numSeg; i++){
 	    segProp<<"\tf(seg["<<i<<"])="<<_segWeight[i]<<",length(seg["<<i<<"])="<<this->_segSize[i]<<"; alphas=[";
 	    for(int j=0; j<(this->_segSize[i]-1); j++)
@@ -1140,13 +1154,13 @@ namespace Epnet
 
 	double totalW=0.0; //used to normalized the weight (power) of each sector (f_i in gintis 2007) in order that sum(weight)=1 ie the agent split is Wealth between all segments
 
-	std::cout<<getId()<<std::endl;
 	for(int i=0; i<(this->listGoods.size()-(2*this->_numSeg)); i++){ //method to split all goods in n segments of size min=2, from Gintis 2007
 		int rand =Engine::GeneralState::statistics().getUniformDistValue(0,(this->_numSeg-1)); //randomly choose the index of one segment
 		this->_segSize[rand]++;
 	}
 
 	_alphas=std::vector<std::vector<double>> (this->_numSeg);
+
 	for(int i=0; i<this->_numSeg; i++){
 	    	double segW = 0.0;
 		while(segW == 0.0)segW= (double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
@@ -1166,9 +1180,13 @@ namespace Epnet
 		}
 		
 	}
-	for(int i=0; i<this->_numSeg; i++){ //normalize the zeight of each segment to 1
+
+	//normalize the zeight of each segment to 1
+	for(int i=0; i<this->_numSeg; i++){ 
 		this->_segWeight[i]=this->_segWeight[i]/totalW;
 	}
+
+
 
     }
 

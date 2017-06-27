@@ -20,7 +20,7 @@ namespace Epnet
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		
 		double all_needs=0.0;
-		double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
+		//double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
 		
 
 		//initialize knowledge about the n goods in our economy: what are the different types, what is their absolute value
@@ -28,8 +28,8 @@ namespace Epnet
 		if(provinceConfig._goodsParam == "random" ||provinceConfig._goodsParam == "randn" ){
 		    for (int i = 0; i < provinceConfig._numGoods ; i++)
 		    {
-			//double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; for totally random absolute value, initialize here
-			double tneed=bneed * (i+1.0);
+			double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //for totally random absolute value, initialize here
+			//double tneed=bneed * (i+1.0);
 
 			all_needs += tneed; //tneeds is the sum of all value. It could be use to normalize the privec
 			std::ostringstream sgoodType;
@@ -54,7 +54,7 @@ namespace Epnet
 			for (int i = 0; i < provinceConfig._numGoods ; i++)
 			{
 
-			    //In Gintis 2007 there is no need for a "needs" (utility are then computed only based on personnal value
+			    //In Gintis 2007 there is no need for a "needs" (utility are then computed only based on personnal value <= false
 			    //We set up -1 to help debugging
 
 			    std::ostringstream sgoodType;
@@ -129,7 +129,7 @@ namespace Epnet
 			{
 				std::ostringstream oss;
 				oss << "Roman_" << i;
-				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep);
+				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep,provinceConfig._aType);
 				addAgent(agent);
 				//position is actually not interesting
 				agent->setRandomPosition();
@@ -152,13 +152,14 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/10.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
 						//---------------/*
 						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
 						agent->setNeed(goodType,std::get<1>(_needs[g]));
+						//agent->setPrice(goodType,1.0/std::get<1>(_needs[g]));
 					}			
 
 
@@ -173,7 +174,6 @@ namespace Epnet
 				else if(provinceConfig._goodsParam== "gintis07" )
 				{
 				    	
-				    agent->setType("gintis07");
 					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
 					for (int g = 0; g < provinceConfig._numGoods ; g++)
 					{
@@ -207,6 +207,8 @@ namespace Epnet
 
 
 					agent->initSegments();
+					agent->setDemand(true);
+					agent->setUtility(true);
 
 					//Set producedGood as a modulo of the agent ID
 					int randg = i%provinceConfig._numGoods;
@@ -240,6 +242,7 @@ namespace Epnet
 					}			
 
 				}
+			 if(provinceConfig._goodsParam == "gintis07")
 				log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
 
 
@@ -262,7 +265,8 @@ namespace Epnet
 			
 			Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
 			//Network n = Network(groupOfproducer,type,it->first,true);
-			n.write();
+			if(provinceConfig._networkOut == "true")
+			    n.write();
 			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
 
 			for (std::vector<std::string>::iterator producer = groupOfproducer.begin(); producer != groupOfproducer.end(); producer++){
@@ -449,6 +453,18 @@ namespace Epnet
 
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		return provinceConfig._marketSize;
+	}
+
+	std::string Province::getTradeType(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return provinceConfig._tradeType;
+	}
+
+	double Province::getMuMax(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return (double) provinceConfig._muMax;
 	}
 
 	void Province::printAllCulturalNerwork(){

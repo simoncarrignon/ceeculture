@@ -26,10 +26,14 @@ class ProvinceConfig : public Engine::Config
 	int _culturalStep;
 	std::string _goodsParam;
 	std::string _networkType;
+	std::string _networkOut;
+	std::string _aType;
 	std::map<std::string,double> _networkParam;
 	float _mutationRate;
 	std::string _innovationProcess;
 	float _marketSize;
+	std::string _tradeType;
+	float _muMax;
 
 public:
 	ProvinceConfig( const std::string & xmlFile );

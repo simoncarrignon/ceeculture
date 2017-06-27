@@ -27,8 +27,9 @@ namespace Epnet
 		{
 			std::string good = std::get<0>(*it);
 			// 	 double producedQuantity = (double)(romanAgent.getProductionRate(good)*provinceWorld.getNumberOfAgents()*romanAgent.getNeed(good));
-
-			double producedQuantity = (double)(romanAgent.getProductionRate(good)*allGood.size());
+			//double producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good));
+			double producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*allGood.size());
+			//double producedQuantity = (double)(romanAgent.getProductionRate(good));
 
 			romanAgent.setQuantity(good,producedQuantity);
 

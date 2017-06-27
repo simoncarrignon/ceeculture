@@ -110,25 +110,6 @@ namespace Epnet
 
 		}
 
-		//gintis way of mutate
-		// 			std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
-		// 			for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
-		// 				if((Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0 < _mutationRate)
-		// 				{
-		// 				  
-		// 				std::string ressource= std::get<0>(*ot);
-		// 				double oldPrice = romanAgent.getPrice(ressource);
-		// 				 if(_innovationProcess == "random")
-		// 					romanAgent.setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX));//*.95
-		// 				  else{
-		// 
-		// 				    if(Engine::GeneralState::statistics().getUniformDistValue(0,2) < 1)
-		// 						romanAgent.setPrice(ressource,oldPrice*.95);//
-		// 					else
-		// 						romanAgent.setPrice(ressource,oldPrice/.95);//
-		// 				 }				   
-		// 				}
-		// 			}  
 
 		//After the cultural copy, price are randomly mutated (the innovation process)
 		std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
@@ -140,13 +121,20 @@ namespace Epnet
 				double oldPrice = romanAgent.getPrice(ressource);
 				if(_innovationProcess == "random")
 					romanAgent.setPrice(ressource,(double)(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX));
+				else if(_innovationProcess == "gintis") {
+				    //gintis way of mutate
+				    if(Engine::GeneralState::statistics().getUniformDistValue(0,2) < 1)
+					romanAgent.setPrice(ressource,oldPrice*.95);//
+				    else
+					romanAgent.setPrice(ressource,oldPrice/.95);//
+				}				   
 				else{
-
+					double randMut = Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0*provinceWorld.getMuMax();
 					if(Engine::GeneralState::statistics().getUniformDistValue(0,2) < 1)
-						romanAgent.setPrice(ressource,oldPrice+Engine::GeneralState::statistics().getUniformDistValue(0,50)/1000.0 );
+						romanAgent.setPrice(ressource,oldPrice+randMut);
 					else
-						romanAgent.setPrice(ressource,oldPrice-(Engine::GeneralState::statistics().getUniformDistValue(0,50))/1000.0);
-					if(romanAgent.getPrice(ressource)<0)romanAgent.setPrice(ressource,0.0);
+						romanAgent.setPrice(ressource,oldPrice-randMut);
+					if(romanAgent.getPrice(ressource)<0)romanAgent.setPrice(ressource,0.0);//this allow "corner prices solutions"? 
 				}				   
 			}
 
