@@ -99,7 +99,7 @@ namespace Epnet
 				int noffer=0;
 				bool tradeDone = 0;
 				int noffer_max=exchangeNetwork.size()*provinceWorld.getMarketSize();//if noffer_max is < numagents/ngoods, it means that we limite the research of the agent in the markert
-				//std::cout<<offerer.getId()<<" requested :"<<requestedQuantity<<", proposed:"<<proposedQuantity<<", pricewanted:"<<offerer.getPrice(goodWanted)<<", priceproduce: "<<offerer.getPrice(offererProducedGood)<<std::endl;
+				std::cout<<offerer.getId()<<" requested :"<<requestedQuantity<<", proposed:"<<proposedQuantity<<", pricewanted:"<<offerer.getPrice(goodWanted)<<", priceproduce: "<<offerer.getPrice(offererProducedGood)<<std::endl;
 				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=noffer_max){
 					noffer++;
 					Roman & responder = (Roman&)(*world->getAgent(*itO));
@@ -149,7 +149,7 @@ namespace Epnet
 					    }
 						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
-				//std::cout<<responder.getId()<<" crequested :"<<responderTradCounter<<", cproposed:"<<responderTradeWill<<", cpricewanted:"<<responder.getPrice(goodWanted)<<", cpriceproduce: "<<responder.getPrice(offererProducedGood)<<std::endl;
+				std::cout<<responder.getId()<<" crequested :"<<responderTradCounter<<", cproposed:"<<responderTradeWill<<", cpricewanted:"<<responder.getPrice(goodWanted)<<", cpriceproduce: "<<responder.getPrice(offererProducedGood)<<std::endl;
 
 						if(
 						  responderTradeWill <= proposedQuantity && 				//the quantity offered is at least egual to the quantity the other estim good for him
