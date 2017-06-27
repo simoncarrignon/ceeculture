@@ -46,7 +46,6 @@ namespace Epnet
     void Roman::registerAttributes()
     {
 	registerFloatAttribute("scores");
-	registerFloatAttribute("mu");
 	for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 	{
 	    std::ostringstream oss;
@@ -95,7 +94,6 @@ namespace Epnet
     void Roman::serialize()
     {
 	serializeAttribute("scores", (float)_score);
-	serializeAttribute("mu", (float)_mutationRate);
 	int id=0; //the need calculate using the demand function (ie the need use in gintis 07) are stored in a vector of int thus are acceesed with normal indices and notes via the more complex technics use in the other cases
 	for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 	{
