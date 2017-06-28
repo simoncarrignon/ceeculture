@@ -449,10 +449,24 @@ namespace Epnet
 		return provinceConfig._tradeType;
 	}
 
+	//Get the maximum amplitude of Mu
 	double Province::getMuMax(){
 
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		return (double) provinceConfig._muMax;
+	}
+
+
+	double Province::getNeed(std::string good){
+	    //check if a good of that type exist in the list
+	    std::vector<std::tuple<std::string,double> >::iterator it = std::find_if(_needs.begin(), _needs.end(), [=](const std::tuple<std::string,double>& n) {return std::get<0>(n) == good;});
+	    if ( it != _needs.end() )
+	    {
+		return std::get<1>(*it);
+	    }
+
+	    //return something impossible as an error
+	    return -1.0;
 	}
 
 	void Province::printAllCulturalNerwork(){

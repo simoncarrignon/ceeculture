@@ -52,6 +52,7 @@ namespace Epnet
 		void killTwoWayConnection(std::string source, std::string target);
 		void createCulturalNetwork();
 		void printAllCulturalNerwork();
+		double getNeed(std::string good);
 	};
 
 } // namespace Epnet
