@@ -35,6 +35,15 @@ void ProvinceConfig::loadParams()
 	_goodsParam= getParamStr( "controller/good", "type");
 	_networkType= getParamStr( "network", "type");
 
+	try{
+	    _events = getParamStr( "events", "type");
+	    if(_events == "rate")
+		_eventsRate =getParamInt( "events", "rate");
+	}
+	catch(const Engine::Exception & e){
+	    //Create a load_config log file?
+	    _events = "no";
+	}
 
 	try{
 	    _networkOut = getParamStr( "network", "output");
