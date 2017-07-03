@@ -47,6 +47,7 @@ namespace Epnet
 		void killConnection(std::string source, std::string target);
 	
 		// 	virtual void step();
+		void stepEnvironment();
 		void proposeTwoWayConnection(std::string source, std::string target);
 		void buildTwoWayConnection(std::string source, std::string target);
 		void killTwoWayConnection(std::string source, std::string target);

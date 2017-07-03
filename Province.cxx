@@ -154,7 +154,7 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/10.0);// market clearing price : 1.0/(i+1)
+						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
@@ -480,6 +480,40 @@ namespace Epnet
 
 
 
+void Province::stepEnvironment()
+{
+	for(size_t d=0; d<_rasters.size(); d++)
+	{
+		if(!_rasters.at(d) || !_dynamicRasters.at(d))
+		{
+			continue;
+		}
+		stepRaster(d);
+	}
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+
+	if( provinceConfig._events == "rate"){
+	    //std::cout<<provinceConfig._eventsRate<< " ts "<<getCurrentTimeStep() <<std::endl;
+	    if( getCurrentTimeStep() >= provinceConfig._culturalStep* 3 *provinceConfig._eventsRate  && getCurrentTimeStep() % (provinceConfig._culturalStep* 3 * provinceConfig._eventsRate ) == 0){
+	//	std::cout << "=========="<< std::endl;
+	//	std::cout << "need:"<< std::get<0>(_needs[0])<< "="<< std::get<1>(_needs[0])<<std::endl;
+	//	std::cout << "need:"<< std::get<0>(_needs[_needs.size()-1])<< "="<< std::get<1>(_needs[_needs.size()-1])<<std::endl;
+		
+		//switch the first need with the last
+		double tmp = std::get<1>(_needs[0]);
+		std::get<1>(_needs[0])=std::get<1>(_needs[_needs.size()-1]);
+		std::get<1>(_needs[_needs.size()-1])=tmp;
+
+		
+		
+	//	std::cout << "Switch" << std::endl;
+	//	std::cout << "need:"<< std::get<0>(_needs[0])<< "="<< std::get<1>(_needs[0])<<std::endl;
+	//	std::cout << "need:"<< std::get<0>(_needs[_needs.size()-1])<< "="<< std::get<1>(_needs[_needs.size()-1])<<std::endl;
+	//	std::cout<<"=========="<< std::endl;
+	    }
+	}
+}
 
 	void Province::buildTwoWayConnection(std::string source, std::string target)
 	{
