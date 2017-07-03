@@ -2,10 +2,10 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="10000" serializeResolution="450"/> 
+	<numSteps value="300" serializeResolution="1"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="1"/>
-	<numAgents value="500"/>
+	<numAgents value="4"/>
 	<market size=".2"/>
 	<controller type="basic" >
 	    <good type="manual"/> <!-- could be : random,randn,manual,gintis07--> 
@@ -35,15 +35,12 @@
 	</goods>
 -->
 
-	<goods num="5">
-		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="31"	need="0.03225806"	productionRate="0"/>
-		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price="15.5"	need="0.06451613"	productionRate="0"/>
-		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price="7.25"	need="0.12903226"	productionRate="0"/>
-		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="3.875"	need="0.25806452"	productionRate="0"/>
-		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="1.9375"	need="0.51612903"	productionRate="0"/>
+	<goods num="2">
+		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1.0"	productionRate="0"/>
+		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price="0.50"	need="2.0"	productionRate="0"/>
 	</goods>
 
-	<events type="rate" rate="100" /><!--	 here we speak in terms of CULTURAL STE (so be carefull)-->
+	<!-- <events type="rate" rate="1000"/> -->
 
 
 </config>
