@@ -1,7 +1,7 @@
 #include <Roman.hxx>
 
 #include <Statistics.hxx>
-#include <World.hxx>
+#include <Province.hxx>
 #include <Logger.hxx>
 
 #include <ProvinceConfig.hxx>
@@ -1195,6 +1195,12 @@ namespace Epnet
 		return goodType;
     }
 
+ double Roman::getNeed(std::string type){
+		Province & curWorld = (Province&) *getWorld();
+		return curWorld.getNeed(type);
+
+
+ }
 
 
 } // namespace Roman
