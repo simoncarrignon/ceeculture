@@ -25,7 +25,8 @@ class ProvinceConfig : public Engine::Config
 	std::string _selectionProcess;
 	int _culturalStep;
 	std::string _goodsParam;
-	bool _isEvent;
+	std::string _events;
+	int _eventsRate;
 	std::string _networkType;
 	std::string _networkOut;
 	std::string _aType;
