@@ -39,7 +39,7 @@ namespace Epnet
 		std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= romanAgent.getListGoods();
 		std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = allGood.begin();
 
-		//std::cout<<"Consumption (fitness) value of agent" << romanAgent << std::endl;
+		//std::cout << romanAgent.getId() << " | " ;
 		while(it!=allGood.end())
 		{
 		    std::string good=std::get<0>(*it);
@@ -66,16 +66,14 @@ namespace Epnet
 			    consumptionScore=romanAgent.getQuantity(good)/(romanAgent.getNeed(good)); //original gintis06 utility
 		    }
 		    else{
-		//	if(good == std::get<0>(romanAgent.getProducedGood())) 
-		//	    romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
+			if(good == std::get<0>(romanAgent.getProducedGood())) 
+			    romanAgent.setQuantity(good,1/romanAgent.getPrice(good)); //use the optimal value for its the production's good
 			//  			//	romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimated value for its the production's good
 			//	
 			////fit= |a-b|/euclideDist(a,b) my favorite one:
 			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)))consumptionScore+=0.0; //undefined fitness function for 0
 			else consumptionScore+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
-			//std::cout<< consumptionScore<<good<<" --  "<< std::endl;
-			//std::cout<<"quantity::"<<romanAgent.getQuantity(good)<<"need "<<romanAgent.getNeed(good)<<std::endl;
-			//std::cout<<consumptionScore<<std::endl;
+			//std::cout<<good<<"--> quantity:"<<romanAgent.getQuantity(good)<<", need "<<romanAgent.getNeed(good)<<" and price "<<romanAgent.getPrice(good)<<" score:" <<  consumptionScore<< " - | -   ";
 			/////////
 
 			//fit= |a-b|/b : In that one I cut its too long right leg.
@@ -95,6 +93,7 @@ namespace Epnet
 		}
 
 		double score=romanAgent.getScore()+consumptionScore;
+		//std::cout<< "final score="<< score <<std::endl;
 		romanAgent.setScore(score);
 		
 
