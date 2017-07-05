@@ -35,7 +35,7 @@ namespace Epnet
 			std::ostringstream sgoodType;
 			sgoodType << "g"<< i;				
 			std::string goodType = sgoodType.str();
-			_needs.push_back(std::make_tuple(goodType,tneed));  
+			_needs.push_back(std::make_tuple(goodType,tneed+1));
 			_maxscore.push_back(std::make_tuple(goodType,0.0));
 			_minscore.push_back(std::make_tuple(goodType,0.0));
 			_typesOfGood.push_back(goodType);
@@ -46,7 +46,7 @@ namespace Epnet
 		    if(provinceConfig._goodsParam == "randn"){
 			for (auto it = _needs.begin(); it != _needs.end() ; it++){
 			    double p = std::get<1>(*it);
-			    *it=std::make_tuple(std::get<0>(*it),p/all_needs);
+			    *it=std::make_tuple(std::get<0>(*it),p/all_needs+1);
 			}
 		    }
 		}
