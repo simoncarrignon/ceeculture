@@ -152,12 +152,12 @@ namespace Epnet
 				std::cout<<responder.getId()<<" crequested :"<<responderTradCounter<<", cproposed:"<<responderTradeWill<<", cpricewanted:"<<responder.getPrice(goodWanted)<<", cpriceproduce: "<<responder.getPrice(offererProducedGood)<<std::endl;
 
 						if(
-						  responderTradeWill <= proposedQuantity && 				//the quantity offered is at least egual to the quantity the other estim good for him
+						  ( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, 0.01) ) && 				//the quantity offered is at least egual to the quantity the other estim good for him
 						  responderTradeWill > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
 						  requestedQuantity > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
-						  responder.getQuantity(goodWanted) >= requestedQuantity &&		//the quantity asked is available in the stock of the responder
-						  offerer.getQuantity(offererProducedGood) >= proposedQuantity &&	//the quantity proposed is available in the offerer stock
-						  responderTradCounter >= requestedQuantity				//the quantity asked is less that the value estimated by the responder
+						  ( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, 0.01)) &&		//the quantity asked is available in the stock of the responder
+						  ( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, 0.01) )  &&	//the quantity proposed is available in the offerer stock
+						  ( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, 0.01))				//the quantity asked is less that the value estimated by the responder
 						  )
 						{
 							if(responderTradeWill<proposedQuantity){
@@ -240,6 +240,20 @@ namespace Epnet
 		return "Trade action";
 	}
 
+	bool TradeAction::AlmostEqualRelative(float A, float B,
+		                         float maxRelDiff )
+	{
+	    // Calculate the difference.
+	    float diff = fabs(A - B);
+	    A = fabs(A);
+	    B = fabs(B);
+	    // Find the largest
+	    float largest = (B > A) ? B : A;
+
+	    if (diff <= largest * maxRelDiff)
+		return true;
+	    return false;
+	}
 } // namespace Epnet
 
 
