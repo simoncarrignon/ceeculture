@@ -99,7 +99,8 @@ namespace Epnet
 				int noffer=0;
 				bool tradeDone = 0;
 				int noffer_max=exchangeNetwork.size()*provinceWorld.getMarketSize();//if noffer_max is < numagents/ngoods, it means that we limite the research of the agent in the markert
-				std::cout<<offerer.getId()<<" requested :"<<requestedQuantity<<", proposed:"<<proposedQuantity<<", pricewanted:"<<offerer.getPrice(goodWanted)<<", priceproduce: "<<offerer.getPrice(offererProducedGood)<<std::endl;
+				//std::cout<<offerer.getId()<<" requested ("<<goodWanted<<"):"<<requestedQuantity<<", proposed("<<offererProducedGood<<"):"<<proposedQuantity<<", pricewanted("<<goodWanted<<"):"<<offerer.getPrice(goodWanted)<<", priceproduce("<<offererProducedGood<<"): "<<offerer.getPrice(offererProducedGood)<<std::endl;
+				if(requestedQuantity < 0.0 || AlmostEqualRelative(requestedQuantity,0.0,0.01))tradeDone=1;
 				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=noffer_max){
 					noffer++;
 					Roman & responder = (Roman&)(*world->getAgent(*itO));
