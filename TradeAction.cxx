@@ -122,8 +122,8 @@ namespace Epnet
 						std::vector<std::string> goods= provinceWorld.getTypesOfGood();
 						std::vector<std::string>::iterator g = goods.begin();
 						while(g!=goods.end()){
-						    M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-						    N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+						    M+=responder.getPrice(*g) * responder.getQuantity(*g);
+						    N+=responder.getPrice(*g) * responder.getNeed(*g);
 						    g++;
 						}
 
@@ -137,8 +137,8 @@ namespace Epnet
 						std::vector<std::string> goods= provinceWorld.getTypesOfGood();
 						std::vector<std::string>::iterator g = goods.begin();
 						while(g!=goods.end()){
-						    M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-						    N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g);
+						    M+=responder.getPrice(*g) * responder.getQuantity(*g);
+						    N+=responder.getPrice(*g) * 1/responder.getPrice(*g);
 						    g++;
 						}
 
@@ -150,7 +150,6 @@ namespace Epnet
 					    }
 						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
-				std::cout<<responder.getId()<<" crequested :"<<responderTradCounter<<", cproposed:"<<responderTradeWill<<", cpricewanted:"<<responder.getPrice(goodWanted)<<", cpriceproduce: "<<responder.getPrice(offererProducedGood)<<std::endl;
 
 						if(
 						  ( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, 0.01) ) && 				//the quantity offered is at least egual to the quantity the other estim good for him
@@ -190,13 +189,14 @@ namespace Epnet
 					//This would imply that an offerer will check each person in the market and trade with each one of them and keep the best offerer
 					//But in the Gintis version people leave the market when they did a trade so not useful now.
 
-					offerer.setQuantity(goodWanted,std::get<1>(bestTrade));		    
+					offerer.setQuantity(goodWanted,offerer.getQuantity(goodWanted)+std::get<1>(bestTrade));
 					offerer.setQuantity(offererProducedGood,offerer.getQuantity(offererProducedGood)-std::get<2>(bestTrade));
 
 
 					Roman & responder = (Roman&)(*world->getAgent(std::get<0>(bestTrade)));
 					responder.setQuantity(offererProducedGood,responder.getQuantity(offererProducedGood)+std::get<2>(bestTrade));
 					responder.setQuantity(goodWanted,responder.getQuantity(goodWanted)-std::get<1>(bestTrade));
+
 
 				}
 				else{
