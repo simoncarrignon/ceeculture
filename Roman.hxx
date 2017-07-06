@@ -187,7 +187,8 @@ namespace Epnet
 		void killTradesTo(std::string source);
 		void killTradesFrom(std::string source);
 		void setListOfCulturalNeighbours(std::vector<std::string> neighbours );
-		std::vector<std::string> getListOfCulturalNeighbours();
+		std::vector<std::string> getListOfCulturalNeighbours(); 
+		void addCulturalNeighbour(std::string neighbour); //add a new agent in the cultural network
 		std::string intToGoodType(int goodId);
 
 		////////////////////////////////////////////////

@@ -1120,6 +1120,11 @@ namespace Epnet
 	_culturalNeighbours = std::vector<std::string>(neighbours);
     }
 
+    void Roman::addCulturalNeighbour(std::string neighbour)
+    {
+	_culturalNeighbours.push_back(neighbour);
+    }
+
     std::vector<std::string> Roman::getListOfCulturalNeighbours()
     {
 	return _culturalNeighbours;
