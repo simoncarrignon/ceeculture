@@ -22,6 +22,8 @@ namespace Epnet
 		std::vector<std::tuple<std::string,double>> _needs;
 		std::vector<std::tuple<std::string,double>> _maxscore;
 		std::vector<std::tuple<std::string,double>> _minscore;
+		double _maxScore;
+		double _minScore;
 
 
 
@@ -30,10 +32,18 @@ namespace Epnet
 		virtual ~Province();
 
 		std::vector<std::string> getTypesOfGood(){return _typesOfGood;};
+
+		//Min and max scores for each groups of producers
 		double getMaxScore(std::string good);
 		void setMaxScore(std::string good,double score);
 		double getMinScore(std::string good);
 		void setMinScore(std::string good,double score);
+
+		///General min and max scores
+		double getMaxScore(){return _maxScore;};
+		void setMaxScore(double score){_maxScore = score};
+		double getMinScore(){return _minScore;};
+		void setMinScore(double score){_minScore = score};
 
 		std::string getTradeType();
 		double getMuMax();

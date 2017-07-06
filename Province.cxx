@@ -20,6 +20,8 @@ namespace Epnet
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		
 		double all_needs=0.0;
+		_minScore=0.0;
+		_maxScore=0.0;
 		//double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
 		
 
@@ -290,7 +292,6 @@ namespace Epnet
 		  
 		}*/
 	   
-	  
 	}
 
 	
