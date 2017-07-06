@@ -73,9 +73,10 @@ namespace Epnet
 			    if(*it != romanAgent.getId()){//this test has to appears given how the cultural networks are design 
 
 				Roman & r= (Roman&)(*world->getAgent(*it));
-				//  					std::cout<<"\t "<<r.getId()<<" that "<<std::get<0>(r.getProducedGood())<<std::endl;
+		//			std::cout<<"\t "<<r.getId()<<" that "<<std::get<0>(r.getProducedGood())<<" with score "<<r.getScore()<< std::endl;
 
 
+		//		std::cout<<"max:"<<provinceWorld.getMaxScore(producedGood)<<"min:"<<provinceWorld.getMinScore(producedGood)<<std::endl;
 				double relScore = (r.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
 				double selfRelScore = (romanAgent.getScore()-provinceWorld.getMinScore(producedGood))/(provinceWorld.getMaxScore(producedGood)-provinceWorld.getMinScore(producedGood));
 
@@ -85,8 +86,9 @@ namespace Epnet
 				bool proba=false;
 
 			//	proba = relScore < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
-				//std::cout<<"otherrel:"<< relScore <<"myrel:"<<  selfRelScore <<std::endl;
-				//std::cout<<"probain:"<< (relScore < selfRelScore) <<std::endl;
+		//		std::cout<<"myscore:"<< romanAgent.getScore() <<std::endl;
+		//		std::cout<<"otherrel:"<< relScore <<"myrel:"<<  selfRelScore <<std::endl;
+		//		std::cout<<"probain:"<< (relScore < selfRelScore) <<std::endl;
 
 				    if(_selectionProcess == "copymin"){
 					proba = relScore < selfRelScore; //&&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
@@ -139,7 +141,6 @@ namespace Epnet
 			}
 
 		}  
-		romanAgent.setScore(0.0);
 
 	}
 

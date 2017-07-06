@@ -2,15 +2,15 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="3000" serializeResolution="90"/> 
+	<numSteps value="1500" serializeResolution="45"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="1"/>
-	<numAgents value="300"/>
+	<numAgents value="200"/>
 	<market size=".5"/>
 	<controller type="basic" >
-	    <good type="randn"/> <!-- how good need are initialized can be : random,randn,manual,gintis07--> 
-	    <agent type="custom"/>  <!--how agent score is computed can be : custom,gintis07,gintis06-->
-	    <trade type="gintis06"/> <!-- how requested quantities are selected can be : custom,gintis07,gintis06,gintis06-outneed -->
+	    <good type="manual"/> <!-- could be : random,randn,manual,gintis07--> 
+	    <agent type="custom"/>  <!--agent mean utility function could be : custom,gintis07,gintis06-->
+	    <trade type="gintis06-outneed"/> <!-- could be : custom,gintis07,gintis06,gintis06-outneed -->
 	    <culture transmission="copymin" innovation="trade" mumax=".05" mutation=".18" step="15"/>
 	</controller>
 
@@ -29,20 +29,20 @@
 	    	<prop0 id="p" value= ".2"/>
 	</network>
 
+	<!--
 	<goods num="3">
 	       	<good   id="proto"      initialQuantity="0"     maxQuantity="1000"      price="-1.0"    need="-1.0"     productionRate="0"/>
 	</goods>
+-->
 
-	<!--
 	<goods num="6">
 		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1.0"	productionRate="0"/>
-		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="2.0"	productionRate="0"/>
-		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="3.0"	productionRate="0"/>
-		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="4.0"	productionRate="0"/>
-		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="5.0"	productionRate="0"/>
-		<good5	id="g5"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="6.0"	productionRate="0"/>
+		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price="0.50"	need="2.0"	productionRate="0"/>
+		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price="0.333333"	need="3.0"	productionRate="0"/>
+		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="0.25"	need="4.0"	productionRate="0"/>
+		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="0.2"	need="5.0"	productionRate="0"/>
+		<good5	id="g5"	initialQuantity="0"	maxQuantity="1000"	price="0.16666667"	need="6.0"	productionRate="0"/>
 	</goods>
--->
 
 	<!-- <events type="rate" rate="1000"/> -->
 
