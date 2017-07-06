@@ -37,7 +37,7 @@ namespace Epnet
 			std::string goodType = sgoodType.str();
 			_needs.push_back(std::make_tuple(goodType,tneed+1));
 			_maxscore.push_back(std::make_tuple(goodType,0.0));
-			_minscore.push_back(std::make_tuple(goodType,0.0));
+			_minscore.push_back(std::make_tuple(goodType,1000.0));
 			_typesOfGood.push_back(goodType);
 			_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
 			//				_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
@@ -62,7 +62,7 @@ namespace Epnet
 			    std::string goodType = sgoodType.str();
 			    _needs.push_back(std::make_tuple(goodType,-1));  
 			    _maxscore.push_back(std::make_tuple(goodType,0.0));
-			    _minscore.push_back(std::make_tuple(goodType,0.0));
+			    _minscore.push_back(std::make_tuple(goodType,1000.0));
 			    _typesOfGood.push_back(goodType);
 			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
 			    //_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
@@ -78,9 +78,9 @@ namespace Epnet
 			    std::string goodType = std::get<0>(*it);
 
 			    _needs.push_back(std::make_tuple(goodType,std::get<4>(*it)));  
-			    _maxscore.push_back(std::make_tuple(goodType,0.0));
-			    _minscore.push_back(std::make_tuple(goodType,0.0));
 			    _typesOfGood.push_back(goodType);
+			    _maxscore.push_back(std::make_tuple(goodType,0.0));
+			    _minscore.push_back(std::make_tuple(goodType,1000.0));
 			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
 
 			}
@@ -479,9 +479,62 @@ namespace Epnet
 	}
 
 
+void Province::step()
+{
+	std::stringstream logName;
+	logName << "simulation_" << getId();
+	log_INFO(logName.str(), getWallTime() << " executing step: " << _step );
+
+	if(_step%_config->getSerializeResolution()==0)
+	{
+		_scheduler->serializeRasters(_step);
+		_scheduler->serializeAgents(_step);
+		log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " serialization done");
+	}
+	stepEnvironment();
+	log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
+	_scheduler->executeAgents();
+	_scheduler->removeAgents();
+	log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
+
+	const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+
+	if ( ((_step)%(3 * (provinceConfig._culturalStep)))   == 0 && (_step> 4 )){
+	    for(int i=0; i<provinceConfig._numAgents; i++){
+		std::ostringstream oss;
+		oss << "Roman_" << i;
+		Roman* romanAgent = dynamic_cast<Roman*> (getAgent(oss.str()));
+		romanAgent->setScore(0.0);
+	    }
+	}
+	if (_step%3  == 0){
+	for (int g = 0; g < provinceConfig._numGoods ; g++)
+	{
+
+	    //std::cout<<"reset scores"<< std::endl;
+	    std::ostringstream sgoodType;
+	    sgoodType << "g"<< g;				
+	    std::string goodType = sgoodType.str();
+	    setMaxScore(goodType,0.0);
+	    setMinScore(goodType,1000.0);
+
+	}
+	}
+
+}
 
 void Province::stepEnvironment()
 {
+    //std::cout<<"step:=="<<_step<<std::endl;
+
+	const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+    //std::cout<<"resetscore All agents: aka ( if (_step%(3 * (provinceConfig._culturalStep) + 1) == 0) ) "<<(_step%(3 * (provinceConfig._culturalStep) + 1) == 0)<<std::endl;
+    //std::cout<<"resminmax : aka ( (_step%3  == 2) ) "<<(_step%3== 2)<<std::endl;
+    //std::cout<<"Production Action : aka ( (_step%3  == 0) ) "<<(_step%3== 0)<<std::endl;
+    //std::cout<<"trade Action : aka ( (_step%3  == 1) ) "<<(_step%3== 1)<<std::endl;
+    //std::cout<<"Consumption Action : aka ( (_step%3  == 2) ) "<<(_step%3== 2)<<std::endl;
+    //std::cout<<"Cultural Action : aka  ((_step%%(3 * (_culturalStep)) == 0) && (timestep> 3 * (_culturalStep) )) "<<( (_step%(3 * (provinceConfig._culturalStep)) == 0) && (_step> 3 * (provinceConfig._culturalStep) ) )<<std::endl;
+
 	for(size_t d=0; d<_rasters.size(); d++)
 	{
 		if(!_rasters.at(d) || !_dynamicRasters.at(d))
@@ -490,9 +543,6 @@ void Province::stepEnvironment()
 		}
 		stepRaster(d);
 	}
-
-		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-
 	if( provinceConfig._events == "rate"){
 	    //std::cout<<provinceConfig._eventsRate<< " ts "<<getCurrentTimeStep() <<std::endl;
 	    if( getCurrentTimeStep() >= provinceConfig._culturalStep* 3 *provinceConfig._eventsRate  && getCurrentTimeStep() % (provinceConfig._culturalStep* 3 * provinceConfig._eventsRate ) == 0){
