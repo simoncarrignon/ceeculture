@@ -240,11 +240,18 @@ namespace Epnet
 					std::ostringstream ossb;
 					ossb << "Roman_" << j;
 					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
+					if(provinceConfig._networkType == "integrate"){
+					    Roman* agb = dynamic_cast<Roman*> (getAgent(ossb.str()));
+					    agent->addCulturalNeighbour(ossb.str());
+					    agb->addCulturalNeighbour(oss.str());
+					}
 					
 				}
 			}
 		}
 		
+		if(provinceConfig._networkType != "integrate"){
+
 		for (std::map< std::string, std::vector< std::string > >::iterator it = _good2Producers.begin(); it != _good2Producers.end();it++) {
 				
 			std::vector<std::string> groupOfproducer = it->second;
@@ -271,6 +278,7 @@ namespace Epnet
 				romanProducer->setListOfCulturalNeighbours( n.getNeighboursOf(*producer));
 				
 			}
+		}
 		}
 		createCulturalNetwork();
 		
