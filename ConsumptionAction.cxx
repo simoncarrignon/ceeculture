@@ -101,8 +101,8 @@ namespace Epnet
 		if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
 		if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
 
-		if(score >= provinceWorld.getMaxScore()provinceWorld.setMaxScore(score);
-		if(score <= provinceWorld.getMinScore()provinceWorld.setMinScore(score);
+		if(score >= provinceWorld.getMaxScore())provinceWorld.setMaxScore(score);
+		if(score <= provinceWorld.getMinScore())provinceWorld.setMinScore(score);
 
 
 
