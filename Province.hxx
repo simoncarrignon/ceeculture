@@ -41,9 +41,9 @@ namespace Epnet
 
 		///General min and max scores
 		double getMaxScore(){return _maxScore;};
-		void setMaxScore(double score){_maxScore = score};
+		void setMaxScore(double score){_maxScore = score;};
 		double getMinScore(){return _minScore;};
-		void setMinScore(double score){_minScore = score};
+		void setMinScore(double score){_minScore = score;};
 
 		std::string getTradeType();
 		double getMuMax();
