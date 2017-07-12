@@ -443,10 +443,16 @@ namespace Epnet
 		return provinceConfig._marketSize;
 	}
 
-	std::string Province::getTradeType(){
+	std::string Province::getTradeUtilFunction(){
 
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-		return provinceConfig._tradeType;
+		return provinceConfig._tradeUtilFunction;
+	}
+
+	std::string Province::getTradeVolSelFunction(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return provinceConfig._tradeVolSelFunction;
 	}
 
 	//Get the maximum amplitude of Mu

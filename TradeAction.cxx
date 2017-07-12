@@ -54,10 +54,10 @@ namespace Epnet
 
 				double requestedQuantity=0;
 				double proposedQuantity =0;
-				if(provinceWorld.getTradeType() =="gintis07"){
+				if(provinceWorld.getTradeVolSelFunction() =="gintis07"){
 				    requestedQuantity= offerer.getNeed(goodWanted)-offerer.getQuantity(goodWanted);
 				}
-				else if( provinceWorld.getTradeType() =="gintis06"){
+				else if( provinceWorld.getTradeVolSelFunction() =="gintis06"){
 				    double M=0.0;
 				    double N=0.0;
 				
@@ -73,7 +73,7 @@ namespace Epnet
 				    double lambda=M/N;
 				    requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
 				}
-				else if( provinceWorld.getTradeType() =="gintis06-outneed"){
+				else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
 				    double M=0.0;
 				    double N=0.0;
 				
@@ -112,10 +112,10 @@ namespace Epnet
 
 					    double responderTradeWill =  0;
 					    double responderTradCounter =  0;
-					    if(provinceWorld.getTradeType()=="gintis07"){
+					    if(provinceWorld.getTradeVolSelFunction()=="gintis07"){
 						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
 					    }
-					    else if (provinceWorld.getTradeType()=="gintis06"){
+					    else if (provinceWorld.getTradeVolSelFunction()=="gintis06"){
 						double M=0.0;
 						double N=0.0;
 
@@ -130,7 +130,7 @@ namespace Epnet
 						double lambda=M/N;
 						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
 					    }
-					    else if( provinceWorld.getTradeType() =="gintis06-outneed"){
+					    else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
 						double M=0.0;
 						double N=0.0;
 
