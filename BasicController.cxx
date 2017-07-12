@@ -47,7 +47,7 @@ namespace Epnet
 		if(timestep%3 == 0)actions.push_back(new ProductionAction());
 		if(timestep%3 == 1)actions.push_back(new TradeAction());
 		if(timestep%3 == 2)actions.push_back(new ConsumptionAction());
-		if( (timestep%(3 * (_culturalStep)) == 0) && (timestep> 3 * (_culturalStep)-1 ) )actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess)); 
+		if( (timestep%(3 * (_culturalStep)) == 0) && (timestep> 4 ) )actions.push_back(new CulturalAction(_mutationRate,_selectionProcess,_innovationProcess)); 
 
 		return actions;
 	}
