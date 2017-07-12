@@ -8,8 +8,15 @@ namespace Epnet
 
 class RandomController : public AgentController
 {
+private:
+  
+	double _mutationRate;  
+	std::string _selectionProcess;  
+	std::string _innovationProcess;
+	int  _culturalStep;
 public:
 	RandomController();
+	RandomController(double mutationRate, std::string selectionProcess, std::string innovationProcess,int culturalStep);
 	virtual ~RandomController();
 	
 	virtual void updateState();

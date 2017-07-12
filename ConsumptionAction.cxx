@@ -23,7 +23,13 @@ namespace Epnet
 		Engine::World * world = agent.getWorld();
 		Province & provinceWorld = (Province&) *world;
 
+
 		double consumptionScore=0.0;
+
+		if(romanAgent.getType() == "random"){
+		    romanAgent.setScore(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0*10);
+		    return;
+		}
 
 		if(romanAgent.getType() == "gintis07")
 		    //in this experiment the idea is different: the utility function IS NOT the consumption function. The utility function is used to know the amount of good wanted.

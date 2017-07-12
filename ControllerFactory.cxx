@@ -47,7 +47,7 @@ namespace Epnet
 	{
 		if (controllerName == "random")
 		{
-			return new RandomController();
+			return new RandomController(mutationRate,selectionProcess,innovationProcess,culturalStep);
 		}
 
 		if (controllerName == "macmillan")
