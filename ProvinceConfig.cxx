@@ -25,7 +25,8 @@ void ProvinceConfig::loadParams()
 	_selectionProcess= getParamStr( "controller/culture", "transmission");	
 	_innovationProcess= getParamStr( "controller/culture", "innovation");	
 	_aType = getParamStr( "controller/agent", "type");	
-	_tradeType= getParamStr( "controller/trade", "type");
+	_tradeUtilFunction= getParamStr( "controller/trade", "util");
+	_tradeVolSelFunction= getParamStr( "controller/trade", "volsel");
 	_culturalStep= getParamInt( "controller/culture", "step");	
 	_muMax= getParamFloat( "controller/culture", "mumax");	
 

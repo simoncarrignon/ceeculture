@@ -39,6 +39,7 @@ namespace Epnet
 		double getMinScore(std::string good);
 		void setMinScore(std::string good,double score);
 
+<<<<<<< HEAD
 		///General min and max scores
 		double getMaxScore(){return _maxScore;};
 		void setMaxScore(double score){_maxScore = score;};
@@ -46,6 +47,10 @@ namespace Epnet
 		void setMinScore(double score){_minScore = score;};
 
 		std::string getTradeType();
+=======
+		std::string getTradeUtilFunction();
+		std::string getTradeVolSelFunction();
+>>>>>>> testJuin2017
 		double getMuMax();
 
 		void printListOfProd(std::string s);//print all producer of the good "s"

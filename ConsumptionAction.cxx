@@ -25,12 +25,12 @@ namespace Epnet
 
 		double consumptionScore=0.0;
 
-		if(romanAgent.getType() == "gintis07")
+		if(provinceWorld.getTradeUtilFunction() == "gintis07")
 		    //in this experiment the idea is different: the utility function IS NOT the consumption function. The utility function is used to know the amount of good wanted.
 		    romanAgent.setDemand(false);
 		    //consumptionScore = romanAgent.consume(); //in that case this is then meaningless? or not?
 
-		if(romanAgent.getType() == "gintis06"){
+		if(provinceWorld.getTradeUtilFunction() == "gintis06"){
 		    std::string fgood=std::get<0>(*(romanAgent.getListGoods().begin()));
 		    //std::cout<<"First Good"<<std::endl;
 		    //std::cout<<fgood<<std::endl;
@@ -43,7 +43,7 @@ namespace Epnet
 		while(it!=allGood.end())
 		{
 		    std::string good=std::get<0>(*it);
-		    if(romanAgent.getType() == "gintis07"){
+		    if(provinceWorld.getTradeUtilFunction() == "gintis07"){
 			//if(good == std::get<0>(romanAgent.getProducedGood())){
 			//    double curNeedForMyGood = romanAgent.getNeed(good);
 			//    if(curNeedForMyGood > 10000){ 
@@ -59,7 +59,7 @@ namespace Epnet
 			romanAgent.setUtility(false);
 		    }
 
-		    else if(romanAgent.getType() == "gintis06"){
+		    else if(provinceWorld.getTradeUtilFunction() == "gintis06"){
 			if(good == std::get<0>(romanAgent.getProducedGood())) 
 			    romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
 			if( (romanAgent.getQuantity(good)/romanAgent.getNeed(good)) < consumptionScore) 

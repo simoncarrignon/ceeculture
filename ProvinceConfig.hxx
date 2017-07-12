@@ -34,7 +34,8 @@ class ProvinceConfig : public Engine::Config
 	float _mutationRate;
 	std::string _innovationProcess;
 	float _marketSize;
-	std::string _tradeType;
+	std::string _tradeUtilFunction;
+	std::string _tradeVolSelFunction;
 	float _muMax;
 
 public:
