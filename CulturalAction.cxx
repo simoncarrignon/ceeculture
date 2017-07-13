@@ -91,12 +91,12 @@ namespace Epnet
 		//		std::cout<<"probain:"<< (relScore < selfRelScore) <<std::endl;
 
 				    if(_selectionProcess == "copymin"){
-					proba = relScore < selfRelScore; //&&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
+					proba = relScore < selfRelScore/2  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > relScore ;
 				    }
 				    else if(_selectionProcess == "copymax"){
-					proba = relScore > selfRelScore; //&&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > relScore ;
+					proba = relScore > selfRelScore*2  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
 				    }
-				    if(proba){
+				    if(proba && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < .02 ){
 					//std::cout<<"soudo"<<std::endl;
 					reproductionDone = 1;
 					romanAgent.copyPriceFrom(r.getId());
