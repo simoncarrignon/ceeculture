@@ -532,6 +532,18 @@ namespace Epnet
 		    std::ostringstream oss;
 		    oss << "Roman_" << i;
 		    Roman* romanAgent = dynamic_cast<Roman*> (getAgent(oss.str()));
+		    double score = romanAgent->getScore();
+		    //Update province min and max score to compute relative selections probabilites
+		    if(score >= getMaxScore(std::get<0>(romanAgent->getProducedGood())))setMaxScore(std::get<0>(romanAgent->getProducedGood()),score);
+		    if(score <= getMinScore(std::get<0>(romanAgent->getProducedGood())))setMinScore(std::get<0>(romanAgent->getProducedGood()),score);
+
+		    if(score >= getMaxScore())setMaxScore(score);
+		    if(score <= getMinScore())setMinScore(score);
+		}
+		for(int i=0; i<provinceConfig._numAgents; i++){
+		    std::ostringstream oss;
+		    oss << "Roman_" << i;
+		    Roman* romanAgent = dynamic_cast<Roman*> (getAgent(oss.str()));
 		    CulturalAction cult(provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess);
 		    cult.execute(*romanAgent);
 		}
