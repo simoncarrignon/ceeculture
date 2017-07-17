@@ -2,7 +2,6 @@
 #include <ProvinceConfig.hxx>
 #include <ProductionAction.hxx>
 #include <TradeAction.hxx>
-#include <CulturalAction.hxx>
 #include <ConsumptionAction.hxx>
 #include <DynamicRaster.hxx>
 #include <Point2D.hxx>

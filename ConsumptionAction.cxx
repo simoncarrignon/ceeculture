@@ -82,10 +82,6 @@ namespace Epnet
 			//}
 			//std::cout<<good<<"--> quantity:"<<romanAgent.getQuantity(good)<<", need "<<romanAgent.getNeed(good)<<" and price "<<romanAgent.getPrice(good)<<" score:" <<  consumptionScore<< " - | -   ";
 			/////////
-			if(std::isnan(std::abs(consumptionScore))){
-			    	std::cout<<"tdasucks"<<std::endl;
-				std::cout<<good<<"--> quantity:"<<romanAgent.getQuantity(good)<<", need "<<romanAgent.getNeed(good)<<" and price "<<romanAgent.getPrice(good)<<" score:" <<  consumptionScore<< " - | -   "<<std::endl;
-			}
 
 			//fit= |a-b|/b : In that one I cut its too long right leg.
 			// 	double cur=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)))/romanAgent.getNeed(good);
@@ -109,11 +105,11 @@ namespace Epnet
 		
 
 		//Update province min and max score to compute relative selections probabilites
-	//	if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
-	//	if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
+		if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
+		if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
 
-	//	if(score >= provinceWorld.getMaxScore())provinceWorld.setMaxScore(score);
-	//	if(score <= provinceWorld.getMinScore())provinceWorld.setMinScore(score);
+		if(score >= provinceWorld.getMaxScore())provinceWorld.setMaxScore(score);
+		if(score <= provinceWorld.getMinScore())provinceWorld.setMinScore(score);
 
 
 
