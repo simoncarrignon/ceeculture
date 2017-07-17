@@ -2,6 +2,7 @@
 #include <ProvinceConfig.hxx>
 #include <ProductionAction.hxx>
 #include <TradeAction.hxx>
+#include <CulturalAction.hxx>
 #include <ConsumptionAction.hxx>
 #include <DynamicRaster.hxx>
 #include <Point2D.hxx>
@@ -526,6 +527,15 @@ namespace Epnet
 
 	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 
+	    if ( ((_step)%(3 * (provinceConfig._culturalStep)))   == 0 && (_step> 4 )){
+		//std::cout<<"reset the bango"<<std::endl;
+		for(int i=0; i<provinceConfig._numAgents; i++){
+		    std::ostringstream oss;
+		    oss << "Roman_" << i;
+		    Roman* romanAgent = dynamic_cast<Roman*> (getAgent(oss.str()));
+		    romanAgent->setScore(0.0);
+		}
+	    }
 	    if (_step%3  == 0){
 		for (int g = 0; g < provinceConfig._numGoods ; g++)
 		{
