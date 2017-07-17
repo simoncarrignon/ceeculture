@@ -156,7 +156,7 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
@@ -185,7 +185,7 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
@@ -306,6 +306,10 @@ namespace Epnet
  	 	 
 	double Province::getMaxScore(std::string good)
 	{
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		if(provinceConfig._networkType == "integrate")
+		    return _maxScore;
+
 		std::vector< std::tuple< std::string, double > >::iterator it = _maxscore.begin();
 
 		while(it!= _maxscore.end()){
@@ -334,6 +338,14 @@ namespace Epnet
 
 	double Province::getMinScore(std::string good)
 	{
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		//so fare the integrate case mean that cultural network == whole network wich mean that it's emaningless to look to the score associate to one good
+		if(provinceConfig._networkType == "integrate")
+		{
+		    return _minScore;
+		}
+
 		std::vector< std::tuple< std::string, double > >::iterator it = _minscore.begin();
 
 		while(it!= _minscore.end()){
@@ -494,49 +506,43 @@ namespace Epnet
 	}
 
 
-void Province::step()
-{
-	std::stringstream logName;
-	logName << "simulation_" << getId();
-	log_INFO(logName.str(), getWallTime() << " executing step: " << _step );
-
-	if(_step%_config->getSerializeResolution()==0)
+	void Province::step()
 	{
+	    std::stringstream logName;
+	    logName << "simulation_" << getId();
+	    log_INFO(logName.str(), getWallTime() << " executing step: " << _step );
+
+	    if(_step%_config->getSerializeResolution()==0)
+	    {
 		_scheduler->serializeRasters(_step);
 		_scheduler->serializeAgents(_step);
 		log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " serialization done");
-	}
-	stepEnvironment();
-	log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
-	_scheduler->executeAgents();
-	_scheduler->removeAgents();
-	log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
-
-	const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-
-	if ( ((_step)%(3 * (provinceConfig._culturalStep)))   == 0 && (_step> 4 )){
-	    for(int i=0; i<provinceConfig._numAgents; i++){
-		std::ostringstream oss;
-		oss << "Roman_" << i;
-		Roman* romanAgent = dynamic_cast<Roman*> (getAgent(oss.str()));
-		romanAgent->setScore(0.0);
 	    }
-	}
-	if (_step%3  == 0){
-	for (int g = 0; g < provinceConfig._numGoods ; g++)
-	{
+	    stepEnvironment();
+	    log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
+	    _scheduler->executeAgents();
+	    _scheduler->removeAgents();
+	    log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
 
-	    //std::cout<<"reset scores"<< std::endl;
-	    std::ostringstream sgoodType;
-	    sgoodType << "g"<< g;				
-	    std::string goodType = sgoodType.str();
-	    setMaxScore(goodType,0.0);
-	    setMinScore(goodType,1000.0);
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+
+	    if (_step%3  == 0){
+		for (int g = 0; g < provinceConfig._numGoods ; g++)
+		{
+
+		    //std::cout<<"reset scores"<< std::endl;
+		    std::ostringstream sgoodType;
+		    sgoodType << "g"<< g;				
+		    std::string goodType = sgoodType.str();
+		    setMaxScore(goodType,0.0);
+		    setMinScore(goodType,1000.0);
+
+		}
+		setMaxScore(0.0);
+		setMinScore(1000.0);
+	    }
 
 	}
-	}
-
-}
 
 void Province::stepEnvironment()
 {
@@ -606,7 +612,6 @@ void Province::stepEnvironment()
 		sourcePtr->killConnectionTo(target);
 		targetPtr->killConnectionTo(source);
 	}
-
 } // namespace Roman
 
 
