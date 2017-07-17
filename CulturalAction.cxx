@@ -101,7 +101,7 @@ namespace Epnet
 				    }
 				    if(proba && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < .02 ){
 					//std::cout<<"soudo"<<std::endl;
-					log_INFO("culture", world->getCurrentTimeStep()<< " , " <<  romanAgent.getId()<<" , "<<selfRelScore<<" , "<<r.getId()<<" , "<<relScore);
+					//log_INFO("culture", world->getCurrentTimeStep()<< " , " <<  romanAgent.getId()<<" , "<<selfRelScore<<" , "<<r.getId()<<" , "<<relScore);
 					reproductionDone = 1;
 					romanAgent.copyPriceFrom(r.getId());
 				    }
@@ -140,7 +140,11 @@ namespace Epnet
 						romanAgent.setPrice(ressource,oldPrice+randMut);
 					else
 						romanAgent.setPrice(ressource,oldPrice-randMut);
-					if(romanAgent.getPrice(ressource)<0)romanAgent.setPrice(ressource,0.0);//this allow "corner prices solutions"? 
+					if(romanAgent.getPrice(ressource)<0){
+					    //Avoid "0" corner solution
+					    double randMut = Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0*provinceWorld.getMuMax();
+					    romanAgent.setPrice(ressource,randMut);
+					}
 				}				   
 			}
 
