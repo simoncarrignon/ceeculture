@@ -140,12 +140,12 @@ namespace Epnet
 						romanAgent.setPrice(ressource,oldPrice+randMut);
 					else
 						romanAgent.setPrice(ressource,oldPrice-randMut);
-					if(romanAgent.getPrice(ressource)<0){
-					    //Avoid "0" corner solution
-					    double randMut = Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0*provinceWorld.getMuMax();
-					    romanAgent.setPrice(ressource,randMut);
-					}
 				}				   
+				while(romanAgent.getPrice(ressource)<=0.0){
+				    //Avoid "0" corner solution
+				    double randMut = Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0*provinceWorld.getMuMax();
+				    romanAgent.setPrice(ressource,randMut);
+				}
 			}
 
 		}  
