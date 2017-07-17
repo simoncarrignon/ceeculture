@@ -45,7 +45,6 @@ if env['debug'] == True:
     #env.Append(LIBS = 'pandorad')
     env.Append(LIBS = 'pandora')
 else:
-    env.Append(CCFLAGS = '-Ofast'.split())
     env.Append(LIBS = 'pandora')
 
 env.Append(CPPPATH = ['.', pandoraPath+'/include'])
