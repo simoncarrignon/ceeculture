@@ -71,9 +71,15 @@ namespace Epnet
 			//  			//	romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimated value for its the production's good
 			//	
 			////fit= |a-b|/euclideDist(a,b) my favorite one:
-			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)) ||  romanAgent.getQuantity(good) <= 0.0 )consumptionScore+=0.0; //undefined fitness function for 0
+			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)))consumptionScore+=0.0;
+			else if ( romanAgent.getQuantity(good) <= 0.0 )consumptionScore+=1.0; //undefined fitness function for 0
 			else consumptionScore+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
-			
+
+			if(std::isnan(std::abs(consumptionScore))){
+			    std::cout<<"tdasucks"<<std::endl;
+			    std::cout<<good<<"--> quantity:"<<romanAgent.getQuantity(good)<<", need "<<romanAgent.getNeed(good)<<" and price "<<romanAgent.getPrice(good)<<" score:" <<  consumptionScore<< " - | -   "<<std::endl;
+			}
+			//}
 			//std::cout<<good<<"--> quantity:"<<romanAgent.getQuantity(good)<<", need "<<romanAgent.getNeed(good)<<" and price "<<romanAgent.getPrice(good)<<" score:" <<  consumptionScore<< " - | -   ";
 			/////////
 
