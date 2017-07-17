@@ -71,10 +71,15 @@ namespace Epnet
 			//  			//	romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimated value for its the production's good
 			//	
 			////fit= |a-b|/euclideDist(a,b) my favorite one:
-			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)))consumptionScore+=0.0; //undefined fitness function for 0
+			if(romanAgent.getQuantity(good)==(romanAgent.getNeed(good)) ||  romanAgent.getQuantity(good) <= 0.0 )consumptionScore+=0.0; //undefined fitness function for 0
 			else consumptionScore+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
+			
 			//std::cout<<good<<"--> quantity:"<<romanAgent.getQuantity(good)<<", need "<<romanAgent.getNeed(good)<<" and price "<<romanAgent.getPrice(good)<<" score:" <<  consumptionScore<< " - | -   ";
 			/////////
+			if(std::isnan(std::abs(consumptionScore))){
+			    	std::cout<<"tdasucks"<<std::endl;
+				std::cout<<good<<"--> quantity:"<<romanAgent.getQuantity(good)<<", need "<<romanAgent.getNeed(good)<<" and price "<<romanAgent.getPrice(good)<<" score:" <<  consumptionScore<< " - | -   "<<std::endl;
+			}
 
 			//fit= |a-b|/b : In that one I cut its too long right leg.
 			// 	double cur=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)))/romanAgent.getNeed(good);
@@ -98,11 +103,11 @@ namespace Epnet
 		
 
 		//Update province min and max score to compute relative selections probabilites
-		if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
-		if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
+	//	if(score >= provinceWorld.getMaxScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMaxScore(std::get<0>(romanAgent.getProducedGood()),score);
+	//	if(score <= provinceWorld.getMinScore(std::get<0>(romanAgent.getProducedGood())))provinceWorld.setMinScore(std::get<0>(romanAgent.getProducedGood()),score);
 
-		if(score >= provinceWorld.getMaxScore())provinceWorld.setMaxScore(score);
-		if(score <= provinceWorld.getMinScore())provinceWorld.setMinScore(score);
+	//	if(score >= provinceWorld.getMaxScore())provinceWorld.setMaxScore(score);
+	//	if(score <= provinceWorld.getMinScore())provinceWorld.setMinScore(score);
 
 
 

@@ -528,18 +528,24 @@ namespace Epnet
 	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 
 	    if ( ((_step)%(3 * (provinceConfig._culturalStep)))   == 0 && (_step> 4 )){
+		//std::cout<<"ordering the scores"<<std::endl;
 		for(int i=0; i<provinceConfig._numAgents; i++){
 		    std::ostringstream oss;
 		    oss << "Roman_" << i;
 		    Roman* romanAgent = dynamic_cast<Roman*> (getAgent(oss.str()));
 		    double score = romanAgent->getScore();
 		    //Update province min and max score to compute relative selections probabilites
+		//std::cout<<romanAgent->getId()<<" with "<<score<<" , max of "<<std::get<0>(romanAgent->getProducedGood())<< " is:  "<< getMaxScore(std::get<0>(romanAgent->getProducedGood()))<< " and min of: "<<std::get<0>(romanAgent->getProducedGood())<<" is:"<< getMinScore(std::get<0>(romanAgent->getProducedGood()))<<" and general Max is :"<< getMaxScore()<< " genal min: "<< getMinScore()<<std::endl;
+
 		    if(score >= getMaxScore(std::get<0>(romanAgent->getProducedGood())))setMaxScore(std::get<0>(romanAgent->getProducedGood()),score);
 		    if(score <= getMinScore(std::get<0>(romanAgent->getProducedGood())))setMinScore(std::get<0>(romanAgent->getProducedGood()),score);
 
 		    if(score >= getMaxScore())setMaxScore(score);
 		    if(score <= getMinScore())setMinScore(score);
+		//    std::cout<< "==================after========================"<<std::endl;
+		//std::cout<<romanAgent->getId()<<" with "<<score<<" , max of "<<std::get<0>(romanAgent->getProducedGood())<< " is:  "<< getMaxScore(std::get<0>(romanAgent->getProducedGood()))<< " and min of: "<<std::get<0>(romanAgent->getProducedGood())<<" is:"<< getMinScore(std::get<0>(romanAgent->getProducedGood()))<<" and general Max is :"<< getMaxScore()<< " genal min: "<< getMinScore()<<std::endl;
 		}
+		//std::cout<<"executing the copies"<<std::endl;
 		for(int i=0; i<provinceConfig._numAgents; i++){
 		    std::ostringstream oss;
 		    oss << "Roman_" << i;
@@ -547,6 +553,7 @@ namespace Epnet
 		    CulturalAction cult(provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess);
 		    cult.execute(*romanAgent);
 		}
+		//std::cout<<"reset the bango"<<std::endl;
 		for(int i=0; i<provinceConfig._numAgents; i++){
 		    std::ostringstream oss;
 		    oss << "Roman_" << i;
