@@ -3,8 +3,9 @@
 #./runExp expename
 #create a folder 
 name=$1
+conf=$2
 mkdir $name
-cp config.xml $name
+cp $conf $name/config.xml
 cd $name
 for i in {1..50} ;
 do
