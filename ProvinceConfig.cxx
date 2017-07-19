@@ -25,7 +25,8 @@ void ProvinceConfig::loadParams()
 	_selectionProcess= getParamStr( "controller/culture", "transmission");	
 	_innovationProcess= getParamStr( "controller/culture", "innovation");	
 	_aType = getParamStr( "controller/agent", "type");	
-	_tradeType= getParamStr( "controller/trade", "type");
+	_tradeUtilFunction= getParamStr( "controller/trade", "util");
+	_tradeVolSelFunction= getParamStr( "controller/trade", "volsel");
 	_culturalStep= getParamInt( "controller/culture", "step");	
 	_muMax= getParamFloat( "controller/culture", "mumax");	
 
@@ -35,6 +36,15 @@ void ProvinceConfig::loadParams()
 	_goodsParam= getParamStr( "controller/good", "type");
 	_networkType= getParamStr( "network", "type");
 
+	try{
+	    _events = getParamStr( "events", "type");
+	    if(_events == "rate")
+		_eventsRate =getParamInt( "events", "rate");
+	}
+	catch(const Engine::Exception & e){
+	    //Create a load_config log file?
+	    _events = "no";
+	}
 
 	try{
 	    _networkOut = getParamStr( "network", "output");
@@ -62,20 +72,20 @@ void ProvinceConfig::loadParams()
 	_numGoods = getParamInt( "goods", "num");
 	
 	if(_goodsParam== "random" ||_goodsParam== "randn"||_goodsParam== "gintis07" ){
-		std::ostringstream name;
-		name << "goods/good";
-		std::string id = getParamStr(name.str(),"id");
-		double initQuantity = getParamFloat(name.str(),"initialQuantity");
-		double maxQuantity = getParamFloat(name.str(),"maxQuantity");
-		double price = getParamFloat(name.str(),"price");
-		double need = getParamFloat(name.str(),"need");
-		double productionRate = getParamFloat(name.str(),"productionRate");
-		_protoGood = std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate);  
-	  
+	    std::ostringstream name;
+	    name << "goods/good";
+	    std::string id = getParamStr(name.str(),"id");
+	    double initQuantity = getParamFloat(name.str(),"initialQuantity");
+	    double maxQuantity = getParamFloat(name.str(),"maxQuantity");
+	    double price = getParamFloat(name.str(),"price");
+	    double need = getParamFloat(name.str(),"need");
+	    double productionRate = getParamFloat(name.str(),"productionRate");
+	    _protoGood = std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate);  
+
 	}
-	  else{
-	for(int i=0; i < _numGoods ; i++)
-	{
+	else{
+	    for(int i=0; i < _numGoods ; i++)
+	    {
 		std::ostringstream name;
 		name << "goods/good" << i;
 		std::string id = getParamStr(name.str(),"id");
@@ -85,11 +95,13 @@ void ProvinceConfig::loadParams()
 		double need = getParamFloat(name.str(),"need");
 		double productionRate = getParamFloat(name.str(),"productionRate");
 		_paramGoods.push_back(std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate));
-	}
+	    }
 
-	_numRasters = getParamInt( "rasters", "num");
-	for(int i=0; i < _numRasters ; i++)
-	{
+	}
+	try{
+	    _numRasters = getParamInt( "rasters", "num");
+	    for(int i=0; i < _numRasters ; i++)
+	    {
 		std::ostringstream name;
 		name << "rasters/raster" << i;
 		std::string id = getParamStr(name.str(),"id");
@@ -97,7 +109,13 @@ void ProvinceConfig::loadParams()
 		double max = getParamFloat(name.str(),"max");
 		double init = getParamFloat(name.str(),"init");
 		_paramRasters.push_back(std::make_tuple(id,min,max,init));
+	    }
 	}
+	catch( std::exception & exceptionThrown )
+	{
+	    std::cout << "exception thrown: " << exceptionThrown.what() << std::endl;
+	    std::cout << "Raster are not used" << std::endl;
+	    _numRasters = 0;
 	}
 }
 	

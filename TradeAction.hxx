@@ -24,6 +24,7 @@ namespace Epnet
 			double getRequestedQuantity(Engine::Agent& r, std::string goodWanted);
 			std::string type;
 			int requested;
+		public : bool AlmostEqualRelative(float A, float B, float maxRelDiff);
 	};
 
 } // namespace Epnet

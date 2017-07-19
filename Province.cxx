@@ -2,6 +2,7 @@
 #include <ProvinceConfig.hxx>
 #include <ProductionAction.hxx>
 #include <TradeAction.hxx>
+#include <CulturalAction.hxx>
 #include <ConsumptionAction.hxx>
 #include <DynamicRaster.hxx>
 #include <Point2D.hxx>
@@ -20,6 +21,8 @@ namespace Epnet
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		
 		double all_needs=0.0;
+		_minScore=0.0;
+		_maxScore=0.0;
 		//double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
 		
 
@@ -35,9 +38,9 @@ namespace Epnet
 			std::ostringstream sgoodType;
 			sgoodType << "g"<< i;				
 			std::string goodType = sgoodType.str();
-			_needs.push_back(std::make_tuple(goodType,tneed));  
+			_needs.push_back(std::make_tuple(goodType,tneed+1));
 			_maxscore.push_back(std::make_tuple(goodType,0.0));
-			_minscore.push_back(std::make_tuple(goodType,0.0));
+			_minscore.push_back(std::make_tuple(goodType,1000.0));
 			_typesOfGood.push_back(goodType);
 			_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
 			//				_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
@@ -46,7 +49,7 @@ namespace Epnet
 		    if(provinceConfig._goodsParam == "randn"){
 			for (auto it = _needs.begin(); it != _needs.end() ; it++){
 			    double p = std::get<1>(*it);
-			    *it=std::make_tuple(std::get<0>(*it),p/all_needs);
+			    *it=std::make_tuple(std::get<0>(*it),p/all_needs+1);
 			}
 		    }
 		}
@@ -62,30 +65,32 @@ namespace Epnet
 			    std::string goodType = sgoodType.str();
 			    _needs.push_back(std::make_tuple(goodType,-1));  
 			    _maxscore.push_back(std::make_tuple(goodType,0.0));
-			    _minscore.push_back(std::make_tuple(goodType,0.0));
+			    _minscore.push_back(std::make_tuple(goodType,1000.0));
 			    _typesOfGood.push_back(goodType);
 			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
 			    //_good2CulturalNetwork.insert(std::pair<std::string,Network>(goodType,Network()));
 			}	  
 
 		}
-		else {
+		else if(provinceConfig._goodsParam == "manual"){
 			//In that case each good and the properties of thoses good have to be manually set by the user in the config file
-			//I have never used that possibility..
+			//At this stage each good should be already well configured by ProvinceConfig 
+			//Here we just update global variable later used to compute some metrics
 			for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 			{
-			    double tneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0;
+			    std::string goodType = std::get<0>(*it);
 
-			    all_needs += tneed;
-
-			    _needs.push_back(std::make_tuple(std::get<0>(*it),tneed));  
-			    _maxscore.push_back(std::make_tuple(std::get<0>(*it),0.0));  
-			    _minscore.push_back(std::make_tuple(std::get<0>(*it),0.0));
-			    _typesOfGood.push_back(std::get<0>(*it));
-			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(std::get<0>(*it),{}));
+			    _needs.push_back(std::make_tuple(goodType,std::get<4>(*it)));  
+			    _typesOfGood.push_back(goodType);
+			    _maxscore.push_back(std::make_tuple(goodType,0.0));
+			    _minscore.push_back(std::make_tuple(goodType,1000.0));
+			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
 
 			}
 
+		}
+		else{
+			//error no good type
 		}
 
 
@@ -152,7 +157,7 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/10.0);// market clearing price : 1.0/(i+1)
+						while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
@@ -162,13 +167,6 @@ namespace Epnet
 						//agent->setPrice(goodType,1.0/std::get<1>(_needs[g]));
 					}			
 
-
-
-					//Set producedGood as a modulo of the agent ID
-					int randg = i%provinceConfig._numGoods;
-					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
-					agent->setProductionRate(std::get<0>(producedGood),1.0);
-					_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				}
 				else if(provinceConfig._goodsParam== "gintis07" )
@@ -188,7 +186,7 @@ namespace Epnet
 						//the protoGood is used to calibrate all other goods. 
 
 						//set a random properties for each goods
-						if(agent->getPrice(goodType)<0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 						if(agent->getQuantity(goodType)<0)agent->setQuantity(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 						if(agent->getProductionRate(goodType)<0)agent->setProductionRate(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
 
@@ -210,14 +208,9 @@ namespace Epnet
 					agent->setDemand(true);
 					agent->setUtility(true);
 
-					//Set producedGood as a modulo of the agent ID
-					int randg = i%provinceConfig._numGoods;
-					std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
-					agent->setProductionRate(std::get<0>(producedGood),1.0);
-					_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				}
-				else{
+				else if(provinceConfig._goodsParam == "manual"){
 					for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 					{
 						//id, maxQuantity, price, need and production rate of the good
@@ -228,23 +221,21 @@ namespace Epnet
 
 						//set a random price for each goods
 
-						agent->setPrice(std::get<0>(*it),(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0); //TODO:demiurge's job
-
-
-						//---------------
-						//set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
-						std::vector<std::tuple<std::string,double> >::iterator need = std::find_if(_needs.begin(), _needs.end(), [=](const std::tuple<std::string,double>& good) {return std::get<0>(good) == std::get<0>(*it);});
-
-						if ( need != _needs.end() )
-						{				  
-							agent->setNeed(std::get<0>(*it),std::get<1>(*need));
-						}
 					}			
 
 				}
-			 if(provinceConfig._goodsParam == "gintis07")
-				log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
+				else{
+				    //
+				}
+				if(provinceConfig._goodsParam == "gintis07")
+					log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
 
+				//Set producedGood as a modulo of the agent ID
+
+				int randg = i%provinceConfig._numGoods;
+				std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
+				agent->setProductionRate(std::get<0>(producedGood),1.0);
+				_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				//loop for initialize the commercial connection of the current agent with all previously created agents.
 				for(int j=(i-1); j>=0; j--)
@@ -252,11 +243,18 @@ namespace Epnet
 					std::ostringstream ossb;
 					ossb << "Roman_" << j;
 					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
+					if(provinceConfig._networkType == "integrate"){
+					    Roman* agb = dynamic_cast<Roman*> (getAgent(ossb.str()));
+					    agent->addCulturalNeighbour(ossb.str());
+					    agb->addCulturalNeighbour(oss.str());
+					}
 					
 				}
 			}
 		}
 		
+		if(provinceConfig._networkType != "integrate"){
+
 		for (std::map< std::string, std::vector< std::string > >::iterator it = _good2Producers.begin(); it != _good2Producers.end();it++) {
 				
 			std::vector<std::string> groupOfproducer = it->second;
@@ -284,6 +282,7 @@ namespace Epnet
 				
 			}
 		}
+		}
 		createCulturalNetwork();
 		
 		//printAllCulturalNerwork();
@@ -294,7 +293,6 @@ namespace Epnet
 		  
 		}*/
 	   
-	  
 	}
 
 	
@@ -309,6 +307,10 @@ namespace Epnet
  	 	 
 	double Province::getMaxScore(std::string good)
 	{
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		if(provinceConfig._networkType == "integrate")
+		    return _maxScore;
+
 		std::vector< std::tuple< std::string, double > >::iterator it = _maxscore.begin();
 
 		while(it!= _maxscore.end()){
@@ -337,6 +339,14 @@ namespace Epnet
 
 	double Province::getMinScore(std::string good)
 	{
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		//so fare the integrate case mean that cultural network == whole network wich mean that it's emaningless to look to the score associate to one good
+		if(provinceConfig._networkType == "integrate")
+		{
+		    return _minScore;
+		}
+
 		std::vector< std::tuple< std::string, double > >::iterator it = _minscore.begin();
 
 		while(it!= _minscore.end()){
@@ -455,16 +465,36 @@ namespace Epnet
 		return provinceConfig._marketSize;
 	}
 
-	std::string Province::getTradeType(){
+	std::string Province::getTradeUtilFunction(){
 
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-		return provinceConfig._tradeType;
+		return provinceConfig._tradeUtilFunction;
 	}
 
+	std::string Province::getTradeVolSelFunction(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return provinceConfig._tradeVolSelFunction;
+	}
+
+	//Get the maximum amplitude of Mu
 	double Province::getMuMax(){
 
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		return (double) provinceConfig._muMax;
+	}
+
+
+	double Province::getNeed(std::string good){
+	    //check if a good of that type exist in the list
+	    std::vector<std::tuple<std::string,double> >::iterator it = std::find_if(_needs.begin(), _needs.end(), [=](const std::tuple<std::string,double>& n) {return std::get<0>(n) == good;});
+	    if ( it != _needs.end() )
+	    {
+		return std::get<1>(*it);
+	    }
+
+	    //return something impossible as an error
+	    return -1.0;
 	}
 
 	void Province::printAllCulturalNerwork(){
@@ -477,7 +507,94 @@ namespace Epnet
 	}
 
 
+	void Province::step()
+	{
+	    std::stringstream logName;
+	    logName << "simulation_" << getId();
+	    log_INFO(logName.str(), getWallTime() << " executing step: " << _step );
 
+	    if(_step%_config->getSerializeResolution()==0)
+	    {
+		_scheduler->serializeRasters(_step);
+		_scheduler->serializeAgents(_step);
+		log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " serialization done");
+	    }
+	    stepEnvironment();
+	    log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
+	    _scheduler->executeAgents();
+	    _scheduler->removeAgents();
+	    log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
+
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+
+	    if ( ((_step)%(3 * (provinceConfig._culturalStep)))   == 0 && (_step> 4 )){
+		//std::cout<<"reset the bango"<<std::endl;
+		for(int i=0; i<provinceConfig._numAgents; i++){
+		    std::ostringstream oss;
+		    oss << "Roman_" << i;
+		    Roman* romanAgent = dynamic_cast<Roman*> (getAgent(oss.str()));
+		    romanAgent->setScore(0.0);
+		}
+	    }
+	    if (_step%3  == 0){
+		for (int g = 0; g < provinceConfig._numGoods ; g++)
+		{
+
+		    //std::cout<<"reset scores"<< std::endl;
+		    std::ostringstream sgoodType;
+		    sgoodType << "g"<< g;				
+		    std::string goodType = sgoodType.str();
+		    setMaxScore(goodType,0.0);
+		    setMinScore(goodType,1000.0);
+
+		}
+		setMaxScore(0.0);
+		setMinScore(1000.0);
+	    }
+
+	}
+
+void Province::stepEnvironment()
+{
+    //std::cout<<"step:=="<<_step<<std::endl;
+
+	const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+    //std::cout<<"resetscore All agents: aka ( if (_step%(3 * (provinceConfig._culturalStep) + 1) == 0) ) "<<(_step%(3 * (provinceConfig._culturalStep) + 1) == 0)<<std::endl;
+    //std::cout<<"resminmax : aka ( (_step%3  == 2) ) "<<(_step%3== 2)<<std::endl;
+    //std::cout<<"Production Action : aka ( (_step%3  == 0) ) "<<(_step%3== 0)<<std::endl;
+    //std::cout<<"trade Action : aka ( (_step%3  == 1) ) "<<(_step%3== 1)<<std::endl;
+    //std::cout<<"Consumption Action : aka ( (_step%3  == 2) ) "<<(_step%3== 2)<<std::endl;
+    //std::cout<<"Cultural Action : aka  ((_step%%(3 * (_culturalStep)) == 0) && (timestep> 3 * (_culturalStep) )) "<<( (_step%(3 * (provinceConfig._culturalStep)) == 0) && (_step> 3 * (provinceConfig._culturalStep) ) )<<std::endl;
+
+	for(size_t d=0; d<_rasters.size(); d++)
+	{
+		if(!_rasters.at(d) || !_dynamicRasters.at(d))
+		{
+			continue;
+		}
+		stepRaster(d);
+	}
+	if( provinceConfig._events == "rate"){
+	    //std::cout<<provinceConfig._eventsRate<< " ts "<<getCurrentTimeStep() <<std::endl;
+	    if( getCurrentTimeStep() >= provinceConfig._culturalStep* 3 *provinceConfig._eventsRate  && getCurrentTimeStep() % (provinceConfig._culturalStep* 3 * provinceConfig._eventsRate ) == 0){
+	//	std::cout << "=========="<< std::endl;
+	//	std::cout << "need:"<< std::get<0>(_needs[0])<< "="<< std::get<1>(_needs[0])<<std::endl;
+	//	std::cout << "need:"<< std::get<0>(_needs[_needs.size()-1])<< "="<< std::get<1>(_needs[_needs.size()-1])<<std::endl;
+		
+		//switch the first need with the last
+		double tmp = std::get<1>(_needs[0]);
+		std::get<1>(_needs[0])=std::get<1>(_needs[_needs.size()-1]);
+		std::get<1>(_needs[_needs.size()-1])=tmp;
+
+		
+		
+	//	std::cout << "Switch" << std::endl;
+	//	std::cout << "need:"<< std::get<0>(_needs[0])<< "="<< std::get<1>(_needs[0])<<std::endl;
+	//	std::cout << "need:"<< std::get<0>(_needs[_needs.size()-1])<< "="<< std::get<1>(_needs[_needs.size()-1])<<std::endl;
+	//	std::cout<<"=========="<< std::endl;
+	    }
+	}
+}
 
 	void Province::buildTwoWayConnection(std::string source, std::string target)
 	{
@@ -505,7 +622,6 @@ namespace Epnet
 		sourcePtr->killConnectionTo(target);
 		targetPtr->killConnectionTo(source);
 	}
-
 } // namespace Roman
 
 

@@ -54,10 +54,10 @@ namespace Epnet
 
 				double requestedQuantity=0;
 				double proposedQuantity =0;
-				if(provinceWorld.getTradeType() =="gintis07"){
+				if(provinceWorld.getTradeVolSelFunction() =="gintis07"){
 				    requestedQuantity= offerer.getNeed(goodWanted)-offerer.getQuantity(goodWanted);
 				}
-				else if( provinceWorld.getTradeType() =="gintis06"){
+				else if( provinceWorld.getTradeVolSelFunction() =="gintis06"){
 				    double M=0.0;
 				    double N=0.0;
 				
@@ -73,7 +73,7 @@ namespace Epnet
 				    double lambda=M/N;
 				    requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
 				}
-				else if( provinceWorld.getTradeType() =="gintis06-outneed"){
+				else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
 				    double M=0.0;
 				    double N=0.0;
 				
@@ -99,7 +99,8 @@ namespace Epnet
 				int noffer=0;
 				bool tradeDone = 0;
 				int noffer_max=exchangeNetwork.size()*provinceWorld.getMarketSize();//if noffer_max is < numagents/ngoods, it means that we limite the research of the agent in the markert
-				//std::cout<<offerer.getId()<<" requested :"<<requestedQuantity<<", proposed:"<<proposedQuantity<<", pricewanted:"<<offerer.getPrice(goodWanted)<<", priceproduce: "<<offerer.getPrice(offererProducedGood)<<std::endl;
+				//std::cout<<offerer.getId()<<" requested ("<<goodWanted<<"):"<<requestedQuantity<<", proposed("<<offererProducedGood<<"):"<<proposedQuantity<<", pricewanted("<<goodWanted<<"):"<<offerer.getPrice(goodWanted)<<", priceproduce("<<offererProducedGood<<"): "<<offerer.getPrice(offererProducedGood)<<std::endl;
+				if(requestedQuantity < 0.0 || AlmostEqualRelative(requestedQuantity,0.0,0.01))tradeDone=1;
 				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=noffer_max){
 					noffer++;
 					Roman & responder = (Roman&)(*world->getAgent(*itO));
@@ -111,33 +112,33 @@ namespace Epnet
 
 					    double responderTradeWill =  0;
 					    double responderTradCounter =  0;
-					    if(provinceWorld.getTradeType()=="gintis07"){
+					    if(provinceWorld.getTradeVolSelFunction()=="gintis07"){
 						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
 					    }
-					    else if (provinceWorld.getTradeType()=="gintis06"){
+					    else if (provinceWorld.getTradeVolSelFunction()=="gintis06"){
 						double M=0.0;
 						double N=0.0;
 
 						std::vector<std::string> goods= provinceWorld.getTypesOfGood();
 						std::vector<std::string>::iterator g = goods.begin();
 						while(g!=goods.end()){
-						    M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-						    N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+						    M+=responder.getPrice(*g) * responder.getQuantity(*g);
+						    N+=responder.getPrice(*g) * responder.getNeed(*g);
 						    g++;
 						}
 
 						double lambda=M/N;
 						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
 					    }
-					    else if( provinceWorld.getTradeType() =="gintis06-outneed"){
+					    else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
 						double M=0.0;
 						double N=0.0;
 
 						std::vector<std::string> goods= provinceWorld.getTypesOfGood();
 						std::vector<std::string>::iterator g = goods.begin();
 						while(g!=goods.end()){
-						    M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-						    N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g);
+						    M+=responder.getPrice(*g) * responder.getQuantity(*g);
+						    N+=responder.getPrice(*g) * 1/responder.getPrice(*g);
 						    g++;
 						}
 
@@ -149,15 +150,14 @@ namespace Epnet
 					    }
 						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
-				//std::cout<<responder.getId()<<" crequested :"<<responderTradCounter<<", cproposed:"<<responderTradeWill<<", cpricewanted:"<<responder.getPrice(goodWanted)<<", cpriceproduce: "<<responder.getPrice(offererProducedGood)<<std::endl;
 
 						if(
-						  responderTradeWill <= proposedQuantity && 				//the quantity offered is at least egual to the quantity the other estim good for him
+						  ( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, 0.01) ) && 				//the quantity offered is at least egual to the quantity the other estim good for him
 						  responderTradeWill > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
 						  requestedQuantity > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
-						  responder.getQuantity(goodWanted) >= requestedQuantity &&		//the quantity asked is available in the stock of the responder
-						  offerer.getQuantity(offererProducedGood) >= proposedQuantity &&	//the quantity proposed is available in the offerer stock
-						  responderTradCounter >= requestedQuantity				//the quantity asked is less that the value estimated by the responder
+						  ( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, 0.01)) &&		//the quantity asked is available in the stock of the responder
+						  ( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, 0.01) )  &&	//the quantity proposed is available in the offerer stock
+						  ( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, 0.01))				//the quantity asked is less that the value estimated by the responder
 						  )
 						{
 							if(responderTradeWill<proposedQuantity){
@@ -189,13 +189,14 @@ namespace Epnet
 					//This would imply that an offerer will check each person in the market and trade with each one of them and keep the best offerer
 					//But in the Gintis version people leave the market when they did a trade so not useful now.
 
-					offerer.setQuantity(goodWanted,std::get<1>(bestTrade));		    
+					offerer.setQuantity(goodWanted,offerer.getQuantity(goodWanted)+std::get<1>(bestTrade));
 					offerer.setQuantity(offererProducedGood,offerer.getQuantity(offererProducedGood)-std::get<2>(bestTrade));
 
 
 					Roman & responder = (Roman&)(*world->getAgent(std::get<0>(bestTrade)));
 					responder.setQuantity(offererProducedGood,responder.getQuantity(offererProducedGood)+std::get<2>(bestTrade));
 					responder.setQuantity(goodWanted,responder.getQuantity(goodWanted)-std::get<1>(bestTrade));
+
 
 				}
 				else{
@@ -240,6 +241,20 @@ namespace Epnet
 		return "Trade action";
 	}
 
+	bool TradeAction::AlmostEqualRelative(float A, float B,
+		                         float maxRelDiff )
+	{
+	    // Calculate the difference.
+	    float diff = fabs(A - B);
+	    A = fabs(A);
+	    B = fabs(B);
+	    // Find the largest
+	    float largest = (B > A) ? B : A;
+
+	    if (diff <= largest * maxRelDiff)
+		return true;
+	    return false;
+	}
 } // namespace Epnet
 
 

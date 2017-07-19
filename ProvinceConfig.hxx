@@ -25,6 +25,8 @@ class ProvinceConfig : public Engine::Config
 	std::string _selectionProcess;
 	int _culturalStep;
 	std::string _goodsParam;
+	std::string _events;
+	int _eventsRate;
 	std::string _networkType;
 	std::string _networkOut;
 	std::string _aType;
@@ -32,7 +34,8 @@ class ProvinceConfig : public Engine::Config
 	float _mutationRate;
 	std::string _innovationProcess;
 	float _marketSize;
-	std::string _tradeType;
+	std::string _tradeUtilFunction;
+	std::string _tradeVolSelFunction;
 	float _muMax;
 
 public:

@@ -150,7 +150,7 @@ namespace Epnet
 
 		double getQuantity(std::string type){ return std::get<0>(getGood(type));};
 		double getPrice(std::string type){ return std::get<2>(getGood(type));};
-		double getNeed(std::string type){ return std::get<3>(getGood(type));};
+		double getNeed(std::string type);
 		double getUtility(std::string type){ return std::get<1>(getGood(type));};
 		double getProductionRate(std::string type){ return std::get<4>(getGood(type));};
 
@@ -187,7 +187,8 @@ namespace Epnet
 		void killTradesTo(std::string source);
 		void killTradesFrom(std::string source);
 		void setListOfCulturalNeighbours(std::vector<std::string> neighbours );
-		std::vector<std::string> getListOfCulturalNeighbours();
+		std::vector<std::string> getListOfCulturalNeighbours(); 
+		void addCulturalNeighbour(std::string neighbour); //add a new agent in the cultural network
 		std::string intToGoodType(int goodId);
 
 		////////////////////////////////////////////////

@@ -2,16 +2,19 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="10000" serializeResolution="45"/> 
+	<numSteps value="4500" serializeResolution="135"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="1"/>
-	<numAgents value="500"/>
-	<market size=".2"/>
+	<numAgents value="300"/>
+	<market size=".5"/>
 	<controller type="basic" >
-	    <good type="randn"/> <!-- could be : random,randn,manual,gintis07--> 
-	    <agent type="custom"/>  <!-- could be : custom,gintis07,gintis06-->
-	    <trade type="gintis06-outneed"/> <!-- could be : custom,gintis07,gintis06,gintis06-outneed -->
-	    <culture transmission="copymin" innovation="trade" mumax="50" mutation=".18" step="15"/>
+	    <good type="randn"/> <!-- how good need are initialized can be : random,randn,manual,gintis07--> 
+	    <agent type="custom"/> <!--not used-->
+	    <trade volsel="gintis06-outneed" util="custom"/>
+	    <!-- trade/volsel allow to choose how requested quantities are selected can be : custom,gintis07,gintis06,gintis06-outneed -->
+<!--trade/util allow to choose how agent score is computed can be : custom,gintis07,gintis06-->
+
+	    <culture transmission="copymin" innovation="trade" mumax=".05" mutation=".18" step="15"/>
 	</controller>
 
 	<!--
@@ -25,30 +28,28 @@
 	    	<prop0 id="m" value= "3"/>
 	</network>
 	-->
-	<network type="full" nparam="1">
+	<network type="integrate" nparam="1">
 	    	<prop0 id="p" value= ".2"/>
 	</network>
 
-	<goods num="5">
+
+	<goods num="3">
 	       	<good   id="proto"      initialQuantity="0"     maxQuantity="1000"      price="-1.0"    need="-1.0"     productionRate="0"/>
 	</goods>
 
 	<!--
-	<goods num="5">
-		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="1.10"	need="1.0"	productionRate="1"/>
-		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price="0.50"	need="2.0"	productionRate="1"/>
-		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price="0.33333"	need="3.0"	productionRate="1"/>
-		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="0.25"	need="4.0"	productionRate="1"/>
-		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="0.20"	need="5.0"	productionRate="1"/>
+	<goods num="3">
+		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1.0"	productionRate="0"/>
+		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price=".5"	need="2.0"	productionRate="0"/>
+		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price=".3333"	need="3.0"	productionRate="0"/>
+		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="4.0"	productionRate="0"/>
+		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="5.0"	productionRate="0"/>
+		<good5	id="g5"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="6.0"	productionRate="0"/>
 	</goods>
--->
 
-	<rasters num="3">
-		<raster0	id="currency"	min="0.0"	max="20.0"	init="20.0"/>
-		<raster1	id="ess-a"	min="0.0"	max="20.0"	init="20.0"/>
-		<raster2	id="ess-b"	min="0.0"	max="20.0"	init="20.0"/>
-		<raster3	id="nonEss-a"	min="0.0"	max="20.0"	init="20.0"/>
-		<raster4	id="nonEss-b"	min="0.0"	max="20.0"	init="20.0"/>
-	</rasters>
+-->
+	<!-- <events type="rate" rate="1000"/> -->
+
+
 </config>
 

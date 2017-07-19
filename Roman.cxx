@@ -1,7 +1,7 @@
 #include <Roman.hxx>
 
 #include <Statistics.hxx>
-#include <World.hxx>
+#include <Province.hxx>
 #include <Logger.hxx>
 
 #include <ProvinceConfig.hxx>
@@ -46,7 +46,6 @@ namespace Epnet
     void Roman::registerAttributes()
     {
 	registerFloatAttribute("scores");
-	registerFloatAttribute("mu");
 	for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 	{
 	    std::ostringstream oss;
@@ -95,7 +94,6 @@ namespace Epnet
     void Roman::serialize()
     {
 	serializeAttribute("scores", (float)_score);
-	serializeAttribute("mu", (float)_mutationRate);
 	int id=0; //the need calculate using the demand function (ie the need use in gintis 07) are stored in a vector of int thus are acceesed with normal indices and notes via the more complex technics use in the other cases
 	for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
 	{
@@ -1122,6 +1120,11 @@ namespace Epnet
 	_culturalNeighbours = std::vector<std::string>(neighbours);
     }
 
+    void Roman::addCulturalNeighbour(std::string neighbour)
+    {
+	_culturalNeighbours.push_back(neighbour);
+    }
+
     std::vector<std::string> Roman::getListOfCulturalNeighbours()
     {
 	return _culturalNeighbours;
@@ -1197,6 +1200,12 @@ namespace Epnet
 		return goodType;
     }
 
+ double Roman::getNeed(std::string type){
+		Province & curWorld = (Province&) *getWorld();
+		return curWorld.getNeed(type);
+
+
+ }
 
 
 } // namespace Roman
