@@ -14,6 +14,7 @@ class ProvinceConfig : public Engine::Config
 	int _numAgents;
 
 	int _numGoods;
+	std::string _typeProd;
 	std::vector<std::tuple<std::string,double,double,double,double,double> > _paramGoods;
 
 	int _numRasters;
@@ -37,6 +38,7 @@ class ProvinceConfig : public Engine::Config
 	std::string _tradeUtilFunction;
 	std::string _tradeVolSelFunction;
 	float _muMax;
+	std::vector<std::tuple<std::string,int>> _nbProds;
 
 public:
 	ProvinceConfig( const std::string & xmlFile );

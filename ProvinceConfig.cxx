@@ -70,6 +70,13 @@ void ProvinceConfig::loadParams()
 		
 
 	_numGoods = getParamInt( "goods", "num");
+	try{
+	    _typeProd = getParamStr( "goods", "prod");
+	}
+	catch( std::exception & exceptionThrown )
+	{
+	    _typeProd="balanced";
+	}
 	
 	if(_goodsParam== "random" ||_goodsParam== "randn"||_goodsParam== "gintis07" ){
 	    std::ostringstream name;
@@ -94,7 +101,19 @@ void ProvinceConfig::loadParams()
 		double price = getParamFloat(name.str(),"price");
 		double need = getParamFloat(name.str(),"need");
 		double productionRate = getParamFloat(name.str(),"productionRate");
+
+		if(_typeProd == "unbalanced"){
+		    try{
+			int nbprod = getParamInt(name.str(),"nprod"); //number of producers
+			_nbProds.push_back(std::make_tuple(id,nbprod)); //and with store it in a map with key="good names" =?> nprod, ie: "good0"=>3 means that we will have 3 producers for good 0
+		    }
+		    catch( std::exception & exceptionThrown){
+			std::cout<<"you configure an unbalanced market but number of productors aren't defined"<<std::endl;
+			exit(0);
+		    }
+		}
 		_paramGoods.push_back(std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate));
+
 	    }
 
 	}
