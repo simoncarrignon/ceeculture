@@ -11,7 +11,7 @@ agents = ['Roman']
 world = 'Province'
 namespaceAgents = ['Epnet']
 
-srcFiles = Split('main.cxx Roman.cxx Province.cxx ProvinceConfig.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx ProposeTradeAction.cxx RandomController.cxx BasicController.cxx ControllerFactory.cxx MacmillanController.cxx ProductionAction.cxx TradeAction.cxx ConsumptionAction.cxx CulturalAction.cxx Network.cxx')
+srcFiles = Split('main.cxx Roman.cxx Province.cxx ProvinceConfig.cxx HarvestAction.cxx ProposeConnectionAction.cxx SendGoodsAction.cxx FunAction.cxx ProposeTradeAction.cxx RandomController.cxx BasicController.cxx ControllerFactory.cxx MacmillanController.cxx ProductionAction.cxx TradeAction.cxx ConsumptionAction.cxx CulturalAction.cxx Network.cxx ProvinceTest.cxx RomanTest.cxx')
 
 ###################################################
 ########## END OF CUSTOM INFORMATION  #############
@@ -38,6 +38,8 @@ env.Append( BUILDERS = {'GenerateMPICode' : generateMPICodeBuilder})
 
 env.Append(LINKFLAGS = '-fopenmp')
 env.Append(CCFLAGS = '-std=c++0x -DTIXML_USE_STL'.split())
+env.Append(LIBS = 'boost_unit_test_framework tinyxml pthread mpl'.split())
+
 if env['debug'] == True:
     env.Append(CCFLAGS = '-g -O0 -Wall -DPANDORADEBUG'.split())
     if env['edebug']==True:
@@ -45,11 +47,13 @@ if env['debug'] == True:
     #env.Append(LIBS = 'pandorad')
     env.Append(LIBS = 'pandora')
 else:
-    env.Append(CCFLAGS = '-Ofast'.split())
     env.Append(LIBS = 'pandora')
 
 env.Append(CPPPATH = ['.', pandoraPath+'/include'])
 env.Append(LIBPATH = [pandoraPath+'/lib'])
+
+
+print env
 
 # add the list of mpi code that must be generated & compiled
 mpiAgentsSrc = ['mpiCode/FactoryCode.cxx']

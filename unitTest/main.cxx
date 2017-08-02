@@ -1147,7 +1147,7 @@ BOOST_AUTO_TEST_CASE( AddTypeGood )
 	myAgent0->setRandomPosition();
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1167,7 +1167,7 @@ BOOST_AUTO_TEST_CASE( AddTwoTimesTypeGood )
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("A",99.0,0.0,0.0,0.0);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1187,7 +1187,7 @@ BOOST_AUTO_TEST_CASE( AddTwoDifferentTypeGood )
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGoodType("B",50.0,0.0,0.0,0.0);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 2);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1211,7 +1211,7 @@ BOOST_AUTO_TEST_CASE( RemoveTypeGood )
 	myAgent0->addGoodType("B",50.0,0.0,0.0,0.0);
 	myAgent0->removeGoodType("A");
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "B");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1231,7 +1231,7 @@ BOOST_AUTO_TEST_CASE( RemoveNoneExistingGood )
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->removeGoodType("B");
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1252,7 +1252,7 @@ BOOST_AUTO_TEST_CASE( AddGood )
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 2.0);
@@ -1273,7 +1273,7 @@ BOOST_AUTO_TEST_CASE( AddTooMuchGood )
 	myAgent0->addGood("A",2.0);
 	myAgent0->addGood("A",98.1);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 100.0);
@@ -1293,7 +1293,7 @@ BOOST_AUTO_TEST_CASE( AddGoodToNotKnownType )
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("B",2.0);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1314,7 +1314,7 @@ BOOST_AUTO_TEST_CASE( RemoveGood )
 	myAgent0->addGood("A",50.0);
 	myAgent0->removeGood("A",2.0);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 48.0);
@@ -1335,7 +1335,7 @@ BOOST_AUTO_TEST_CASE( RemoveTooMuchGood )
 	myAgent0->addGood("A",10.0);
 	myAgent0->removeGood("A",20.0);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 0.0);
@@ -1356,7 +1356,7 @@ BOOST_AUTO_TEST_CASE( RemoveGoodNotKnown )
 	myAgent0->addGood("A",10.0);
 	myAgent0->removeGood("B",20.0);
 
-	std::vector<std::tuple<std::string, double, double, double, double> > listGoods = myAgent0->getListGoods();
+	std::vector<std::tuple<std::string, double, double, double, double, double> > listGoods = myAgent0->getListGoods();
 	BOOST_CHECK_EQUAL(listGoods.size(), 1);
 	BOOST_CHECK_EQUAL(std::get<0>(listGoods[0]), "A");
 	BOOST_CHECK_EQUAL(std::get<1>(listGoods[0]), 10.0);
@@ -1376,7 +1376,7 @@ BOOST_AUTO_TEST_CASE( GetGood )
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
-	std::tuple<double, double, double, double> goods = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods = myAgent0->getGood("A");
 	BOOST_CHECK_EQUAL(std::get<0>(goods), 2.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods), 100.0);
 
@@ -1394,7 +1394,7 @@ BOOST_AUTO_TEST_CASE( GetGoodUnknwon )
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",2.0);
 
-	std::tuple<double, double, double, double> goods = myAgent0->getGood("B");
+	std::tuple<double, double, double, double, double> goods = myAgent0->getGood("B");
 	BOOST_CHECK_EQUAL(std::get<0>(goods), -1.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods), -1.0);
 
@@ -1428,8 +1428,8 @@ BOOST_AUTO_TEST_CASE( SendGoodToReceiver )
 
 	myAgent0->sendGoodTo("agent_1","A",15);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 5.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1460,8 +1460,8 @@ BOOST_AUTO_TEST_CASE( SendUnknownGood )
 
 	myAgent0->sendGoodTo("agent_1","B",15);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1494,9 +1494,9 @@ BOOST_AUTO_TEST_CASE( SendGoodUnknownToReceiver )
 
 	myAgent0->sendGoodTo("agent_1","B",15);
 
-	std::tuple<double, double, double, double> goodsA0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goodsB0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> goodsA0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goodsB0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goodsA0), 20.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goodsA0), 100.0);
@@ -1526,8 +1526,8 @@ BOOST_AUTO_TEST_CASE( SendGoodWithoutConnection )
 
 	myAgent0->sendGoodTo("agent_1","A",15);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1558,8 +1558,8 @@ BOOST_AUTO_TEST_CASE( SendGoodToSender )
 
 	myAgent1->sendGoodTo("agent_0","A",15);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 0.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1591,8 +1591,8 @@ BOOST_AUTO_TEST_CASE( SendSaturatingGood )
 
 	myAgent0->sendGoodTo("agent_1","A",90);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 10.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1623,8 +1623,8 @@ BOOST_AUTO_TEST_CASE( SendGoodNotInStock )
 
 	myAgent0->sendGoodTo("agent_1","A",30);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
 
 	BOOST_CHECK_EQUAL(std::get<0>(goods0), 20.0);
 	BOOST_CHECK_EQUAL(std::get<1>(goods0), 100.0);
@@ -1654,10 +1654,10 @@ BOOST_AUTO_TEST_CASE( GetListAllTrades )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
@@ -1695,10 +1695,10 @@ BOOST_AUTO_TEST_CASE( GetListProposedTradesFromSource )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
@@ -1734,21 +1734,21 @@ BOOST_AUTO_TEST_CASE( TradeGoods )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -1784,21 +1784,21 @@ BOOST_AUTO_TEST_CASE( RefuseTrade )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->refuseTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -1831,10 +1831,10 @@ BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToSender )
 	myAgent1->setRandomPosition();
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent1->proposeConnectionTo("agent_0");
@@ -1842,9 +1842,9 @@ BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToSender )
 
 	myAgent1->proposeTradeTo("agent_0","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent1->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent0->getReceivedTrades();
 
@@ -1879,17 +1879,17 @@ BOOST_AUTO_TEST_CASE( TradeGoodOfUnknownTypeToReceiver )
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
 
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -1920,20 +1920,20 @@ BOOST_AUTO_TEST_CASE( TradeGoodsWhenNoNetworkLink )
 	myAgent1->setRandomPosition();
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -1969,20 +1969,20 @@ BOOST_AUTO_TEST_CASE( TradeGoodsWithLinkInWrongDirection )
 	myAgent0->acceptConnectionFrom("agent_1");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2019,20 +2019,20 @@ BOOST_AUTO_TEST_CASE( AcceptNonExistingTrade )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2068,20 +2068,20 @@ BOOST_AUTO_TEST_CASE( NotEnoughCurrencyInReceiver )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2118,20 +2118,20 @@ BOOST_AUTO_TEST_CASE( TradeGoodNotInStock )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("currency",50.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2167,22 +2167,22 @@ BOOST_AUTO_TEST_CASE( NotEnoughStorageSpaceInReceiver )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",50.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("A",95.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
@@ -2218,21 +2218,21 @@ BOOST_AUTO_TEST_CASE( NotEnoughSpaceInSender )
 	myAgent1->acceptConnectionFrom("agent_0");
 
 	myAgent0->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent0->addGoodType("currency",100.0,0.0,0.0);
+	myAgent0->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent0->addGood("A",20.0);
 	myAgent0->addGood("currency",95.0);
 
 	myAgent1->addGoodType("A",100.0,0.0,0.0,0.0);
-	myAgent1->addGoodType("currency",100.0,0.0,0.0);
+	myAgent1->addGoodType("currency",100.0,0.0,0.0,0.0);
 	myAgent1->addGood("currency",50.0);
 
 	myAgent0->proposeTradeTo("agent_1","A",10,10);
 	myAgent1->acceptTradeFrom("agent_0","A",10,10);
 
-	std::tuple<double, double, double, double> goods0 = myAgent0->getGood("A");
-	std::tuple<double, double, double, double> goods1 = myAgent1->getGood("A");
-	std::tuple<double, double, double, double> currency0 = myAgent0->getGood("currency");
-	std::tuple<double, double, double, double> currency1 = myAgent1->getGood("currency");
+	std::tuple<double, double, double, double, double> goods0 = myAgent0->getGood("A");
+	std::tuple<double, double, double, double, double> goods1 = myAgent1->getGood("A");
+	std::tuple<double, double, double, double, double> currency0 = myAgent0->getGood("currency");
+	std::tuple<double, double, double, double, double> currency1 = myAgent1->getGood("currency");
 	std::vector<std::tuple<std::string,std::string,double,double> > listProposedTrades = myAgent0->getProposedTrades();
 	std::vector<std::tuple<std::string,std::string,double,double> > listReceivedTrades = myAgent1->getReceivedTrades();
 
