@@ -3,6 +3,7 @@
 
 #include <World.hxx>
 #include <Province.hxx>
+#include <math.h>
 
 #include <Logger.hxx>
 
@@ -20,6 +21,11 @@ namespace Epnet
 	void ProductionAction::execute(Engine::Agent& agent)
 	{
 		Roman & romanAgent = (Roman&)agent;
+		Engine::World * world = agent.getWorld();
+		Province & provinceWorld = (Province&) *world;
+		std::string pgood = std::get<0>(romanAgent.getProducedGood());
+		double ratio =  provinceWorld.getRatio(pgood);
+
 
 		std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= (romanAgent.getListGoods());
 
@@ -28,9 +34,8 @@ namespace Epnet
 			std::string good = std::get<0>(*it);
 			// 	 double producedQuantity = (double)(romanAgent.getProductionRate(good)*provinceWorld.getNumberOfAgents()*romanAgent.getNeed(good));
 			//double producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good));
-			double producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*allGood.size());
-			//double producedQuantity = (double)(romanAgent.getProductionRate(good));
-
+			//double producedQuantityold = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*allGood.size());
+			double producedQuantity = round((double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*(ratio+1)));
 			romanAgent.setQuantity(good,producedQuantity);
 
 		}
