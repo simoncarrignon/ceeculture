@@ -121,7 +121,7 @@ namespace Epnet
 		std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods= romanAgent.getListGoods();
 		for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 			std::string ressource= std::get<0>(*ot);
-			if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0 < _mutationRate)
+			if(Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0 < _mutationRate && ressource!="coins")
 			{
 
 				double oldPrice = romanAgent.getPrice(ressource);
