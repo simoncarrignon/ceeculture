@@ -816,6 +816,7 @@ namespace Epnet
 
     }
 
+    //this is what should be used to move goods froma gents to agent if this model has to be well designed and well coded (this is JM code actually)
     void Roman::sendGoodTo(std::string target, std::string type, double value)
     {
 	// if the connection with the target has been validated
