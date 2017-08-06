@@ -31,14 +31,16 @@ namespace Epnet
 		std::random_shuffle(gto.begin(),gto.end());//random the order of good like that we don't go to buy the same product first
 
 		std::vector<std::string>::iterator  it = gto.begin();
+		float epsilon=0.00001;
 
 		std::string offererProducedGood= std::get<0>(offerer.getProducedGood()); 
+		//std::cout<<gto.size()<<" prod."<< agent.getId()<< "trading";
 
 		//For all type of ressource
 		while(it != gto.end()){	
 
-
 			std::string goodWanted = *it;
+		//	std::cout<<" "<< goodWanted << ", "<<provinceWorld.getListOfProd(goodWanted).size()<< " prod, ";
 			if(goodWanted != offererProducedGood){
 
 				//std::vector< std::string > exchangeNetwork =offerer.getValidRcvConnections();
@@ -51,6 +53,7 @@ namespace Epnet
 				std::tuple< std::string, double, double> bestTrade=std::make_tuple<std::string,double,double>(std::string(""),0,0);
 
 				//qt is the quantity that of is own produced good the agent is willing to exchange
+				double ratio =  provinceWorld.getRatio(offererProducedGood);
 
 				double requestedQuantity=0;
 				double proposedQuantity =0;
@@ -70,8 +73,9 @@ namespace Epnet
 					g++;
 				    }
 
-				    double lambda=M/N;
-				    requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
+				    if(!rat)ratio=1;
+				    double lambda=M/(N * ratio);
+				    requestedQuantity= offerer.getNeed(goodWanted)*lambda;//-offerer.getQuantity(goodWanted);
 				}
 				else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
 				    double M=0.0;
@@ -86,8 +90,9 @@ namespace Epnet
 					g++;
 				    }
 
-				    double lambda=M/N;
-				    requestedQuantity= 1/offerer.getPrice(goodWanted)*lambda-offerer.getQuantity(goodWanted);
+				    if(!rat)ratio=1;
+				    double lambda=M/(N * ratio);
+				    requestedQuantity= 1/offerer.getPrice(goodWanted)*lambda;//-offerer.getQuantity(goodWanted);
 				}
 				else{
 				    requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
@@ -100,20 +105,22 @@ namespace Epnet
 				bool tradeDone = 0;
 				int noffer_max=exchangeNetwork.size()*provinceWorld.getMarketSize();//if noffer_max is < numagents/ngoods, it means that we limite the research of the agent in the markert
 				//std::cout<<offerer.getId()<<" requested ("<<goodWanted<<"):"<<requestedQuantity<<", proposed("<<offererProducedGood<<"):"<<proposedQuantity<<", pricewanted("<<goodWanted<<"):"<<offerer.getPrice(goodWanted)<<", priceproduce("<<offererProducedGood<<"): "<<offerer.getPrice(offererProducedGood)<<std::endl;
-				if(requestedQuantity < 0.0 || AlmostEqualRelative(requestedQuantity,0.0,0.01))tradeDone=1;
+				if(requestedQuantity < 0.0 || AlmostEqualRelative(requestedQuantity,0.0,epsilon))tradeDone=1;
+				//std::cout<< goodWanted<<" has  "<<exchangeNetwork.size()<< " prod :";
 				while(itO != exchangeNetwork.end() && !tradeDone && noffer<=noffer_max){
 					noffer++;
 					Roman & responder = (Roman&)(*world->getAgent(*itO));
-
+					//std::cout<<" "<<responder.getId()<< " among :"<<responder.getListOfCulturalNeighbours().size()<<":";
 					std::string responderProducedGood = std::get<0>(responder.getProducedGood());
 
 
 					if(responderProducedGood == goodWanted ){ 
 
+					    double ratio =  provinceWorld.getRatio(goodWanted);
 					    double responderTradeWill =  0;
 					    double responderTradCounter =  0;
 					    if(provinceWorld.getTradeVolSelFunction()=="gintis07"){
-						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
+						responderTradeWill =  responder.getNeed(offererProducedGood);//-responder.getQuantity(offererProducedGood); 
 					    }
 					    else if (provinceWorld.getTradeVolSelFunction()=="gintis06"){
 						double M=0.0;
@@ -127,8 +134,9 @@ namespace Epnet
 						    g++;
 						}
 
-						double lambda=M/N;
-						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
+						if(!rat)ratio=1;
+						double lambda=M/(N*ratio);
+						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda;///-responder.getQuantity(offererProducedGood); 
 					    }
 					    else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
 						double M=0.0;
@@ -138,26 +146,27 @@ namespace Epnet
 						std::vector<std::string>::iterator g = goods.begin();
 						while(g!=goods.end()){
 						    M+=responder.getPrice(*g) * responder.getQuantity(*g);
-						    N+=responder.getPrice(*g) * 1/responder.getPrice(*g);
+						    N+=responder.getPrice(*g) * 1/responder.getPrice(*g);//in that case the ratio should be his own ratio
 						    g++;
 						}
 
-						double lambda=M/N;
-						responderTradeWill =  1/responder.getPrice(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
+						if(!rat)ratio=1;
+						double lambda=M/(N*ratio);
+						responderTradeWill =  1/responder.getPrice(offererProducedGood)*lambda;//-responder.getQuantity(offererProducedGood); 
 					    }
 					    else{
-						responderTradeWill= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
+						responderTradeWill= offerer.getPrice(goodWanted);//-offerer.getQuantity(goodWanted);
 					    }
 						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
 
 						if(
-						  ( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, 0.01) ) && 				//the quantity offered is at least egual to the quantity the other estim good for him
+						  ( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, epsilon) ) && 				//the quantity offered is at least egual to the quantity the other estim good for him
 						  responderTradeWill > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
 						  requestedQuantity > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
-						  ( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, 0.01)) &&		//the quantity asked is available in the stock of the responder
-						  ( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, 0.01) )  &&	//the quantity proposed is available in the offerer stock
-						  ( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, 0.01))				//the quantity asked is less that the value estimated by the responder
+						  ( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, epsilon)) &&		//the quantity asked is available in the stock of the responder
+						  ( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, epsilon) ) // &&	//the quantity proposed is available in the offerer stock
+						  //( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, epsilon))				//the quantity asked is less that the value estimated by the responder
 						  )
 						{
 							if(responderTradeWill<proposedQuantity){
@@ -170,13 +179,36 @@ namespace Epnet
 								tradeDone=1;
 							}
 						}else{
-							//trade fail
+						    //The trade fail: print why
+						    //timestep,requestedQuantity,responderTradCounter,responder.getQuantity(goodWanted),proposedQuantity,responderTradeWill,offerer.getQuantity(offererProducedGood),responder.getQuantity(offererProducedGood),(responderTradeWill<=proposedQuantity),(responderTradeWill>0),(requestedQuantity>0),(responder.getQuantity(goodWanted)>=requestedQuantity),(offerer.getQuantity(offererProducedGood)>=proposedQuantity),(responderTradCounter>=requestedQuantity);
+
+						    
+						   // std::stringstream logTrade;
+						   // std::string sep= ",";
+						   // logTrade<<world->getCurrentTimeStep()<<sep;
+						   // logTrade<<goodWanted<<sep;
+						   // logTrade<<offererProducedGood<<sep;
+						   // logTrade<<requestedQuantity<< sep;
+						   // logTrade<<responderTradCounter<< sep;
+						   // logTrade<<responder.getQuantity(goodWanted)<< sep;
+						   // logTrade<<proposedQuantity<< sep;
+						   // logTrade<<responderTradeWill<< sep;
+						   // logTrade<<offerer.getQuantity(offererProducedGood)<< sep;
+						   // logTrade<<responder.getQuantity(offererProducedGood)<< sep;
+						   // logTrade<<( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, epsilon) ) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
+						   // logTrade<< (responderTradeWill > 0 ) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
+						   // logTrade<<(requestedQuantity > 0) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
+						   // logTrade<<( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, epsilon)) <<sep;		//the quantity asked is available in the stock of the responder
+						   // logTrade<<( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, epsilon) )  <<sep;	//the quantity proposed is available in the offerer stock
+					//	   // logTrade<<( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, epsilon));				//the quantity asked is less that the value estimated by the responder
+						   // log_INFO("trade", logTrade.str());
+
 						}
 
 
 					}
 					else{
-						std::cout<<"ça narrive pluusuus"<<std::endl;
+					    //This case has to be implemented when redistribution is allowed!
 					}
 
 					itO++;		    
@@ -202,13 +234,14 @@ namespace Epnet
 				else{
 					//the agent has leaved the market without doing any trade
 				}
-
 			}
 
 
 			it++;
 		}
 //      std::cout << "tradetime," << (std::clock() - start) / (double)(CLOCKS_PER_SEC / 1000) << ","<< world->getCurrentTimeStep()<<std::endl;
+//	if(offerer.getQuantity(offererProducedGood) <= 0.0||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),0.0, epsilon))
+//	    offerer.setQuantity(offererProducedGood,3);
 
 
 
