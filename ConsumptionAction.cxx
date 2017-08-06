@@ -43,7 +43,7 @@ namespace Epnet
 		while(it!=allGood.end())
 		{
 		    std::string good=std::get<0>(*it);
-		    if(romanAgent.getNeed(good)>0){
+		    if(romanAgent.getNeed(good)>0 && good != "coins"){
 		    if(provinceWorld.getTradeUtilFunction() == "gintis07"){
 			//if(good == std::get<0>(romanAgent.getProducedGood())){
 			//    double curNeedForMyGood = romanAgent.getNeed(good);
