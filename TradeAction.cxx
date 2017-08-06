@@ -73,7 +73,6 @@ namespace Epnet
 					g++;
 				    }
 
-				    if(!rat)ratio=1;
 				    double lambda=M/(N * ratio);
 				    requestedQuantity= offerer.getNeed(goodWanted)*lambda;//-offerer.getQuantity(goodWanted);
 				}
@@ -90,7 +89,6 @@ namespace Epnet
 					g++;
 				    }
 
-				    if(!rat)ratio=1;
 				    double lambda=M/(N * ratio);
 				    requestedQuantity= 1/offerer.getPrice(goodWanted)*lambda;//-offerer.getQuantity(goodWanted);
 				}
@@ -134,7 +132,6 @@ namespace Epnet
 						    g++;
 						}
 
-						if(!rat)ratio=1;
 						double lambda=M/(N*ratio);
 						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda;///-responder.getQuantity(offererProducedGood); 
 					    }
@@ -150,7 +147,6 @@ namespace Epnet
 						    g++;
 						}
 
-						if(!rat)ratio=1;
 						double lambda=M/(N*ratio);
 						responderTradeWill =  1/responder.getPrice(offererProducedGood)*lambda;//-responder.getQuantity(offererProducedGood); 
 					    }
