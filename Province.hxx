@@ -20,6 +20,7 @@ namespace Epnet
 		std::map<std::string,Network> _good2CulturalNetwork;
 
 		std::vector<std::tuple<std::string,double>> _needs;
+		std::vector<std::tuple<std::string,int>> _nbProds;
 		std::vector<std::tuple<std::string,double>> _maxscore;
 		std::vector<std::tuple<std::string,double>> _minscore;
 		double _maxScore;
@@ -53,6 +54,7 @@ namespace Epnet
 		std::vector<std::string> getListOfProd(std::string s);
 		float getMarketSize();
 	 
+		double getRatio(std::string pgood);
 		void proposeConnection(std::string source, std::string target);
 		void buildConnection(std::string source, std::string target);
 		void killConnection(std::string source, std::string target);
