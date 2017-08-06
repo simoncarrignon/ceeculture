@@ -23,6 +23,7 @@ namespace Epnet
 		double all_needs=0.0;
 		_minScore=0.0;
 		_maxScore=0.0;
+		_nbProds=provinceConfig._nbProds;
 		//double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
 		
 
@@ -93,6 +94,11 @@ namespace Epnet
 			//error no good type
 		}
 
+
+		//initialize a log file that allows to log why trades fail
+		std::stringstream tradeHeaders ;
+		tradeHeaders<< "timestep,goodwanted,goodproposed,requestedQuantity,responderTradCounter,responder.getQuantity-goodWanted,proposedQuantity,responderTradeWill,offerer.getQuantity-offererProducedGood,responder.getQuantity-offererProducedGood,responderTradeWill_SUP_proposedQuantity,responderTradeWill_INFEQ_0,requestedQuantity_INFEQ_0,responder.getQuantity-goodWanted-_INF_requestedQuantity,offerer.getQuantity-offererProducedGood-_INF_proposedQuantity,responderTradCounter_INF_requestedQuantity-";
+		log_INFO("trade",tradeHeaders.str());
 
 		
 	}
@@ -214,10 +220,12 @@ namespace Epnet
 					for (auto it = provinceConfig._paramGoods.begin(); it != provinceConfig._paramGoods.end() ; it++)
 					{
 						//id, maxQuantity, price, need and production rate of the good
-						agent->addGoodType(std::get<0>(*it),std::get<2>(*it),std::get<3>(*it),std::get<4>(*it),std::get<5>(*it));
+					    std::string goodType = std::get<0>(*it);
+						agent->addGoodType(goodType,std::get<2>(*it),std::get<3>(*it),std::get<4>(*it),std::get<5>(*it));
 
 						//add init quantity to new good
-						agent->addGood(std::get<0>(*it),std::get<1>(*it));
+						agent->addGood(goodType,std::get<1>(*it));
+						while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 
 						//set a random price for each goods
 
@@ -230,11 +238,42 @@ namespace Epnet
 				if(provinceConfig._goodsParam == "gintis07")
 					log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
 
-				//Set producedGood as a modulo of the agent ID
+				//
+				//
+				///choose the production good
+				std::tuple< std::string, double, double, double, double, double > producedGood =  std::tuple< std::string, double, double, double, double, double >();
 
-				int randg = i%provinceConfig._numGoods;
-				std::tuple< std::string, double, double, double, double, double > producedGood = agent->getListGoods()[randg];
-				agent->setProductionRate(std::get<0>(producedGood),1.0);
+				if(provinceConfig._typeProd == "unbalanced"){
+				    bool found=0; //a stop condition
+				    int list=0; //indice that will be increm
+				    int ind=0;
+				    int ng=_nbProds.size(); //number of good
+
+				    while(!found && list <= (ng-1)){ //loop to see where the id of the roman fall in => the index where he falls in gives us his production good
+
+					if(std::get<1>(_nbProds[list]) < 0 || i < ind + std::get<1>(_nbProds[list]) ){
+					    //if the id is less than ...
+					    found=1;
+					    producedGood = agent->getListGoods()[list];
+					}
+
+					ind+=std::get<1>(_nbProds[list]);
+					list++;
+				    }
+				}
+				else{
+				    //Set producedGood as a modulo of the agent ID
+				    int randg = i%provinceConfig._numGoods;
+				    producedGood = agent->getListGoods()[randg];
+				}
+
+
+
+				//set rate of production of the production good
+				if(agent->getProductionRate(std::get<0>(producedGood))<=0) //this is all about HOW you want to initialize your production rate. So far it's really badly done if you want to set them up manually
+					agent->setProductionRate(std::get<0>(producedGood),1.0); 
+				//at this agent to the list of productor of this good
+				//tis is used afterward to simplify the way people are going to market
 				_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				//loop for initialize the commercial connection of the current agent with all previously created agents.
@@ -459,6 +498,16 @@ namespace Epnet
 		return(allprod);
 
 	}
+	//
+	//return the ration of people producing the good `pgood`
+	double Province::getRatio(std::string pgood){
+		int totalAgents = this->getNumberOfAgents();
+		int nbAgentsProducingSameGood = this->getListOfProd(pgood).size();
+
+		double ratio = (double)(totalAgents)/(double)nbAgentsProducingSameGood; 
+		return ratio;
+	}
+
 	float Province::getMarketSize(){
 
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
@@ -586,6 +635,11 @@ void Province::stepEnvironment()
 		std::get<1>(_needs[0])=std::get<1>(_needs[_needs.size()-1]);
 		std::get<1>(_needs[_needs.size()-1])=tmp;
 
+		std::ostringstream sgoodType;
+		sgoodType << "g"<< _typesOfGood.size();				
+		std::string goodType = sgoodType.str();
+		_needs.push_back(std::make_tuple(goodType,0));
+		_typesOfGood.push_back(goodType);
 		
 		
 	//	std::cout << "Switch" << std::endl;
