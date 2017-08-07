@@ -91,6 +91,9 @@ namespace Epnet
 		void registerAttributes();
 		void serialize();
 
+		void registerGood(std::string type);
+		void serializeGood(std::string type,int id);//the id is to retrieve the need from _need. 
+
 		void setResources( int resources );
 		int getResources() const;
 

@@ -45,38 +45,22 @@ namespace Epnet
 
     void Roman::registerAttributes()
     {
+	Province & curWorld = (Province&) *getWorld();
 	registerFloatAttribute("scores");
-	for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
-	{
-	    std::ostringstream oss;
-	    oss <<std::get<0>(*it) << "_q";
-	    std::string name=oss.str();
-	    registerFloatAttribute(name);
-	    std::ostringstream ossb;
-	    ossb <<std::get<0>(*it) << "_p";
-	    name=ossb.str();
-	    registerFloatAttribute(name);
-	    std::ostringstream ossc;
-	    ossc <<std::get<0>(*it) << "_n";
-	    name=ossc.str();
-	    registerFloatAttribute(name);
-
-	    if(_type == "gintis07"){
-		std::ostringstream ossd;
-		ossd <<std::get<0>(*it) << "_on";
-		name=ossd.str();
-		registerFloatAttribute(name);
+	if(!curWorld.hasEvent()){
+	    for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+	    {
+		this->registerGood(std::get<0>(*it));
 	    }
-
-
-
-	    /*std::ostringstream ossb;
-	      oss <<std::get<0>(*it) << "_q";
-	      registerFloatAttribute(ossb.str());
-	      std::ostringstream ossc;
-	      oss <<std::get<0>(*it) << "_n";
-	      registerFloatAttribute(ossc.str());
-	      */
+	}
+	else{
+	    for( int i =0 ; i<7;i++)
+	    {
+		std::ostringstream oss;
+		oss <<"g"<<i;
+		this->registerGood(oss.str());
+	    }
+	    this->registerGood("coins");
 	}
 
 	//	registerIntAttribute("nbConnectionsRcv");
@@ -93,45 +77,29 @@ namespace Epnet
 
     void Roman::serialize()
     {
+	Province & curWorld = (Province&) *getWorld();
 	serializeAttribute("scores", (float)_score);
 	int id=0; //the need calculate using the demand function (ie the need use in gintis 07) are stored in a vector of int thus are acceesed with normal indices and notes via the more complex technics use in the other cases
-	for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
-	{
-	    std::ostringstream oss;
-	    oss <<std::get<0>(*it) << "_q";
-	    std::string name=oss.str();
-	    float value =(float)getQuantity(std::get<0>(*it));
-	    serializeAttribute(name,value); 
-
-	    std::ostringstream ossb;
-	    ossb <<std::get<0>(*it) << "_p";
-	    name=ossb.str();
-	    value =(float)getPrice(std::get<0>(*it));
-	    serializeAttribute(name,value );
-
-	    std::ostringstream ossc;
-	    ossc <<std::get<0>(*it) << "_n";
-	    name=ossc.str();
-	    value =(float)getNeed(std::get<0>(*it));
-	    serializeAttribute(name,value); 
-
-	    if(_type == "gintis07"){
-		std::ostringstream ossd;
-		ossd <<std::get<0>(*it) << "_on";
-		name=ossd.str();
-		serializeAttribute(name,(float)this->_optNeed[id]); 
+	if(!curWorld.hasEvent()){
+	    for( std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = listGoods.begin(); it != listGoods.end() ; it++)
+	    {
+		serializeGood(std::get<0>(*it),id);
+		id++;
 	    }
-
-	    /*			std::ostringstream ossb;
-				oss <<std::get<0>(*it) << "_q";
-				serializeAttribute(ossb.str(), (float)getQuantity(std::get<0>(*it)));
-				std::ostringstream ossc;
-				oss <<std::get<0>(*it) << "_n";
-				serializeAttribute(ossc.str(), (float)getNeed(std::get<0>(*it)));
-				*/			
-	    id++;
 	}
+	else{
+	    for( int i =0 ; i<7;i++)
+	    {
+		std::ostringstream oss;
+		oss <<"g"<<i;
+		this->serializeGood(oss.str(),id);
+		id++;
+	    }
+	    this->serializeGood("coins",id);
+	}
+
 	serializeAttribute("p_good", std::get<0>(getProducedGood()));
+
 	if(_type == "gintis07"){
 	    serializeAttribute("u", (float)_curUtility);
 	    serializeAttribute("opt_u", (float)_optUtility);
@@ -1207,6 +1175,57 @@ namespace Epnet
 
 
  }
+
+ void Roman::registerGood(std::string type){
+	    std::ostringstream oss;
+	    oss <<type << "_q";
+	    std::string name=oss.str();
+	    registerFloatAttribute(name);
+	    std::ostringstream ossb;
+	    ossb <<type << "_p";
+	    name=ossb.str();
+	    registerFloatAttribute(name);
+	    std::ostringstream ossc;
+	    ossc <<type << "_n";
+	    name=ossc.str();
+	    registerFloatAttribute(name);
+
+	    if(_type == "gintis07"){
+		std::ostringstream ossd;
+		ossd <<type << "_on";
+		name=ossd.str();
+		registerFloatAttribute(name);
+	    }
+ }
+
+ void Roman::serializeGood(std::string type, int id){
+	    std::ostringstream oss;
+	    oss <<type << "_q";
+	    std::string name=oss.str();
+	    float value =(float)getQuantity(type);
+	    serializeAttribute(name,value); 
+
+	    std::ostringstream ossb;
+	    ossb <<type << "_p";
+	    name=ossb.str();
+	    value =(float)getPrice(type);
+	    serializeAttribute(name,value );
+
+	    std::ostringstream ossc;
+	    ossc <<type << "_n";
+	    name=ossc.str();
+	    value =(float)getNeed(type);
+	    serializeAttribute(name,value); 
+
+	    if(_type == "gintis07"){
+		std::ostringstream ossd;
+		ossd <<type << "_on";
+		name=ossd.str();
+		serializeAttribute(name,(float)this->_optNeed[id]); 
+	    }
+
+ }
+
 
 
 } // namespace Roman
