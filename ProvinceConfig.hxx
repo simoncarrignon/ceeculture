@@ -28,6 +28,7 @@ class ProvinceConfig : public Engine::Config
 	std::string _goodsParam;
 	std::string _events;
 	int _eventsRate;
+	int _eventsStop;
 	std::string _networkType;
 	std::string _networkOut;
 	std::string _aType;
@@ -35,10 +36,11 @@ class ProvinceConfig : public Engine::Config
 	float _mutationRate;
 	std::string _innovationProcess;
 	float _marketSize;
-	std::string _tradeUtilFunction;
-	std::string _tradeVolSelFunction;
-	float _muMax;
-	std::vector<std::tuple<std::string,int>> _nbProds;
+	std::string _tradeUtilFunction; //what kind of utility function will be used to trade
+	std::string _tradeVolSelFunction; //what kind of function will be sued to select the amount of good wanted
+	float _muMax; //range of the mutations
+	std::vector<std::tuple<std::string,int>> _nbProds; //totalle number of producter for each products of the simulation
+	std::string _logTrade; //a string that says if a log of all the trade (amount, kind, why they failed) should be printed
 
 public:
 	ProvinceConfig( const std::string & xmlFile );

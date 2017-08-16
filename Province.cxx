@@ -91,14 +91,16 @@ namespace Epnet
 
 		}
 		else{
-			//error no good type
+		    //error no good type
 		}
 
 
-		//initialize a log file that allows to log why trades fail
-		std::stringstream tradeHeaders ;
-		tradeHeaders<< "timestep,goodwanted,goodproposed,requestedQuantity,responderTradCounter,responder.getQuantity-goodWanted,proposedQuantity,responderTradeWill,offerer.getQuantity-offererProducedGood,responder.getQuantity-offererProducedGood,responderTradeWill_SUP_proposedQuantity,responderTradeWill_INFEQ_0,requestedQuantity_INFEQ_0,responder.getQuantity-goodWanted-_INF_requestedQuantity,offerer.getQuantity-offererProducedGood-_INF_proposedQuantity,responderTradCounter_INF_requestedQuantity-";
-		log_INFO("trade",tradeHeaders.str());
+		if(logTrade()){
+		    //initialize a log file that allows to log why trades fail
+		    std::stringstream tradeHeaders ;
+		    tradeHeaders<< "timestep,goodwanted,goodproposed,requestedQuantity,responderTradCounter,responder.getQuantity-goodWanted,proposedQuantity,responderTradeWill,offerer.getQuantity-offererProducedGood,responder.getQuantity-offererProducedGood,responderTradeWill_SUP_proposedQuantity,responderTradeWill_INFEQ_0,requestedQuantity_INFEQ_0,responder.getQuantity-goodWanted-_INF_requestedQuantity,offerer.getQuantity-offererProducedGood-_INF_proposedQuantity,responderTradCounter_INF_requestedQuantity-";
+		    log_INFO("trade",tradeHeaders.str());
+		}
 
 		
 	}
@@ -243,9 +245,9 @@ namespace Epnet
 				///choose the production good
 				std::tuple< std::string, double, double, double, double, double > producedGood =  std::tuple< std::string, double, double, double, double, double >();
 
-				if(provinceConfig._typeProd == "unbalanced"){
+				if(provinceConfig._typeProd == "unbalanced"){ //an algo to setup 'on the fly' who produces what in an iunbalanced scenario
 				    bool found=0; //a stop condition
-				    int list=0; //indice that will be increm
+				    int list=0; //indice that will be incremanted
 				    int ind=0;
 				    int ng=_nbProds.size(); //number of good
 
@@ -625,30 +627,75 @@ void Province::stepEnvironment()
 	}
 	if( provinceConfig._events == "rate"){
 	    //std::cout<<provinceConfig._eventsRate<< " ts "<<getCurrentTimeStep() <<std::endl;
-	    if( getCurrentTimeStep() >= provinceConfig._culturalStep* 3 *provinceConfig._eventsRate  && getCurrentTimeStep() % (provinceConfig._culturalStep* 3 * provinceConfig._eventsRate ) == 0){
-	//	std::cout << "=========="<< std::endl;
+	    if( getCurrentTimeStep() >= provinceConfig._culturalStep* 3 *provinceConfig._eventsRate  && getCurrentTimeStep() % (provinceConfig._culturalStep* 3 * provinceConfig._eventsRate ) == 0 && getCurrentTimeStep() <= provinceConfig._eventsStop ){
+		//std::cout << "=========="<< std::endl;
 	//	std::cout << "need:"<< std::get<0>(_needs[0])<< "="<< std::get<1>(_needs[0])<<std::endl;
 	//	std::cout << "need:"<< std::get<0>(_needs[_needs.size()-1])<< "="<< std::get<1>(_needs[_needs.size()-1])<<std::endl;
 		
 		//switch the first need with the last
-		double tmp = std::get<1>(_needs[0]);
-		std::get<1>(_needs[0])=std::get<1>(_needs[_needs.size()-1]);
-		std::get<1>(_needs[_needs.size()-1])=tmp;
+		//double tmp = std::get<1>(_needs[0]);
+		//std::get<1>(_needs[0])=std::get<1>(_needs[_needs.size()-1]);
+		//std::get<1>(_needs[_needs.size()-1])=tmp;
 
 		std::ostringstream sgoodType;
-		sgoodType << "g"<< _typesOfGood.size();				
+		sgoodType << "g"<< _typesOfGood.size()-1;	//the new good will be simply called gN
 		std::string goodType = sgoodType.str();
-		_needs.push_back(std::make_tuple(goodType,0));
-		_typesOfGood.push_back(goodType);
+		_maxscore.push_back(std::make_tuple(goodType,0.0));
+		_minscore.push_back(std::make_tuple(goodType,1000.0));
+
+		_needs.push_back(std::make_tuple(goodType,0)); //add a new need for this new good to the global vector of need
+		this->normalizeNeeds(); //update the need of this and all other good
 		
+		_typesOfGood.push_back(goodType); //add the good to the gloabl list of good
+
+
+		bool newProd=0;
+		for(auto it=_agents.begin(); it != _agents.end() ; it++)
+		{
+
+		   Roman * agent  = dynamic_cast<Roman *>(getAgent( (*(*it)).getId()));
+		    agent->addGoodType(goodType,0.0,0.0,0.0,0.0);
+
+		    //std::cout<<"before"<<std::endl;
+		    //std::cout<<"prod good:"<<std::get<0>(agent->getProducedGood())<<std::endl; 
+		    //    //set a random properties for each goods
+		    while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
+		    if( std::get<0>(agent->getProducedGood()) == "coins" && !newProd){
+			agent->setProductionRate(goodType,1.0);
+			agent->setProductionRate("coins",0.0);
+			_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{agent->getId()}));
+			removeFromListOfProd(agent->getId(),"coins");
+			newProd=1;
+		    }
+
+		    //    //set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
+		    agent->setNeed(goodType,1.0/(_needs.size()-1));
+		    //std::cout<<"after"<<std::endl;
+		    //std::cout<<"prod good:"<<std::get<0>(agent->getProducedGood())<<std::endl; 
+		}			
+
 		
 	//	std::cout << "Switch" << std::endl;
 	//	std::cout << "need:"<< std::get<0>(_needs[0])<< "="<< std::get<1>(_needs[0])<<std::endl;
 	//	std::cout << "need:"<< std::get<0>(_needs[_needs.size()-1])<< "="<< std::get<1>(_needs[_needs.size()-1])<<std::endl;
-	//	std::cout<<"=========="<< std::endl;
+//		std::cout<<"=========="<< std::endl;
+//	    for(auto it = _typesOfGood.begin(); it != _typesOfGood.end();it++)
+//		printListOfProd(*it);
 	    }
 	}
 }
+
+	//this function normlaize all the need of the non monetary goods. Whatever was the need __before__ the call of this function, it become 1/#(!monetarygood). ie if thre is 6 goods in the province, 5 of them beings non monetary, the need for the five non monetary goods will be 0.2
+	void Province::normalizeNeeds()
+	{
+	    for( auto it = _needs.begin() ; it != _needs.end(); it++){
+		//std::cout<<"nouveau needs for"<<std::get<0>(*it)<<":"<<_needs.size()<<" moins un " <<_needs.size()-1<<" celuila:"<<std::get<0>(*it)<< "vaut : "<<std::get<1>(*it)<<std::endl;
+		if(std::get<0>(*it) != "coins")
+		    std::get<1>(*it)=1.0/(_needs.size()-1);
+		//std::cout<<"after  needs:"<<_needs.size()<<" moins un " <<_needs.size()-1<<" celuila:"<<std::get<0>(*it)<< "vaut : "<<std::get<1>(*it)<<std::endl;;
+
+	    }
+	}
 
 	void Province::buildTwoWayConnection(std::string source, std::string target)
 	{
@@ -676,6 +723,37 @@ void Province::stepEnvironment()
 		sourcePtr->killConnectionTo(target);
 		targetPtr->killConnectionTo(source);
 	}
+
+	bool Province::hasEvent()
+	{ 
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+	    if(provinceConfig._events == "rate") 
+	       	return(true) ; 
+	    else
+		return(false);
+	}
+	bool Province::logTrade()
+	{ 
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+	    if(provinceConfig._logTrade == "true") 
+	       	return(true) ; 
+	    else
+		return(false);
+	}
+	void Province::removeFromListOfProd(std::string agentId,std::string good)
+    	{
+	    //printListOfProd(good);
+	    std::vector<std::string> * listToRemove= & _good2Producers[good];
+	    auto idx = std::find(listToRemove->begin(),listToRemove->end(),agentId);
+	    if(idx==listToRemove->end())
+		    std::cout<<agentId<< " is not in the list of producer of "<<good<<std::endl;
+	    else{
+		std::cout<<"find someone to dump "<<agentId<<" in good "<<good<<std::endl;
+		listToRemove->erase(idx);
+	    }
+	    //printListOfProd(good);
+	}
+
 } // namespace Roman
 
 

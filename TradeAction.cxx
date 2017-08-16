@@ -74,7 +74,7 @@ namespace Epnet
 				    }
 
 				    double lambda=M/(N * ratio);
-				    requestedQuantity= offerer.getNeed(goodWanted)*lambda;//-offerer.getQuantity(goodWanted);
+				    requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
 				}
 				else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
 				    double M=0.0;
@@ -90,7 +90,7 @@ namespace Epnet
 				    }
 
 				    double lambda=M/(N * ratio);
-				    requestedQuantity= 1/offerer.getPrice(goodWanted)*lambda;//-offerer.getQuantity(goodWanted);
+				    requestedQuantity= 1/offerer.getPrice(goodWanted)*lambda-offerer.getQuantity(goodWanted);
 				}
 				else{
 				    requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
@@ -118,7 +118,7 @@ namespace Epnet
 					    double responderTradeWill =  0;
 					    double responderTradCounter =  0;
 					    if(provinceWorld.getTradeVolSelFunction()=="gintis07"){
-						responderTradeWill =  responder.getNeed(offererProducedGood);//-responder.getQuantity(offererProducedGood); 
+						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
 					    }
 					    else if (provinceWorld.getTradeVolSelFunction()=="gintis06"){
 						double M=0.0;
@@ -133,7 +133,7 @@ namespace Epnet
 						}
 
 						double lambda=M/(N*ratio);
-						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda;///-responder.getQuantity(offererProducedGood); 
+						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
 					    }
 					    else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
 						double M=0.0;
@@ -148,58 +148,61 @@ namespace Epnet
 						}
 
 						double lambda=M/(N*ratio);
-						responderTradeWill =  1/responder.getPrice(offererProducedGood)*lambda;//-responder.getQuantity(offererProducedGood); 
+						responderTradeWill =  1/responder.getPrice(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
 					    }
 					    else{
-						responderTradeWill= offerer.getPrice(goodWanted);//-offerer.getQuantity(goodWanted);
+						responderTradeWill= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
 					    }
-						responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
+					    responderTradCounter= responderTradeWill*responder.getPrice(offererProducedGood)/(responder.getPrice(goodWanted)); 
 
 
-						if(
-						  ( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, epsilon) ) && 				//the quantity offered is at least egual to the quantity the other estim good for him
-						  responderTradeWill > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
-						  requestedQuantity > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
-						  ( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, epsilon)) &&		//the quantity asked is available in the stock of the responder
-						  ( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, epsilon) ) // &&	//the quantity proposed is available in the offerer stock
-						  //( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, epsilon))				//the quantity asked is less that the value estimated by the responder
-						  )
-						{
-							if(responderTradeWill<proposedQuantity){
-								proposedQuantity=responderTradeWill;
-								//if(requestedQuantity>responderTradCounter) requestedQuantity = responderTradCounter;
-							}
+					    if(
+						    ( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, epsilon) ) && 				//the quantity offered is at least egual to the quantity the other estim good for him
+						    responderTradeWill > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
+						    requestedQuantity > 0 && 				//the quantity offered is at least egual to the quantity the other estim good for him
+						    ( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, epsilon)) &&		//the quantity asked is available in the stock of the responder
+						    ( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, epsilon) )  &&	//the quantity proposed is available in the offerer stock
+						    ( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, epsilon))				//the quantity asked is less that the value estimated by the responder
+					      )
+					    {
+						//trade is a success
+						if(responderTradeWill<proposedQuantity){
+						    proposedQuantity=responderTradeWill;
+						    //if(requestedQuantity>responderTradCounter) requestedQuantity = responderTradCounter;
+						}
 
-							if(std::get<2>(bestTrade) <= requestedQuantity){ 
-								bestTrade=std::make_tuple(*itO,requestedQuantity,proposedQuantity);
-								tradeDone=1;
-							}
-						}else{
+						//if we didn't had a better trade before we set this one as the best
+						if(std::get<2>(bestTrade) <= requestedQuantity){ 
+						    bestTrade=std::make_tuple(*itO,requestedQuantity,proposedQuantity);
+						    tradeDone=1;
+						}
+					    }else{
 						    //The trade fail: print why
 						    //timestep,requestedQuantity,responderTradCounter,responder.getQuantity(goodWanted),proposedQuantity,responderTradeWill,offerer.getQuantity(offererProducedGood),responder.getQuantity(offererProducedGood),(responderTradeWill<=proposedQuantity),(responderTradeWill>0),(requestedQuantity>0),(responder.getQuantity(goodWanted)>=requestedQuantity),(offerer.getQuantity(offererProducedGood)>=proposedQuantity),(responderTradCounter>=requestedQuantity);
 
-						    
-						   // std::stringstream logTrade;
-						   // std::string sep= ",";
-						   // logTrade<<world->getCurrentTimeStep()<<sep;
-						   // logTrade<<goodWanted<<sep;
-						   // logTrade<<offererProducedGood<<sep;
-						   // logTrade<<requestedQuantity<< sep;
-						   // logTrade<<responderTradCounter<< sep;
-						   // logTrade<<responder.getQuantity(goodWanted)<< sep;
-						   // logTrade<<proposedQuantity<< sep;
-						   // logTrade<<responderTradeWill<< sep;
-						   // logTrade<<offerer.getQuantity(offererProducedGood)<< sep;
-						   // logTrade<<responder.getQuantity(offererProducedGood)<< sep;
-						   // logTrade<<( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, epsilon) ) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
-						   // logTrade<< (responderTradeWill > 0 ) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
-						   // logTrade<<(requestedQuantity > 0) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
-						   // logTrade<<( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, epsilon)) <<sep;		//the quantity asked is available in the stock of the responder
-						   // logTrade<<( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, epsilon) )  <<sep;	//the quantity proposed is available in the offerer stock
-					//	   // logTrade<<( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, epsilon));				//the quantity asked is less that the value estimated by the responder
-						   // log_INFO("trade", logTrade.str());
+						    if(provinceWorld.logTrade()){
+							std::stringstream logTrade;
+							std::string sep= ",";
+							logTrade<<world->getCurrentTimeStep()<<sep;
+							logTrade<<goodWanted<<sep;
+							logTrade<<offererProducedGood<<sep;
+							logTrade<<requestedQuantity<< sep;
+							logTrade<<responderTradCounter<< sep;
+							logTrade<<responder.getQuantity(goodWanted)<< sep;
+							logTrade<<proposedQuantity<< sep;
+							logTrade<<responderTradeWill<< sep;
+							logTrade<<offerer.getQuantity(offererProducedGood)<< sep;
+							logTrade<<responder.getQuantity(offererProducedGood)<< sep;
+							logTrade<<( responderTradeWill < proposedQuantity || AlmostEqualRelative(responderTradeWill,proposedQuantity, epsilon) ) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
+							logTrade<< (responderTradeWill > 0 ) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
+							logTrade<<(requestedQuantity > 0) <<sep; 				//the quantity offered is at least egual to the quantity the other estim good for him
+							logTrade<<( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, epsilon)) <<sep;		//the quantity asked is available in the stock of the responder
+							logTrade<<( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, epsilon) )  <<sep;	//the quantity proposed is available in the offerer stock
+							//	   logTrade<<( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, epsilon));				//the quantity asked is less that the value estimated by the responder
+							log_INFO("trade", logTrade.str());
 
-						}
+						    }
+					    }
 
 
 					}

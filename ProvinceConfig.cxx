@@ -36,16 +36,32 @@ void ProvinceConfig::loadParams()
 	_goodsParam= getParamStr( "controller/good", "type");
 	_networkType= getParamStr( "network", "type");
 
+	//events setup
 	try{
 	    _events = getParamStr( "events", "type");
 	    if(_events == "rate")
 		_eventsRate =getParamInt( "events", "rate");
+		_eventsStop =getParamInt( "events", "stop");
 	}
 	catch(const Engine::Exception & e){
 	    //Create a load_config log file?
 	    _events = "no";
 	}
 
+
+	//loggfiels
+	try{
+	    //what should be stored here is a map for all differen kind of log and if they are true or not
+	    _logTrade = getParamStr( "logs/trade", "value");
+	}
+	catch(const Engine::Exception & e){
+	    //Create a load_config log file?
+	    _logTrade = "false";
+	}
+
+	
+	////networks
+	//read if network will be manually set up or nottj
 	try{
 	    _networkOut = getParamStr( "network", "output");
 	}

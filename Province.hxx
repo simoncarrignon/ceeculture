@@ -50,7 +50,7 @@ namespace Epnet
 		std::string getTradeVolSelFunction();
 		double getMuMax();
 
-		void printListOfProd(std::string s);//print all producer of the good "s"
+		void printListOfProd(std::string s);//print all producer of the good __s__
 		std::vector<std::string> getListOfProd(std::string s);
 		float getMarketSize();
 	 
@@ -67,6 +67,10 @@ namespace Epnet
 		void createCulturalNetwork();
 		void printAllCulturalNerwork();
 		double getNeed(std::string good);
+		void normalizeNeeds();
+		bool hasEvent(); //return true if event that will change the number of goods can occurs
+		bool logTrade(); //return true if a log of the trade has to be done
+		void removeFromListOfProd(std::string agent,std::string good);//remove the agent __agent__ from the list of producers of the good __good__ 
 	};
 
 } // namespace Epnet

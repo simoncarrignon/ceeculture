@@ -35,7 +35,7 @@ namespace Epnet
 			// 	 double producedQuantity = (double)(romanAgent.getProductionRate(good)*provinceWorld.getNumberOfAgents()*romanAgent.getNeed(good));
 			//double producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good));
 			//double producedQuantityold = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*allGood.size());
-			double producedQuantity = round((double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*(ratio+1)));
+			double producedQuantity = round((double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*(ratio)));
 			romanAgent.setQuantity(good,producedQuantity);
 
 		}
