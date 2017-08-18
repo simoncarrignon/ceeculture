@@ -60,7 +60,7 @@ namespace Epnet
 				if(provinceWorld.getTradeVolSelFunction() =="gintis07"){
 				    requestedQuantity= offerer.getNeed(goodWanted)-offerer.getQuantity(goodWanted);
 				}
-				else if( provinceWorld.getTradeVolSelFunction() =="gintis06"){
+				else if (provinceWorld.getTradeVolSelFunction()=="gintis06" ||provinceWorld.getTradeVolSelFunction() =="gintis06-outneed" ){
 				    double M=0.0;
 				    double N=0.0;
 				
@@ -69,34 +69,24 @@ namespace Epnet
 				    //compute the lagrangian optmizer
 				    while(g!=goods.end()){
 					M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-					N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+					if( provinceWorld.getTradeVolSelFunction() =="gintis06")
+					    N+=offerer.getPrice(*g) * offerer.getNeed(*g);
+					if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed")
+					    N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g); // as is this line is useless, in gintis06 1/getNeed(*g)
 					g++;
 				    }
 
 				    double lambda=M/(N * ratio);
-				    requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
-				}
-				else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
-				    double M=0.0;
-				    double N=0.0;
-				
-				    std::vector<std::string> goods= provinceWorld.getTypesOfGood();
-				    std::vector<std::string>::iterator g = goods.begin();
-				    //compute the lagrangian optmizer
-				    while(g!=goods.end()){
-					M+=offerer.getPrice(*g) * offerer.getQuantity(*g);
-					N+=offerer.getPrice(*g) * 1/offerer.getPrice(*g); // as is this line is useless, in gintis06 1/getNeed(*g)
-					g++;
-				    }
-
-				    double lambda=M/(N * ratio);
-				    requestedQuantity= 1/offerer.getPrice(goodWanted)*lambda-offerer.getQuantity(goodWanted);
+				    if( provinceWorld.getTradeVolSelFunction() =="gintis06")
+					requestedQuantity= offerer.getNeed(goodWanted)*lambda-offerer.getQuantity(goodWanted);
+				    if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed")
+					requestedQuantity= 1/offerer.getPrice(goodWanted)*lambda-offerer.getQuantity(goodWanted);
 				}
 				else{
 				    requestedQuantity= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
 				}
 
-				    proposedQuantity=requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
+				proposedQuantity=requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
 
 
 				int noffer=0;
@@ -120,7 +110,7 @@ namespace Epnet
 					    if(provinceWorld.getTradeVolSelFunction()=="gintis07"){
 						responderTradeWill =  responder.getNeed(offererProducedGood)-responder.getQuantity(offererProducedGood); 
 					    }
-					    else if (provinceWorld.getTradeVolSelFunction()=="gintis06"){
+					    else if (provinceWorld.getTradeVolSelFunction()=="gintis06" ||provinceWorld.getTradeVolSelFunction() =="gintis06-outneed" ){
 						double M=0.0;
 						double N=0.0;
 
@@ -128,27 +118,18 @@ namespace Epnet
 						std::vector<std::string>::iterator g = goods.begin();
 						while(g!=goods.end()){
 						    M+=responder.getPrice(*g) * responder.getQuantity(*g);
-						    N+=responder.getPrice(*g) * responder.getNeed(*g);
+						    if (provinceWorld.getTradeVolSelFunction()=="gintis06")
+							    N+=responder.getPrice(*g) * responder.getNeed(*g);
+						    if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed")
+							N+=responder.getPrice(*g) * 1/responder.getPrice(*g);//in that case the ratio should be his own ratio
 						    g++;
 						}
 
 						double lambda=M/(N*ratio);
-						responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
-					    }
-					    else if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed"){
-						double M=0.0;
-						double N=0.0;
-
-						std::vector<std::string> goods= provinceWorld.getTypesOfGood();
-						std::vector<std::string>::iterator g = goods.begin();
-						while(g!=goods.end()){
-						    M+=responder.getPrice(*g) * responder.getQuantity(*g);
-						    N+=responder.getPrice(*g) * 1/responder.getPrice(*g);//in that case the ratio should be his own ratio
-						    g++;
-						}
-
-						double lambda=M/(N*ratio);
-						responderTradeWill =  1/responder.getPrice(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
+						if (provinceWorld.getTradeVolSelFunction()=="gintis06")
+						    responderTradeWill =  responder.getNeed(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
+						if( provinceWorld.getTradeVolSelFunction() =="gintis06-outneed")
+						    responderTradeWill =  1/responder.getPrice(offererProducedGood)*lambda-responder.getQuantity(offererProducedGood); 
 					    }
 					    else{
 						responderTradeWill= offerer.getPrice(goodWanted)-offerer.getQuantity(goodWanted);
