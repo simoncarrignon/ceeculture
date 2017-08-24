@@ -68,7 +68,7 @@ namespace Epnet
 		    }
 		    else{
 			if(good == std::get<0>(romanAgent.getProducedGood())) 
-			    romanAgent.setQuantity(good,1/romanAgent.getPrice(good)); //use the optimal value for its the production's good
+			    romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
 			//  			//	romanAgent.setQuantity(good,romanAgent.getPrice(good)); //use the estimated value for its the production's good
 			//	
 			////fit= |a-b|/euclideDist(a,b) my favorite one:
@@ -77,7 +77,7 @@ namespace Epnet
 			else consumptionScore+=std::abs((romanAgent.getQuantity(good))-(romanAgent.getNeed(good)) )/(std::sqrt(std::abs((romanAgent.getQuantity(good))*(romanAgent.getQuantity(good))+(romanAgent.getNeed(good))*(romanAgent.getNeed(good)))));
 
 			if(std::isnan(std::abs(consumptionScore))){
-			    std::cout<<"tdasucks"<<std::endl;
+			    std::cout<<"bad"<<std::endl;
 			    std::cout<<good<<"--> quantity:"<<romanAgent.getQuantity(good)<<", need "<<romanAgent.getNeed(good)<<" and price "<<romanAgent.getPrice(good)<<" score:" <<  consumptionScore<< " - | -   "<<std::endl;
 			}
 			//}

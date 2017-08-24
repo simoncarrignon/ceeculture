@@ -14,7 +14,7 @@ do
 	ln -s ../../AnalyseTools/analysis exp_$i/; 
 	ln -s ../config.xml exp_$i/; 
 	cd exp_$i ; 
-	./province ; 
+	time ./province ; 
 	./analysis ; 
 	cd .. ;
 done

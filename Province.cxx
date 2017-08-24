@@ -283,7 +283,7 @@ namespace Epnet
 				{
 					std::ostringstream ossb;
 					ossb << "Roman_" << j;
-					this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
+					///this->buildTwoWayConnection(oss.str(),ossb.str());//TODO here check the this->network
 					if(provinceConfig._networkType == "integrate"){
 					    Roman* agb = dynamic_cast<Roman*> (getAgent(ossb.str()));
 					    agent->addCulturalNeighbour(ossb.str());
