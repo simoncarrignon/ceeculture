@@ -47,10 +47,10 @@ namespace Epnet
 
 			if( (Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0 > _mutationRate){
 
-				int wsize = allAgents.size();
+				int wsize = romanAgent.getListOfCulturalNeighbours().size();
+				std::vector< std::string > nb=romanAgent.getListOfCulturalNeighbours();
 				int agId=Engine::GeneralState::statistics().getUniformDistValue(0,wsize-1) ;
-				std::string rId = allAgents[agId];
-
+				std::string rId = nb[agId];
 				romanAgent.copyPriceFrom(rId);
 
 			}
@@ -99,7 +99,7 @@ namespace Epnet
 				    else if(_selectionProcess == "copymax"){
 					proba = relScore > selfRelScore*2  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
 				    }
-				    if(proba && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < .02 ){
+				    if(proba && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < provinceWorld.getCopyRate() ){
 					//std::cout<<"soudo"<<std::endl;
 					//log_INFO("culture", world->getCurrentTimeStep()<< " , " <<  romanAgent.getId()<<" , "<<selfRelScore<<" , "<<r.getId()<<" , "<<relScore);
 					reproductionDone = 1;

@@ -46,6 +46,8 @@ namespace Epnet
 		double getMinScore(){return _minScore;};
 		void setMinScore(double score){_minScore = score;};
 
+		double getCopyRate();
+
 		std::string getTradeUtilFunction();
 		std::string getTradeVolSelFunction();
 		double getMuMax();

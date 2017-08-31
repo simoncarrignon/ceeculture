@@ -34,6 +34,7 @@ class ProvinceConfig : public Engine::Config
 	std::string _aType;
 	std::map<std::string,double> _networkParam;
 	float _mutationRate;
+	float _copyRate;
 	std::string _innovationProcess;
 	float _marketSize;
 	std::string _tradeUtilFunction; //what kind of utility function will be used to trade

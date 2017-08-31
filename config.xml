@@ -7,7 +7,6 @@
 	<size width="1800" height="5"/>
 	<logs>
 	    <trade value="false"/>
-	    <culture/>
 	</logs>
 	<numAgents value="500"/>
 	<market size=".15"/>
@@ -18,7 +17,7 @@
 	    <!-- trade/volsel allow to choose how requested quantities are selected can be : custom,gintis07,gintis06,gintis06-outneed -->
 <!--trade/util allow to choose how agent score is computed can be : custom,gintis07,gintis06-->
 
-	    <culture transmission="copymin" innovation="trade" mumax=".5" mutation=".18" step="15"/>
+	    <culture transmission="copymin" innovation="trade" mumax=".5" mutation=".18" copy="0.02" step="15"/>
 	</controller>
 
 	<!--

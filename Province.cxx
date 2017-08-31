@@ -535,6 +535,12 @@ namespace Epnet
 		return (double) provinceConfig._muMax;
 	}
 
+	double Province::getCopyRate(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return provinceConfig._copyRate;
+	}
+
 
 	double Province::getNeed(std::string good){
 	    //check if a good of that type exist in the list
