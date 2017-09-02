@@ -71,6 +71,7 @@ namespace Epnet
 		int _nbTrades;
 		double _score;
 		std::string _type;
+		int _size;
 
 
 		AgentController* _controller;
@@ -80,7 +81,7 @@ namespace Epnet
 		public:
 		Roman( const std::string & id, std::string controllerType );
 		Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess,std::string innovationProcess,int culturalStep);
-		Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess,std::string innovationProcess,int culturalStep,std::string agentType);
+		Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess,std::string innovationProcess,int culturalStep,std::string agentType,int size);
 
 		virtual ~Roman();
 

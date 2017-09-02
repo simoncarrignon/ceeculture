@@ -28,13 +28,14 @@ namespace Epnet
 	_type="";
     }
 
-    Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess, std::string innovationProcess,int culturalStep,std::string agentType) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
+    Roman::Roman( const std::string & id, std::string controllerType,double mutationRate,std::string selectionProcess, std::string innovationProcess,int culturalStep,std::string agentType,int size) : Agent(id), _resources(5), _maxActions(20), _nbTrades(0)
     {
 	_controller = ControllerFactory::get().makeController(controllerType,mutationRate,selectionProcess,innovationProcess,culturalStep);
 	_controller->setAgent(this);
 	_score=0.0;
 	_mutationRate=mutationRate;
 	_type=agentType;
+	_size=size;
     }
 
 
@@ -67,6 +68,7 @@ namespace Epnet
 	//	registerIntAttribute("nbConnectionsSend");
 	//	registerIntAttribute("nbAchievedTrades");
 	registerStringAttribute("p_good");
+	registerFloatAttribute("size");
 
 	if(_type == "gintis07"){
 	    registerFloatAttribute("u");
@@ -78,6 +80,7 @@ namespace Epnet
     void Roman::serialize()
     {
 	Province & curWorld = (Province&) *getWorld();
+//std::cout<<"serialize"<< _size<<std::endl;
 	serializeAttribute("scores", (float)_score);
 	int id=0; //the need calculate using the demand function (ie the need use in gintis 07) are stored in a vector of int thus are acceesed with normal indices and notes via the more complex technics use in the other cases
 	if(!curWorld.hasEvent()){
@@ -98,6 +101,7 @@ namespace Epnet
 	    this->serializeGood("coins",id);
 	}
 
+	serializeAttribute("size", (float)_size);
 	serializeAttribute("p_good", std::get<0>(getProducedGood()));
 
 	if(_type == "gintis07"){

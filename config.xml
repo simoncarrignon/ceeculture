@@ -9,7 +9,7 @@
 	    <trade value="false"/>
 	</logs>
 	<numAgents value="500"/>
-	<market size=".15"/>
+	<market size="1"/>
 	<controller type="basic" >
 	    <good type="manual" money="false"/> <!-- how good need are initialized can be : random,randn,manual,gintis07--> 
 	    <agent type="custom"/> <!--not used-->
@@ -17,7 +17,9 @@
 	    <!-- trade/volsel allow to choose how requested quantities are selected can be : custom,gintis07,gintis06,gintis06-outneed -->
 <!--trade/util allow to choose how agent score is computed can be : custom,gintis07,gintis06-->
 
-	    <culture transmission="copymin" innovation="trade" mumax=".5" mutation=".18" copy="0.02" step="15"/>
+	    <culture transmission="copymin" innovation="trade" mumax="1" mutation=".18" copy="10" step="15"/> :w
+	    
+	   
 	</controller>
 
 	<!--
@@ -42,18 +44,18 @@
 	</goods>
 -->
 
-	<goods num="6" prod="unbalanced">
-		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need=".2"	productionRate="0" nprod="5"/>
-		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need=".2"	productionRate="0" nprod="5"/>
-		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need=".2"	productionRate="0" nprod="5"/>
-		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need=".2"	productionRate="0" nprod="5"/>
-		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need=".2"	productionRate="0" nprod="14"/>
+	<goods num="2" prod="unbalanced">
+		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="5"/>
+		<good1	id="coins"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1"	productionRate="0" nprod="-1"/>
+		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="5"/>
+		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="5"/>
+		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="14"/>
 		<good5	id="coins"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1"	productionRate="0" nprod="-1"/>
 		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="5.0"	productionRate="0"/>
 		<good5	id="g5"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="6.0"	productionRate="0"/>
 	</goods>
 
-	<!-- <events type="rate" rate="300" stop="40500"/> -->
+	<events type="rate" rate="25" stop="4500"/> 
 
 
 </config>

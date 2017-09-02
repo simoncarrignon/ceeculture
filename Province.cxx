@@ -142,7 +142,10 @@ namespace Epnet
 			{
 				std::ostringstream oss;
 				oss << "Roman_" << i;
-				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep,provinceConfig._aType);
+				int size=std::ceil( (1.0/std::log(double(i+2))) *4.0)+1;
+				//std::cout << "Roman_" << i <<"log"<<std::log(double(i))<< " preceiling:"<<(1.0/std::log(double(i))) *4.0<< " size:"<<size<<std::endl;
+
+				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep,provinceConfig._aType,size);
 				addAgent(agent);
 				//position is actually not interesting
 				agent->setRandomPosition();
@@ -655,7 +658,7 @@ void Province::stepEnvironment()
 		_typesOfGood.push_back(goodType); //add the good to the gloabl list of good
 
 
-		bool newProd=0;
+		int newProd=0;
 		for(auto it=_agents.begin(); it != _agents.end() ; it++)
 		{
 
@@ -666,16 +669,17 @@ void Province::stepEnvironment()
 		    //std::cout<<"prod good:"<<std::get<0>(agent->getProducedGood())<<std::endl; 
 		    //    //set a random properties for each goods
 		    while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
-		    if( std::get<0>(agent->getProducedGood()) == "coins" && !newProd){
+		    if( std::get<0>(agent->getProducedGood()) == "coins" && newProd<5){
 			agent->setProductionRate(goodType,1.0);
 			agent->setProductionRate("coins",0.0);
 			_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{agent->getId()}));
 			removeFromListOfProd(agent->getId(),"coins");
-			newProd=1;
+			newProd++;
 		    }
 
 		    //    //set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
-		    agent->setNeed(goodType,1.0/(_needs.size()-1));
+		    //agent->setNeed(goodType,1.0/(_needs.size()-1));
+		    agent->setNeed(goodType,1.0);
 		    //std::cout<<"after"<<std::endl;
 		    //std::cout<<"prod good:"<<std::get<0>(agent->getProducedGood())<<std::endl; 
 		}			
