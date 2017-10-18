@@ -653,7 +653,7 @@ void Province::stepEnvironment()
 		_minscore.push_back(std::make_tuple(goodType,1000.0));
 
 		_needs.push_back(std::make_tuple(goodType,0)); //add a new need for this new good to the global vector of need
-		this->normalizeNeeds(); //update the need of this and all other good
+		//this->normalizeNeeds(); //update the need of this and all other good
 		
 		_typesOfGood.push_back(goodType); //add the good to the gloabl list of good
 
