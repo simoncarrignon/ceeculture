@@ -66,6 +66,11 @@ namespace Epnet
 			if( (romanAgent.getQuantity(good)/romanAgent.getNeed(good)) < consumptionScore) 
 			    consumptionScore=romanAgent.getQuantity(good)/(romanAgent.getNeed(good)); //original gintis06 utility
 		    }
+		    else if(provinceWorld.getTradeUtilFunction() == "brughman16"){ //thus should be used with copymax
+			if(good == std::get<0>(romanAgent.getProducedGood())) 
+			    romanAgent.setQuantity(good,0); //
+			consumptionScore=romanAgent.getQuantity(good);
+		    }
 		    else{
 			if(good == std::get<0>(romanAgent.getProducedGood())) 
 			    romanAgent.setQuantity(good,romanAgent.getNeed(good)); //use the optimal value for its the production's good
