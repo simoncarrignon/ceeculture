@@ -57,6 +57,7 @@ namespace Epnet
 
 				double requestedQuantity=0.0; //__requestedQuantity__ is the quantity of good __goodWanded__ that satisify the demand of __offerer__ give is own endowment and private price
 				double proposedQuantity =0.0; //__proposedQuantity__ is the quantity of good __offererProducedGood__ that the agent __offerer__ propose in exchange of the quantity __requestedQuantity__ 
+				double universalNeed =0.0; 
 
 				if(provinceWorld.getTradeVolSelFunction() =="gintis07"){
 				    requestedQuantity= offerer.getNeed(goodWanted);//-offerer.getQuantity(goodWanted); //the need as computed given the private utility function of the agent
@@ -88,8 +89,32 @@ namespace Epnet
 				    //std::cout<<"lambda="<<lambda<<" requestedQuantity="<<requestedQuantity<<" req:"<<requestedQuantity<<std::endl;
 				    if(goodWanted != "coins") requestedQuantity= requestedQuantity-offerer.getQuantity(goodWanted);
 				}
+				else if (provinceWorld.getTradeVolSelFunction()=="brughman17" ){
+				    double M=0.0;
+				    double N=0.0;
+				
+				    std::vector<std::string> goods= provinceWorld.getTypesOfGood();
+				    std::vector<std::string>::iterator g = goods.begin();
+				   
+				    //This is a really useless and slow stuff: should be done just once for the all simu, and not eveyr timestp
+				    while(g!=goods.end()){
+					if(*g != offererProducedGood && *g != "coins"){
+					    M+=offerer.getNeed(*g);
+					    N+=offerer.getQuantity(*g);
+					}
+					g++;
+				    }
+
+				    if(goodWanted != "coins") 
+					requestedQuantity= (M-N)/(goods.size()-1);
+				    else
+					requestedQuantity= offerer.getNeed(goodWanted);
+
+
+				}
 				else{
-				    requestedQuantity= offerer.getPrice(goodWanted);//-offerer.getQuantity(goodWanted);
+				    requestedQuantity= offerer.getNeed(goodWanted);
+				    if(goodWanted != "coins") requestedQuantity= requestedQuantity-offerer.getQuantity(goodWanted);
 				}
 
 				proposedQuantity=requestedQuantity*(offerer.getPrice(goodWanted)/offerer.getPrice(offererProducedGood));
@@ -150,8 +175,32 @@ namespace Epnet
 						if(offererProducedGood != "coins") responderTradeWill= responderTradeWill-responder.getQuantity(offererProducedGood);
 
 					    }
+					    else if (provinceWorld.getTradeVolSelFunction()=="brughman17" ){
+
+						double M=0.0;
+						double N=0.0;
+
+						std::vector<std::string> goods= provinceWorld.getTypesOfGood();
+						std::vector<std::string>::iterator g = goods.begin();
+						//
+						//This is a really useless and slow stuff: should be done just once for the all simu, and not eveyr timestp
+						while(g!=goods.end()){
+						    if(*g != responderProducedGood && *g != "coins"  ){
+							M+=responder.getNeed(*g);
+							N+=responder.getQuantity(*g);
+						    }
+						    g++;
+						}
+
+						if(goodWanted != "coins") 
+						    responderTradeWill= (M-N)/(goods.size()-1);
+						else
+						    responderTradeWill= responder.getNeed(offererProducedGood);
+//std::cout<<responderTradeWill<<" MN:"<<M<<", "<<N<<std::endl;
+					    }
 					    else{
-						responderTradeWill= responder.getPrice(goodWanted);//-responder.getQuantity(goodWanted);
+						responderTradeWill= responder.getNeed(goodWanted);//-responder.getQuantity(goodWanted);
+						if(offererProducedGood != "coins") responderTradeWill= responderTradeWill-responder.getQuantity(offererProducedGood);
 					    }
 					    responderTradCounter= responderTradeWill*responder.getPrice(goodWanted)/(responder.getPrice(goodWanted)); 
 
