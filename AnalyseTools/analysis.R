@@ -1,8 +1,9 @@
 if(require("plyr")){library(plyr)}
 if(require("vioplot")){library(vioplot)}
 if(require("RColorBrewer")){library(RColorBrewer)}
-if(require("poweRlaw")){library(poweRlaw)}
+#if(require("poweRlaw")){library(poweRlaw)}
 if(require("XML")){library(XML)}
+source("configHandle.R")
 
 
 
@@ -124,43 +125,26 @@ getMeanRatio<-function(datas,nres,timestep,timeA=0,timeB=0,abs=TRUE){
 }
 
 
-getMeanRatio2<-function(datas,timestep=1,timeA=0,timeB=0){
+getMeanRatio2<-function(datas,timestep=1,timeA=0,timeB=0,type="q"){
 
     res=c()
     datas=datas[datas$timeStep %% timestep == 0,]
 
     if(timeB>timeA)
 	datas=datas[datas$timeStep >timeA & datas$timeStep < timeB ,]
-    for(p in levels(datas$p_good)){
-	cur=datas[datas$p_good == p,]
-	pRes=paste(p,"_p",sep="")	
-	pResN=paste(p,"_n",sep="")	
-	print(pRes)
-	for(i in levels(cur$p_good)){
-	    if(i != p){
-		wRes=paste(i,"_p",sep="")	
+##    for(p in levels(datas$p_good)){
+##	cur=datas[datas$p_good == p,]
+	for(i in levels(datas$p_good)[which(levels(datas$p_good) != "coins")]){
+		wRes=paste(i,"_",type,sep="")	
 		wResN=paste(i,"_n",sep="")	
-		print(wRes)
-		toBind=tapply(cur[,wRes]-cur[,wResN],cur$timeStep,mean)
-		res=rbind(res,toBind)
-	    }
-	    #else{
-	    #    ni=c()
-	    #    for ( o in 0:(nres-1)){
-	    #        if(o != p){
-	    #    	wResN=paste("g",o,"_n",sep="")	
-	    #    	ni=c(ni,unique(cur[,wResN]))
-	    #        }
-	    #    }
+	#	print(wRes)
+		#if(type=="q")toBind=tapply(datas[datas[,wRes]>0,wRes]-datas[datas[,wRes]>0,wResN],datas$timeStep[datas[,wRes]>0],mean)
+		if(type=="q")toBind=tapply(datas[datas[,wRes]>0,wRes]-1,datas$timeStep[datas[,wRes]>0],mean)
+		#if(type=="p")toBind=tapply(datas[datas[,wRes]>0,wRes]-1/datas[datas[,wRes]>0,wResN],datas$timeStep[datas[,wRes]>0],mean)
+		if(type=="p")toBind=tapply(abs(datas[datas[,wRes]>0,wRes]-1),datas$timeStep[datas[,wRes]>0],mean)
 
-	    #    nP=unique(cur[,pResN])
-	    #    opt=prodOpt(nP,ni)
-	    #    print(opt)
-	    #    print(nP)
-	    #    toBind=tapply(cur[,pRes]-opt,cur$timeStep,mean)
-	    #    res=rbind(res,toBind)
-	    #}
-	}
+		res=rbind(res,toBind)
+	#}
     }
     return(res)
 }
@@ -291,26 +275,53 @@ createEverything<-function(expeDir,timeA=0,timeB=0){
 }
 
 #Return a table with all ratio mean for each file of the dir expedir
-getAllMeanRatio<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
+getAllMeanDiff<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,type="q"){
+
+    all=data.frame()
+    folds=list.dirs(expeDir,recursive=F)
+    sim=0
+
+    for ( f in folds[1:min(c(length(folds),maxfolder))]){
+	expe=file.path(f,"/agents.csv")
+	print(expe)
+	work=try(read.csv(expe,sep=";"))
+	if(is.data.frame(work)){
+	    toBind=getMeanRatio2(work,timestep,timeA=timeA,timeB=timeB,type=type)
+	    all=rbind(all,toBind)
+	    sim=sim+1
+	}
+	else
+	    print(paste("Fodler",folder,"doesn't contains the agents.csv file"))
+    }
+    return(all)
+}
+#Return a table with all ratio mean for each file of the dir expedir
+getAll<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 
     all=data.frame()
     files=list.files(expeDir,pattern="*")
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
-	folder=	paste(expeDir,i,sep="")
-	file=	paste(expeDir,i,"/agents.csv",sep="")
+	folder=	file.path(expeDir,i)
+	file=	file.path(expeDir,i,"/agents.csv")
 	print(file)
-	work=read.csv(file,sep=";")
-	toBind=getMeanRatio2(work,timestep,timeA=timeA,timeB=timeB)
-	#p=getPropFromXml(folder,"network","p")
-	#v=getPropFromXml(folder,"network","v")
-	network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
-	all=rbind(all,cbind(t(toBind)))#,p,v,network))
-	sim=sim+1
+	work=try(read.csv(file,sep=";"))
+	if(is.data.frame(work)){
+	    for(i in levels(work$p_good)){
+		wRes=paste(i,"_p",sep="")	
+		wResN=paste(i,"_n",sep="")	
+		toBind=tapply(work[,wRes]-1/work[,wResN],work$timeStep,mean)
+	    }
+	    all=rbind(all,toBind)
+	    sim=sim+1
+	}
+	else
+	    print(paste("Fodler",folder,"doesn't contains the agents.csv file"))
     }
     return(all)
 }
+
 
 getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,listOfXmlValue=c(),fun=mean){
 
@@ -319,13 +330,14 @@ getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,lis
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
-	folder=	paste(expeDir,i,sep="")
-	file=	paste(expeDir,i,"/agents.csv",sep="")
+	folder=	file.path(expeDir,i)
+	file=	file.path(expeDir,i,"/agents.csv")
 	print(file)
 	work=try(read.csv(file,sep=";"))
 	if(is.data.frame(work)){
 	    work=work[work$timeStep %% timestep == 0,]
-	    toBind=tapply(work$scores,work[,c("timeStep","p_good")],fun)
+	    #toBind=tapply(work$scores,work[,c("timeStep","p_good")],fun)
+	    toBind=tapply(work$scores,work[,c("timeStep")],fun)
 
 	    #	m=getPropFromXml(folder,"network","m")
 	    #v=getPropFromXml(folder,"network","v")
@@ -816,12 +828,12 @@ main <- function(){
     dev.off()
     boxplot(a$scores ~a$timeStep)
 
-    rand=getAllMeanRatio("~/randnet//",timestep=50)
-    newrat12=getAllMeanRatio("~/newcondition12/",3,timestep=50)
-    longRat=getAllMeanRatio("~/long/",3)
+    rand=getAllMeanDiff("~/randnet//",timestep=50)
+    newrat12=getAllMeanDiff("~/newcondition12/",3,timestep=50)
+    longRat=getAllMeanDiff("~/long/",3)
 
-    newratlast=getAllMeanRatio("~/newconditionlast/",3,timestep=50)
-    newrat=getAllMeanRatio("~/newcondition/",3,timestep=50)
+    newratlast=getAllMeanDiff("~/newconditionlast/",3,timestep=50)
+    newrat=getAllMeanDiff("~/newcondition/",3,timestep=50)
     colname=read.csv("~/newcondition1/run_0000/agents.csv",sep=";",nrows=1)
     a=c()
     expeDir="~/newcondition1/"
@@ -836,7 +848,7 @@ main <- function(){
     pdf("meanEachGroup.pdf")
     plotAllClassMean(tt2,3,100)
     dev.off()
-    rat=getAllMeanRatio(expeDir,3,timestep=100)
+    rat=getAllMeanDiff(expeDir,3,timestep=100)
     pdf("meanRatio.pdf")
     boxplot(rat,outline=F)
     dev.off()
@@ -1258,9 +1270,185 @@ fit=read.csv("~/Dropbox/trade/python/complete/fits.csv")
 
 
     full=getAllMeanScore("~/result/testFull/")
+    simpleT=getAllMeanScore("~/result/simpleTrade100/")
+    simpleT1=getAllMeanScore("~/result/simpleTrade200/")
+    simpleT2=getAllMeanScore("~/result/simpleTrade300/")
+    simpleT3=getAllMeanScore("~/result/simpleTrade400/")
+    simpleT4=getAllMeanScore("~/result/simpleTrade500/")
+    randomT=getAllMeanScore( "~/result/random/simpleTrade100/")
+    randomT1=getAllMeanScore("~/result/random/simpleTrade200/")
+    randomT2=getAllMeanScore("~/result/random/simpleTrade300/")
+    randomT3=getAllMeanScore("~/result/random/simpleTrade400/")
+    randomT4=getAllMeanScore("~/result/random/simpleTrade500/")
+     boxplot(cbind(randomT[max(randomT)],randomT1[max(randomT1)],randomT2[max(randomT2)],randomT3[max(randomT3)],randomT4[max(randomT4)]))
+     boxplot(cbind(simpleT[max(simpleT)],simpleT1[max(simpleT1)],simpleT3[max(simpleT3)],simpleT4[max(simpleT4)]))
+
+     monoExpeRN=read.csv("~/result/randn/simpleTrade100/exp_10/agents.csv",sep=";")
+     monoExpeR=read.csv("~/result/random/simpleTrade100/exp_10/agents.csv",sep=";")
+     par(mfrow=c(2,1))
+     boxplot(monoExpeR$scores ~ monoExpeR$timeStep,ylim=c(0,50))
+     boxplot(monoExpeRN$scores ~ monoExpeRN$timeStep,ylim=c(0,50))
+	plot(monoExpe$g3_p ~ monoExpe$timeStep)
+
+    copymin=getAllMeanScore( "~/result/copymin/simpleTrade500/")
+     monoExpeR=read.csv("~/result/copymin/simpleTrade500/exp_100/agents.csv",sep=";")
+     boxplot(monoExpeR$scores ~ monoExpeR$timeStep,ylim=c(0,50))
+     
+     plot(monoExpeR$g0_q/monoExpeR$g0_n ~ monoExpeR$timeStep,type="n")
+     plot(monoExpeR$g2_q/monoExpeR$g2_n ~ monoExpeR$timeStep)
+    boxplot(monoExpeR$g3_q[ monoExpeR$p_good != "g3"]/monoExpeR$g3_n[ monoExpeR$p_good != "g3"] ~ monoExpeR$timeStep[ monoExpeR$p_good != "g3"],col="red")
+    clrs=1:4
+    names(clrs)=levels((monoExpeR$p_good))
+    #sapply(levels(monoExpeR$p_good),function(i){ 
+	   points(monoExpeR$g0_q[ monoExpeR$p_good !="g0"]/monoExpeR$g0_n[ monoExpeR$p_good !="g0"] ~ monoExpeR$timeStep[ monoExpeR$p_good !="g0"],col=clrs["g0"],pch=20)
+	   points(monoExpeR$g1_q[ monoExpeR$p_good !="g1"]/monoExpeR$g1_n[ monoExpeR$p_good !="g1"] ~ monoExpeR$timeStep[ monoExpeR$p_good !="g1"],col=clrs["g1"],pch=20)
+	   points(monoExpeR$g2_q[ monoExpeR$p_good !="g2"]/monoExpeR$g2_n[ monoExpeR$p_good !="g2"] ~ monoExpeR$timeStep[ monoExpeR$p_good !="g2"],col=clrs["g2"],pch=20)
+	   points(monoExpeR$g3_q[ monoExpeR$p_good !="g3"]/monoExpeR$g3_n[ monoExpeR$p_good !="g3"] ~ monoExpeR$timeStep[ monoExpeR$p_good !="g3"],col=clrs["g3"],pch=20)
+	      #})
+
+	   plot(monoExpeR$score[ monoExpeR$p_good !="g0" & monoExpeR$timeStep>0]~monoExpeR$g0_p[ monoExpeR$p_good !="g0"& monoExpeR$timeStep>0])
+     
+
+    randnT=getAllMeanScore( "~/result/randn/simpleTrade100/")
+    randnT1=getAllMeanScore("~/result/randn/simpleTrade200/")
+    randnT2=getAllMeanScore("~/result/randn/simpleTrade300/")
+    randnT3=getAllMeanScore("~/result/randn/simpleTrade400/")
+    randnT4=getAllMeanScore("~/result/randn/simpleTrade500/")
+    randnT=getAllMeanScore( "~/result/randn/randnLonger/simpleTrade100/")
+    randnT1=getAllMeanScore("~/result/randn/randnLonger/simpleTrade200/")
+    randnT2=getAllMeanScore("~/result/randn/randnLonger/simpleTrade300/")
+    randnT3=getAllMeanScore("~/result/randn/randnLonger/simpleTrade400/")
+    randnT4=getAllMeanScore("~/result/randn/randnLonger/simpleTrade500/")
+    gin06=getAllMeanScore("~/result/randnGin06/")
+
+    testProd1=getAll("~/share_res/produce1_2G/")
+    testProd_random_infinM=getAll("~/share_res/produce1_2G_random_MoreInfinProd/")
+    testProd_random_infinMQ=getAll("~/share_res/produce1_2G_random_MoreInfinProd_Quantity/")
+    testProd_random_infinMQ_RN=getAllMeanScore("~/share_res/produce1_2G_random_MoreInfinProd_RequestNeed5G_copymax/")
+    testProd_random_infinMQ_RNG6=getAll("~/share_res/produce1_2G_random_MoreInfinProd_RequestNeed5G_Gin06copymax/")
+    testProd_random_infin=getAllMeanScore("~/share_res/produce1_2G_random_infinProd/")
+    testProd_random=getAllMeanScore("~/share_res/produce1_randnd_500ag_5G_Gin06copymax/")
+    testProd_random=getAll("~/share_res/produce1_2G_random/")
+    testProd1=read.csv("~/share_res/produce1_2G_random_MoreInfinProd_RequestNeed5G_copymax/exp_8/agents.csv",sep=";")
+    testProd1=read.csv("~/share_res/produce1_2G_random_MoreInfinProd_RequestNeed5G_Gin06copymax/exp_6/agents.csv",sep=";")
+	  plot(testProd1$g0_p)
+
+    par(mfrow=c(1,3))
+    boxplot(testProd_random,ylim=c(-1,1))
+    boxplot(testProd_random_infin,ylim=c(-0,2))
+    boxplot(testProd_random_infinM,ylim=c(-0,2))
+    boxplot(testProd_random_infinMQ,ylim=c(-0,2))
+    boxplot(testProd_random_infinMQ_RN,ylim=c(-1,1))
+    boxplot(testProd1$g2_q ~ testProd1$timeStep)
+    points(testProd1$g2_q[testProd1$p_good != "g2"] ~ testProd1$timeStep[testProd1$p_good != "g2"],col=2)
+    lines(testProd1$g2_n ~ testProd1$timeStep)
+     boxplot(cbind(randnT[ncol(randnT)],randnT1[ncol(randnT1)],randnT2[ncol(randnT2)],randnT3[ncol(randnT3)],randnT4[ncol(randnT4)]))
 
 
+     monoExpeRN=read.csv("~/result/randn/simpleTrade100/exp_10/agents.csv",sep=";")
+     monoExpeRL=read.csv("~/result/randn/randnLonger/simpleTrade500/exp_10/agents.csv",sep=";")
+     monoExpeR=read.csv("~/result/random/simpleTrade100/exp_10/agents.csv",sep=";")
+     
+     pdf("~/projects/PhD//doc/images/RandRvsRandom100Agents4goodsOneExemple.pdf")
+     par(mfrow=c(1,2))
+     par(mar=c(0,0,0,0))
+     boxplot(monoExpeR$scores ~ monoExpeR$timeStep,ylim=c(0,50))
+     boxplot(monoExpeRN$scores ~ monoExpeRN$timeStep,ylim=c(0,50))
+     boxplot(monoExpeRL$scores ~ monoExpeRL$timeStep,ylim=c(0,50))
+     dev.off()
+     pdf("~/projects/PhD//doc/images/RandRvsRandom100Agents4goods.pdf")
+     par(mfrow=c(1,2))
+     par(mar=c(0,0,0,0))
+     boxplot(randnT,ylim=c(0,50))
+     boxplot(randomT,ylim=c(0,50))
+     dev.off()
+     pdf("~/projects/PhD//doc/images/RandRvsRandom200Agents4goods.pdf")
+     par(mfrow=c(1,2))
+     par(mar=c(0,0,0,0))
+     boxplot(randnT1,ylim=c(0,50))
+     boxplot(randomT1,ylim=c(0,50))
+     dev.off()
+     pdf("~/projects/PhD//doc/images/RandRvsRandom300Agents4goods.pdf")
+     par(mfrow=c(1,2))
+     par(mar=c(0,0,0,0))
+     boxplot(randnT2,ylim=c(0,50))
+     boxplot(randomT2,ylim=c(0,50))
+     dev.off()
+     pdf("~/projects/PhD//doc/images/RandRvsRandom400Agents4goods.pdf")
+     par(mfrow=c(1,2))
+     par(mar=c(0,0,0,0))
+     boxplot(randnT3,ylim=c(0,50))
+     boxplot(randomT3,ylim=c(0,50))
+     dev.off()
+     pdf("~/projects/PhD//doc/images/RandRvsRandom500Agents4goods.pdf")
+     par(mfrow=c(1,2))
+     par(mar=c(0,0,0,0))
+     boxplot(randnT4,ylim=c(0,50))
+     boxplot(randomT4,ylim=c(0,50))
+     dev.off()
 
+
+    longtruc=read.csv("~/share_res/theydontknow/exp_110/agents.csv",sep=";")
+    boxplot(longtruc$g1_q ~ longtruc$timeStep)
+    longtruc=read.csv("~/share_res/agents.csv",sep=";")
+    boxplot(longtruc$scores ~ longtruc$timeStep)
+     plot(longtruc$g0_p/longtruc$g0_n ~ longtruc$timeStep,type="n")
+     plot(longtruc$g2_q/longtruc$g2_n ~ longtruc$timeStep)
+    boxplot(longtruc$g3_q[ longtruc$p_good != "g3"]/longtruc$g3_n[ longtruc$p_good != "g3"] ~ longtruc$timeStep[ longtruc$p_good != "g3"],col="red")
+    clrs=1:4
+    names(clrs)=levels((longtruc$p_good))
+    #sapply(levels(longtruc$p_good),function(i){ 
+	   points(longtruc$g0_q[ longtruc$p_good !="g0"]/longtruc$g0_n[ longtruc$p_good !="g0"] ~ longtruc$timeStep[ longtruc$p_good !="g0"],col=clrs["g0"],pch=20)
+	   points(longtruc$g1_q[ longtruc$p_good !="g1"]/longtruc$g1_n[ longtruc$p_good !="g1"] ~ longtruc$timeStep[ longtruc$p_good !="g1"],col=clrs["g1"],pch=20)
+	   points(longtruc$g2_q[ longtruc$p_good !="g2"]/longtruc$g2_n[ longtruc$p_good !="g2"] ~ longtruc$timeStep[ longtruc$p_good !="g2"],col=clrs["g2"],pch=20)
+	   points(longtruc$g3_q[ longtruc$p_good !="g3"]/longtruc$g3_n[ longtruc$p_good !="g3"] ~ longtruc$timeStep[ longtruc$p_good !="g3"],col=clrs["g3"],pch=20)
+	      #})
+
+    theyknow=getAllMeanScore("~/share_res/theyknow/")
+    theydontknow=getAllMeanScore("~/share_res/theydontknow/")
+    theydontknowD2=getAllMeanScore("~/share_res/theydontknowD2/")
+    theydontknowT4=getAllMeanScore("~/share_res/theydontknowT4/")
+    theydontknow4G=getAllMeanScore("~/share_res/theydontknow4G/")
+    theyknowRatioDiff=getAllMeanDiff("~/share_res/theyknow/")
+    theydontknowRatioDiff=getAllMeanDiff("~/share_res/theydontknow/")
+    theydontknowD2RatioDiff=getAllMeanDiff("~/share_res/theydontknowD2/")
+    theydontknowD4RatioDiff=getAllMeanDiff("~/share_res/theydontknowD4/")
+    theydontknowT4RatioDiff=getAllMeanDiff("~/share_res/theydontknowT4/")
+    theydontknow4GRatioDiff=getAllMeanDiff("~/share_res/theydontknow4G/")
+    theydontknow4GEX=read.csv("~/share_res/theydontknow4G/exp_100/agents.csv",sep=";")
+    plot(theydontknow4GEX$g0_q ~ theydontknow4GEX$timeStep)
+    points(theydontknow4GEX$g4_q ~ theydontknow4GEX$timeStep,col=4)
+    theyknowRatio=getAll("~/share_res/theyknow/")
+    theydontknowRatio=getAll("~/share_res/theydontknow/")
+    theydontknowD2Ratio=getAll("~/share_res/theydontknowD2/")
+    theydontknowD4Ratio=getAll("~/share_res/theydontknowD4/")
+    theydontknowT4Ratio=getAll("~/share_res/theydontknowT4/")
+    theydontknow4GRatio=getAll("~/share_res/theydontknow4G/")
+    pdf("scoreKnowvsdontKnow.pdf")
+     par(mfrow=c(1,5))
+     par(mar=c(0,0,0,0))
+     boxplot(theydontknow4G,ylim=c(0,40))
+     boxplot(theydontknowT4,ylim=c(0,20))
+     boxplot(theydontknow,ylim=c(0,20))
+     boxplot(theydontknowD4,ylim=c(0,20))
+     boxplot(theydontknowD2,ylim=c(0,20))
+     boxplot(theyknow,ylim=c(0,20))
+     dev.off()
+     par(mfrow=c(1,5))
+     par(mar=c(0,0,0,0))
+     boxplot(theydontknow4GRatio,ylim=c(0,1))
+     boxplot(theydontknowT4Ratio,ylim=c(0,1))
+     boxplot(theydontknowRatio,ylim=c(0,1))
+     boxplot(theydontknowD4Ratio,ylim=c(0,1))
+     boxplot(theydontknowD2Ratio,ylim=c(0,1))
+     boxplot(theyknowRatio,ylim=c(0,1))
+     boxplot(theydontknow4GRatioDiff,ylim=c(-.75,.75),axes=T,outpch=20)
+     boxplot(theydontknowT4RatioDiff,ylim=c(-.75,.75),axes=T,outpch=20)
+     boxplot(theydontknowRatioDiff,ylim=c(-.75,.75),axes=T,outpch=20)
+     boxplot(theydontknowD4RatioDiff,ylim=c(-.75,.75),axes=T,outpch=20)
+     boxplot(theydontknowD2RatioDiff,ylim=c(-.75,.75),axes=T,outpch=20)
+     boxplot(theyknowRatioDiff,ylim=c(-.75,.75),axes=T,outpch=20)
+     boxplot(theydontknow4GRatioDiff,ylim=c(-1,1),outpch=20)
 }
 
 
@@ -1276,3 +1464,26 @@ getAllOf <- function(dats,elt="n"){
     clns=paste("g",0:(ngoods-1),"_",elt,sep="")
     sapply(levels(dats$agent),function(i)dats[dats$agent == i , clns])
 }
+
+
+
+#This function 
+concateOnMeasurement<-function(work,ty="q",fun="mean",exclude=T,...){
+
+	    toBind=c()
+	    rnames=c()
+	    opti=c()
+	    
+	    for(i in  levels(work$p_good) [which( levels(work$p_good) != "coins")]    ){
+		wRes=paste(i,"_",ty,sep="")	
+		if(exclude)l=tapply(work[work$p_good != i,wRes],work$timeStep[work$p_good != i],fun,na.rm=T)
+		else l=tapply(work[,wRes],work$timeStep,fun,na.rm=T)
+		toBind=rbind(l,toBind)
+		rnames=c(wRes,rnames)
+	    }
+	    rownames(toBind)=rnames
+	    return(toBind)
+}
+
+
+get
