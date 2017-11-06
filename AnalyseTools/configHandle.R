@@ -53,8 +53,9 @@ getPropFromXml <- function(expeDir,type,propId,format=as.numeric){
 ## cleaner way to get any properties in the Xml file:
 ##	<type cla=valeureturned/>
 ##if `type` doesn't identify aa unique node in the xml tree then one should use: "rootoftype//type"
-getProp  <-  function(configfile,type,cla){
-    return( xmlAttrs( getNodeSet(xmlParse(configfile),paste("//",type,sep=""))[[1]])[cla] )
+getProp  <-  function(configfile,type,cla,num=T){
+    if(num)return( as.numeric(xmlAttrs( getNodeSet(xmlParse(configfile),paste("//",type,sep=""))[[1]])[cla] ))
+    else return( xmlAttrs( getNodeSet(xmlParse(configfile),paste("//",type,sep=""))[[1]])[cla] )
 }
 
 
