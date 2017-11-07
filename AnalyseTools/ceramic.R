@@ -340,6 +340,12 @@ writeAllIndicatorFromSnapshotJulyResult <- function(){
     whyFailedTrade(fail[fail$goodwanted == "g0",])
     whyFailedTrade(fail[fail$goodwanted == "g1",])
     whyFailedTrade(fail[fail$goodwanted == "g2",])
+    whyFailedTrade(fail[fail$goodwanted == "g3",])
+
+    whyFailedTrade(fail[fail$goodproposed == "g0",])
+    whyFailedTrade(fail[fail$goodproposed == "g1",])
+    whyFailedTrade(fail[fail$goodproposed == "g2",])
+    whyFailedTrade(fail[fail$goodproposed == "g3",])
     unbalbis=unbal
     ComparePricesQuantitiesScores(unbal)
     ComparePricesQuantitiesScores(bal)
@@ -1168,15 +1174,52 @@ getMeanDistFold  <-  function(foldExp){
 
 
 
-#heatmap2 <- function(m){
-#}
-
 
 newTest <- function(){
-
     ulu=getAllMeanScore("~/result/testCopyMutEvents/1_mu0.001-copy0.0001/")
+    ulu=getAllMeanScore("~/share_res/TEST/")
+    getMeanDistFold("~/share_res/TEST/")
+    distrib=read.csv("Population-distribution_Wilson2011.txt",header=F)
+
+
+    maxSize=max(distrib$V1)
+    logMax=log2(maxSize)
+	breaks=2^(0:logMax+1)
+	labs=2^(1:logMax)
+	binCOEV=cut(distrib$V1,labels=labs,breaks=breaks)
+	countSize=table(binCOEV)
+	countSize=countSize[countSize>0]
+	fit=lm(log(countSize) ~ log(as.numeric(names(countSize))))                                                     
+
+	plot(names(countSize),countSize,log="xy",ylab="number of settlement",xlab="settlement size")
+	points(as.numeric(names(fit$fitted.values)),exp(fit$fitted.values),col="red",type="l")
+
+	plot(names(countSize),countSize,ylab="number of settlement size",xlab="settlement size")
+	points(as.numeric(names(fit$fitted.values)),exp(fit$fitted.values),col="red",type="l")
+
+	points(names(countSize),countSize,ylab="settlement size",xlab="number of settlement")
+	abline(seq(0.1,250000,100),fit$coefficients[1]*exp(seq(0.1,250000,100)*(fit$coefficients[2])),col="red")
+	points(as.numeric(names(fit$fitted.values)),exp(fit$fitted.values),col="red",type="l")
+
+	axis(2)
+
+	points(seq(0.1,250000,100),fit$coefficients[1]+(seq(0.1,250000,100)^(-fit$coefficients[2])),col="red")
+
+
+
+
+
 
     matrixGoodPerSite(ulu)
     plotSiteWithGood(siteWithAmount(deb))
 
+    x1 = 1000000           # Maximum value
+    x0 = 1000         # It can't be zero; otherwise X^0^(neg) is 1/0.
+    alpha = fit$coefficients[2]     # It has to be negative.
+    y = runif(1e5)   # Number of samples
+    x = fit$coefficients[1]*((x1^(alpha+1) - x0^(alpha+1))*y + x0^(alpha+1))^(1/(alpha+1))
+	simubinCOEV=cut(x,labels=labs,breaks=breaks)
+	simucountSize=table(simubinCOEV)
+	simucountSize=simucountSize[simucountSize>000]
+	plot(as.numeric(names(simucountSize)),simucountSize)
 }
