@@ -1182,16 +1182,22 @@ newTest <- function(){
     distrib=read.csv("Population-distribution_Wilson2011.txt",header=F)
 
 
-    maxSize=max(distrib$V1)
-    logMax=log2(maxSize)
-	breaks=2^(0:logMax+1)
+    #plot binned gien log distrib
+    plotBinDist <- function(dat,add=F,...){
+	maxSize=max(dat) #max of dataset
+	logMax=log2(maxSize) #log of the max 
+	breaks=2^(0:logMax+1) 
 	labs=2^(1:logMax)
-	binCOEV=cut(distrib$V1,labels=labs,breaks=breaks)
+	binCOEV=cut(dat,labels=labs,breaks=breaks)
 	countSize=table(binCOEV)
-	countSize=countSize[countSize>0]
-	fit=lm(log(countSize) ~ log(as.numeric(names(countSize))))                                                     
+	countSize=countSize[countSize>0]/sum(countSize)
+	fit=lm(log2(countSize/sum(countSize)) ~ log2(as.numeric(names(countSize))))                                                     
 
-	plot(names(countSize),countSize,log="xy",ylab="number of settlement",xlab="settlement size")
+	if(add)
+	    points(as.numeric(names(countSize)),as.numeric(countSize),...)
+	else
+	    plot(as.numeric(names(countSize)),as.numeric(countSize),log="xy",ylab="frequencies",xlab="settlement size",...)
+    }
 	points(as.numeric(names(fit$fitted.values)),exp(fit$fitted.values),col="red",type="l")
 
 	plot(names(countSize),countSize,ylab="number of settlement size",xlab="settlement size")
@@ -1210,11 +1216,71 @@ newTest <- function(){
 
 
 
-    matrixGoodPerSite(ulu)
-    plotSiteWithGood(siteWithAmount(deb))
+	matrixGoodPerSite(ulu)
+	plotSiteWithGood(siteWithAmount(deb))
 
-    x1 = 1000000           # Maximum value
-    x0 = 1000         # It can't be zero; otherwise X^0^(neg) is 1/0.
+	x1 = 1000000           # Maximum value
+	x0 = 1000         # It can't be zero; otherwise X^0^(neg) is 1/0.
+
+	distrib=distrib$V1
+	x1 = max(distrib)           # Maximum value
+	x0 = min(distrib)         # It can't be zero; otherwise X^0^(neg) is 1/0.
+	fit=lm(log(distrib)~log(seq_along(distrib)))
+	plot(log(distrib)~log(seq_along(distrib)))
+
+	points(as.numeric(names(fit$fitted.values)),exp(fit$fitted.values),col="red",type="l")
+
+	plot(sort(distrib)~order(distrib),log="xy",type="n",xlab="rank",ylab="settlement size")
+
+	#the fit is done on ranked distribution (cdf?) and we assume ths ranked distribution is a power low thus it should have a power low probability distribution 
+	fit=lm(log(sort(distrib))~log(order(distrib)))
+	 points(exp(.001:7),exp(fit$coefficients[1]+(.001:7)*fit$coefficients[2]),col="green",type="l",lwd=3)
+	#text(exp(7/2-1),exp((fit$coefficients[1]+(7/2)*fit$coefficients[2])),label=paste(
+
+
+	#in that case from the alpha computed in this CDF we can deduce that the alpha of the power law distribution is 1+1/alpha
+	#https://stats.stackexchange.com/questions/91670/connection-between-power-law-and-zipfs-law#114582
+	#and more detailled stuff: http://www.hpl.hp.com/research/idl/papers/ranking/ranking.html
+		alpha = -1 + 1/fit$coefficients[2]     # It has to be negative.
+
+sapply(1:100,function(i){
+       	ul=simulateDist(distrib,length(distrib),min(distrib),max(distrib),alpha)
+	fomrage=softenedData(ul)
+	points((fomrage)~(seq_along(fomrage)),col=alpha("dark green",.1),pch=20)
+	})
+	points(sort(distrib)~order(distrib),log="xy",pch=20,col="white")
+	points(sort(distrib)~order(distrib),log="xy")
+
+##this function take simulated data and cast it in mor similare data than the one we hae
+softenedData <- function(dat){
+	softed=sort(signif(dat,digits=3),decreasing=T) 
+	softed[softed<5000]=2000
+	softed[softed<11750 && softed >= 10000]=10000
+	softed[softed<14500 && softed >= 14000]=14000
+	return(softed)
+
+}
+
+#return a variable randomly distributed following a power law
+simulateDist <- function(dat,len,x1,x0,alpha){
+#taken from:
+	#https://stackoverflow.com/questions/918736/random-number-generator-that-produces-a-power-law-distribution/46984446?noredirect=1#comment81267263_46984446
+
+    y = runif(len)   # Number of samples
+    x = ((x1^(alpha+1) - x0^(alpha+1))*y + x0^(alpha+1))^(1/(alpha+1))
+    return(x)
+
+}
+plotDist <- function(dat) plot(as.numeric(table(signif(dat,2))) ~ as.numeric(names(table(signif(dat,2)))),log="xy")
+
+
+
+lines(density(x), col="chocolate", lwd=1)
+lines(density(x, adjust=2), lty="dotted", col="darkblue", lwd=2)
+h = hist(x, prob=T, breaks=40, plot=F)
+plot(h$count, log="xy", type='l', lwd=1, lend=2, 
+     xlab="", ylab="", main="Density in logarithmic scale")
+
     alpha = fit$coefficients[2]     # It has to be negative.
     y = runif(1e5)   # Number of samples
     x = fit$coefficients[1]*((x1^(alpha+1) - x0^(alpha+1))*y + x0^(alpha+1))^(1/(alpha+1))
