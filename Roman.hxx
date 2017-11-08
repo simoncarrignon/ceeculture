@@ -105,6 +105,8 @@ namespace Epnet
 
 		double getScore() {return _score;};
 		void setScore(double value) {_score = value ;};
+		int getSize() {return _size;};
+		int setSize(int size) {_size = size;};
 
 
 		void copyPriceFrom(std::string replacerId);

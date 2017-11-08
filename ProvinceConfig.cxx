@@ -30,6 +30,7 @@ void ProvinceConfig::loadParams()
 	_culturalStep= getParamInt( "controller/culture", "step");	
 	_muMax= getParamFloat( "controller/culture", "mumax");	
 
+
 	_mutationRate= getParamFloat( "controller/culture", "mutation");
 	_copyRate= getParamFloat( "controller/culture", "copy");
 
@@ -38,6 +39,27 @@ void ProvinceConfig::loadParams()
 	_networkType= getParamStr( "network", "type");
 
 	//events setup
+	try{
+	    _distrib = getParamStr( "popdistrib", "type");
+	    std::cout<<"fdsdfsd"<<_distrib<<std::endl;
+
+	    try{
+		if(_distrib == "pl"){
+		    _plMax= getParamFloat( "popdistrib", "max");//param for opo size distribution
+		    _plMin= getParamFloat( "popdistrib", "min");
+		    _plAlpha= getParamFloat( "popdistrib", "alpha");
+		}
+	    }
+	    catch(const Engine::Exception & e){
+		std::cerr<<e.what()<<std::endl;
+		std::cerr<<"when defining a power lave you have to give: max,min and alpha "<<std::endl;
+		exit(0);
+	    }
+	}
+	catch(const Engine::Exception & e){
+	    _distrib = "random";
+	}
+
 	try{
 	    _events = getParamStr( "events", "type");
 	    if(_events == "rate")

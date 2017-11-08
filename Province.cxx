@@ -1,6 +1,5 @@
 #include <Province.hxx>
 #include <ProvinceConfig.hxx>
-#include <ProductionAction.hxx>
 #include <TradeAction.hxx>
 #include <CulturalAction.hxx>
 #include <ConsumptionAction.hxx>
@@ -24,8 +23,8 @@ namespace Epnet
 		_minScore=0.0;
 		_maxScore=0.0;
 		_nbProds=provinceConfig._nbProds;
-		//double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
-		
+		_totPopSize=0;
+	
 
 		//initialize knowledge about the n goods in our economy: what are the different types, what is their absolute value
 		//Maybe that should go in the constructor
@@ -142,13 +141,16 @@ namespace Epnet
 			{
 				std::ostringstream oss;
 				oss << "Roman_" << i;
-				int size=std::ceil( (1.0/std::log(double(i+2))) *4.0)+1;
 				//std::cout << "Roman_" << i <<"log"<<std::log(double(i))<< " preceiling:"<<(1.0/std::log(double(i))) *4.0<< " size:"<<size<<std::endl;
 
+				int size=getASize();
 				Roman * agent = new Roman(oss.str(),provinceConfig._controllerType,provinceConfig._mutationRate,provinceConfig._selectionProcess,provinceConfig._innovationProcess,provinceConfig._culturalStep,provinceConfig._aType,size);
 				addAgent(agent);
 				//position is actually not interesting
 				agent->setRandomPosition();
+
+				_totPopSize+=size; //add up the size of the new agent to be able to compute cumulate size
+			
 				//currency is not interesting in itself. that may be changed
 				//currency has no price by itself
 				if(provinceConfig._goodsParam== "random" || provinceConfig._goodsParam== "randn")
@@ -774,6 +776,17 @@ void Province::stepEnvironment()
 	    }
 	    //printListOfProd(good);
 	}
+
+	int Province::getASize(){
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+
+	    if(provinceConfig._distrib == "pl")
+		return(	Engine::GeneralState::statistics().getPowerLawDistValue (provinceConfig._plMin,provinceConfig._plMax,provinceConfig._plAlpha));
+	    else
+		return(Engine::GeneralState::statistics().getUniformDistValue(0,1000));
+
+	}
+
 
 } // namespace Roman
 

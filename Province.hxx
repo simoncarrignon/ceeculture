@@ -25,6 +25,7 @@ namespace Epnet
 		std::vector<std::tuple<std::string,double>> _minscore;
 		double _maxScore;
 		double _minScore;
+		int _totPopSize; //this is usefull is Roman Agent represent more than one people
 
 
 
@@ -47,6 +48,8 @@ namespace Epnet
 		void setMinScore(double score){_minScore = score;};
 
 		double getCopyRate();
+		double getTotPopSize(){return _totPopSize;};
+		void setTotPopSize(double score){_totPopSize = score;};
 
 		std::string getTradeUtilFunction();
 		std::string getTradeVolSelFunction();
@@ -73,6 +76,8 @@ namespace Epnet
 		bool hasEvent(); //return true if event that will change the number of goods can occurs
 		bool logTrade(); //return true if a log of the trade has to be done
 		void removeFromListOfProd(std::string agent,std::string good);//remove the agent __agent__ from the list of producers of the good __good__ 
+
+		int getASize(); //return a integer give the distrib parameter of the config file
 	};
 
 } // namespace Epnet

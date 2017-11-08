@@ -43,6 +43,11 @@ class ProvinceConfig : public Engine::Config
 	std::vector<std::tuple<std::string,int>> _nbProds; //totalle number of producter for each products of the simulation
 	std::string _logTrade; //a string that says if a log of all the trade (amount, kind, why they failed) should be printed
 
+	std::string _distrib;//how population size should be distributed
+	float _plMax;//param for opo size distribution
+	float _plMin;
+	float _plAlpha;
+
 public:
 	ProvinceConfig( const std::string & xmlFile );
 	ProvinceConfig( const Engine::Size <int> & size, const int & numSteps );
