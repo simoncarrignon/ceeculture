@@ -24,6 +24,7 @@ namespace Epnet
 		std::vector<std::tuple<std::string,double>> _minscore;
 		double _maxScore;
 		double _minScore;
+		int _totPopSize; //this is usefull is Roman Agent represent more than one people
 
 
 
@@ -45,6 +46,9 @@ namespace Epnet
 		double getMinScore(){return _minScore;};
 		void setMinScore(double score){_minScore = score;};
 
+		double getTotPopSize(){return _totPopSize;};
+		void setTotPopSize(double score){_totPopSize = score;};
+
 		std::string getTradeUtilFunction();
 		std::string getTradeVolSelFunction();
 		double getMuMax();
@@ -65,6 +69,8 @@ namespace Epnet
 		void createCulturalNetwork();
 		void printAllCulturalNerwork();
 		double getNeed(std::string good);
+
+		int getASize(); //return a integer give the distrib parameter of the config file
 	};
 
 } // namespace Epnet

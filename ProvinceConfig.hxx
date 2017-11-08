@@ -38,6 +38,11 @@ class ProvinceConfig : public Engine::Config
 	std::string _tradeVolSelFunction;
 	float _muMax;
 
+	std::string _distrib;//how population size should be distributed
+	float _plMax;//param for opo size distribution
+	float _plMin;
+	float _plAlpha;
+
 public:
 	ProvinceConfig( const std::string & xmlFile );
 	ProvinceConfig( const Engine::Size <int> & size, const int & numSteps );

@@ -181,7 +181,6 @@ namespace Epnet
 
 					itO++;		    
 				}
-				//std::cout<<noffer<<std::endl;
 
 				if(std::get<0>(bestTrade) != ""){
 
@@ -196,7 +195,8 @@ namespace Epnet
 					Roman & responder = (Roman&)(*world->getAgent(std::get<0>(bestTrade)));
 					responder.setQuantity(offererProducedGood,responder.getQuantity(offererProducedGood)+std::get<2>(bestTrade));
 					responder.setQuantity(goodWanted,responder.getQuantity(goodWanted)-std::get<1>(bestTrade));
-
+				std::cout<<offerer.getSize()<<std::endl;
+				std::cout<<responder.getSize()<<std::endl;
 
 				}
 				else{

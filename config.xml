@@ -2,21 +2,24 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="4500" serializeResolution="135"/> 
+	<numSteps value="1" serializeResolution="135"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="1"/>
 	<numAgents value="300"/>
 	<market size=".5"/>
+
+
 	<controller type="basic" >
 	    <good type="randn"/> <!-- how good need are initialized can be : random,randn,manual,gintis07--> 
 	    <agent type="custom"/> <!--not used-->
 	    <trade volsel="gintis06-outneed" util="custom"/>
 	    <!-- trade/volsel allow to choose how requested quantities are selected can be : custom,gintis07,gintis06,gintis06-outneed -->
-<!--trade/util allow to choose how agent score is computed can be : custom,gintis07,gintis06-->
+<!--trade/util allow to choose how agent score is computed can be : custom,gintis07,gintis06,brughman17-->
 
 	    <culture transmission="copymin" innovation="trade" mumax=".05" mutation=".18" step="15"/>
 	</controller>
 
+	<popdistrib type="pl" max="500000" min="2000" alpha="-2.23"/> <!--this allow to define fuction that willl define the distribution of the size of the agents-->
 	<!--
 	<network type="sw" nparam="2">
 	    	<prop0 id="v" value= "2"/>

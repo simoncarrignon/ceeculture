@@ -1,6 +1,5 @@
 #include <Province.hxx>
 #include <ProvinceConfig.hxx>
-#include <ProductionAction.hxx>
 #include <TradeAction.hxx>
 #include <CulturalAction.hxx>
 #include <ConsumptionAction.hxx>
@@ -23,6 +22,7 @@ namespace Epnet
 		double all_needs=0.0;
 		_minScore=0.0;
 		_maxScore=0.0;
+		_totPopSize=0;
 		//double bneed=(double)(Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0; //if you want relative price (something lik p1=2*x, p2=p1*2, p3=p2*2...., and not totally random) inialize a "base need" here. 
 		
 
@@ -138,6 +138,11 @@ namespace Epnet
 				addAgent(agent);
 				//position is actually not interesting
 				agent->setRandomPosition();
+				int size=getASize();
+				agent->setSize(size);
+
+				_totPopSize+=size; //add up the size of the new agent to be able to compute cumulate size
+			
 				//currency is not interesting in itself. that may be changed
 				//currency has no price by itself
 				if(provinceConfig._goodsParam== "random" || provinceConfig._goodsParam== "randn")
@@ -622,6 +627,18 @@ void Province::stepEnvironment()
 		sourcePtr->killConnectionTo(target);
 		targetPtr->killConnectionTo(source);
 	}
+
+	int Province::getASize(){
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+
+	    if(provinceConfig._distrib == "pl")
+	return(	Engine::GeneralState::statistics().getPowerLawDistValue (provinceConfig._plMin,provinceConfig._plMax,provinceConfig._plAlpha));
+	    else
+		return(Engine::GeneralState::statistics().getUniformDistValue(0,1000));
+
+	}
+
+
 } // namespace Roman
 
 
