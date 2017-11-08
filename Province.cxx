@@ -230,7 +230,11 @@ namespace Epnet
 
 						//add init quantity to new good
 						agent->addGood(goodType,std::get<1>(*it));
-						while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+						//set a random properties for each goods
+						if (getTradeVolSelFunction()=="brughman17" )
+						    while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,10));// market clearing price : 1.0/(i+1)
+						else
+						    while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 
 						//set a random price for each goods
 
@@ -652,7 +656,7 @@ void Province::stepEnvironment()
 		_maxscore.push_back(std::make_tuple(goodType,0.0));
 		_minscore.push_back(std::make_tuple(goodType,1000.0));
 
-		_needs.push_back(std::make_tuple(goodType,0)); //add a new need for this new good to the global vector of need
+		_needs.push_back(std::make_tuple(goodType,1)); //add a new need for this new good to the global vector of need
 		//this->normalizeNeeds(); //update the need of this and all other good
 		
 		_typesOfGood.push_back(goodType); //add the good to the gloabl list of good
@@ -668,11 +672,18 @@ void Province::stepEnvironment()
 		    //std::cout<<"before"<<std::endl;
 		    //std::cout<<"prod good:"<<std::get<0>(agent->getProducedGood())<<std::endl; 
 		    //    //set a random properties for each goods
-		    while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);
+		    if (getTradeVolSelFunction()=="brughman17" )
+			while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,10));// market clearing price : 1.0/(i+1)
+		    else
+			while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
 		    if( std::get<0>(agent->getProducedGood()) == "coins" && newProd<5){
 			agent->setProductionRate(goodType,1.0);
 			agent->setProductionRate("coins",0.0);
-			_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{agent->getId()}));
+			if(_good2Producers.find(goodType) == _good2Producers.end())
+			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{agent->getId()}));
+			else
+			    _good2Producers[goodType].push_back(agent->getId());
+			std::cout<<"nouveau:"<<goodType<<" with "<<getListOfProd(goodType).size()<<" prod"<<" and the megalist is:"<<_good2Producers.size()<<std::endl;
 			removeFromListOfProd(agent->getId(),"coins");
 			newProd++;
 		    }
