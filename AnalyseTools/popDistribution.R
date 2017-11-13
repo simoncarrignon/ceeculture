@@ -25,3 +25,92 @@ simulateDist <- function(dat,len,x1,x0,alpha){
     return(x)
 
 }
+
+
+drawGraphs<-function(){
+
+    png("ProbabilityDistributionFucntion.png")
+hist(x, prob = T, breaks=40,   border=F,  col="yellowgreen", xlab="settlement size",main="Power law density")
+lines(density(x), col="chocolate", lwd=1)
+lines(density(x, adjust=2), lty="dotted", col="darkblue", lwd=2)
+h = hist(x, prob=T, breaks=40, plot=F)
+dev.off()
+ 
+distrib=read.csv("Population-distribution_Wilson2011.txt",header=F)
+distrib=distrib$V1
+
+
+png("distribRank.png")
+    plot(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="settlement size",log="yx")
+dev.off()
+
+
+png("distribRankFit.png")
+	fit=lm(log(sort(distrib))~log(order(distrib)))
+	plot(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="settlement size",log="yx")
+	points(exp(.001:7),exp(fit$coefficients[1]+(.001:7)*fit$coefficients[2]),col="orange",type="l",lwd=3)
+	text(exp(7/2-3),exp((fit$coefficients[1]+(7/2)*fit$coefficients[2])),label=paste("y=ax+b :\n",round(fit$coefficients[2],2),"x+",round(fit$coefficients[1],2),"\nalpha=1-1/a ~",round(alpha,2)),col="orange",adj=0,lwd=4,cex=1.2)
+dev.off()
+
+png("distribRankSimAll.png")
+    plot(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="yellowgreen",log="yx",type="n")
+	points(sort(distrib)~order(distrib))
+	points(sort(distrib)~order(distrib),pch=20,col="white")
+sapply(1:10,function(i){
+       #png("distribRankSimAll3.png")
+       	ul=simulateDist(distrib,length(distrib),min(distrib),max(distrib),alpha)
+	fomrage=softenedData(ul)
+	points((fomrage)~(seq_along(fomrage)),col=alpha("yellowgreen",.3),pch=20)
+	})
+	dev.off()
+
+ev.off()
+	plot(sort(distrib)~order(distrib),log="xy",type="n",xlab="rank",ylab="settlement size")
+
+	#the fit is done on ranked distribution (cdf?) and we assume ths ranked distribution is a power low thus it should have a power low probability distribution 
+
+
+	#in that case from the alpha computed in this CDF we can deduce that the alpha of the power law distribution is 1+1/alpha
+	#https://stats.stackexchange.com/questions/91670/connection-between-power-law-and-zipfs-law#114582
+	#and more detailled stuff: http://www.hpl.hp.com/research/idl/papers/ranking/ranking.html
+		alpha = -1 + 1/fit$coefficients[2]     # It has to be negative.
+
+sapply(1:100,function(i){
+       	ul=simulateDist(distrib,length(distrib),min(distrib),max(distrib),alpha)
+	fomrage=softenedData(ul)
+	points((fomrage)~(seq_along(fomrage)),col=alpha("dark green",.1),pch=20)
+	})
+	points(sort(distrib)~order(distrib),log="xy",pch=20,col="white")
+	points(sort(distrib)~order(distrib),log="xy")
+
+    png("distribDataBinedAndSimRepeated.png")
+    plotBinDist(distrib,main="Frequencies Distributions Binned")
+       	sapply(1:10,function(i){       	ul=simulateDist(distrib,length(distrib),min(distrib),max(distrib),alpha)
+	fomrage=softenedData(ul)
+    plotBinDist(fomrage,add=T,col=alpha("yellowgreen",.2))})
+sapply(1:10,function(i){       	       	ul=simulateDist(distrib,length(distrib)*10,min(distrib),max(distrib),alpha)
+	fomrage=softenedData(ul)
+    plotBinDist(fomrage,add=T,col=alpha("orange",.2))})
+sapply(1:10,function(i){       	ul=simulateDist(distrib,length(distrib)*100,min(distrib),max(distrib),alpha)
+	fomrage=softenedData(ul)
+    plotBinDist(fomrage,add=T,col=alpha("purple",.2))})
+    legend("topright",legend=c("data","sim(len x 1)","sim(len x 10)","sim(len x 100)"),col=c(1,"yellowgreen","orange","purple"),pch=22)
+    dev.off()
+   
+
+    distrib=read.csv("~/share_res/dis",header=F)
+}
+
+
+##this function take simulated data and cast it in mor similare data than the one we hae
+softenedData <- function(dat){
+	softed=sort(signif(dat,digits=3),decreasing=T) 
+	softed[softed<5000]=2000
+	softed[softed<11750 && softed >= 10000]=10000
+	softed[softed<14500 && softed >= 14000]=14000
+	return(softed)
+
+}
+
+plotDist <- function(dat) plot(as.numeric(table(signif(dat,2))) ~ as.numeric(names(table(signif(dat,2)))),log="xy")
+
