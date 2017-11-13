@@ -36,19 +36,21 @@ lines(density(x, adjust=2), lty="dotted", col="darkblue", lwd=2)
 h = hist(x, prob=T, breaks=40, plot=F)
 dev.off()
  
-distrib=read.csv("Population-distribution_Wilson2011.txt",header=F)
+distrib2=read.csv("Population-distribution_Wilson2011.txt",header=F)
+distrib=read.csv("population-distribution-Hanson-2016.txt",header=F)
 distrib=distrib$V1
+distrib2=distrib2$V1
 
 
 png("distribRank.png")
-    plot(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="settlement size",log="yx")
-dev.off()
-
-
+    points(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="settlement size",log="yx")
+    plot(sort(distrib2) ~ order(distrib2) ,xlab="rank",ylab="settlement size",log="yx",col="red")
+dev.off() 
 png("distribRankFit.png")
 	fit=lm(log(sort(distrib))~log(order(distrib)))
+	fit2=lm(log(sort(distrib2))~log(order(distrib2)))
 	plot(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="settlement size",log="yx")
-	points(exp(.001:7),exp(fit$coefficients[1]+(.001:7)*fit$coefficients[2]),col="orange",type="l",lwd=3)
+	points(exp(.001:7),exp(fit2$coefficients[1]+(.001:7)*fit2$coefficients[2]),col="green",type="l",lwd=3)
 	text(exp(7/2-3),exp((fit$coefficients[1]+(7/2)*fit$coefficients[2])),label=paste("y=ax+b :\n",round(fit$coefficients[2],2),"x+",round(fit$coefficients[1],2),"\nalpha=1-1/a ~",round(alpha,2)),col="orange",adj=0,lwd=4,cex=1.2)
 dev.off()
 
@@ -76,25 +78,31 @@ ev.off()
 		alpha = -1 + 1/fit$coefficients[2]     # It has to be negative.
 
 sapply(1:100,function(i){
-       	ul=simulateDist(distrib,length(distrib),min(distrib),max(distrib),alpha)
-	fomrage=softenedData(ul)
+       	ul=simulateDist(distrib,length(distrib),min(distrib),max(distrib),-1*alpha)
+	#fomrage=softenedData(ul)
+	fomrage=sort(ul,decreasing=T)
 	points((fomrage)~(seq_along(fomrage)),col=alpha("dark green",.1),pch=20)
 	})
 	points(sort(distrib)~order(distrib),log="xy",pch=20,col="white")
 	points(sort(distrib)~order(distrib),log="xy")
 
+    png("distribDataBined.png")
+    plotBinDist(distrib,main="Frequencies Distributions Binned",add=T)
+    plotBinDist(ul,main="Frequencies Distributions Binned",add=F,col="red")
+    dev.off()
+
     png("distribDataBinedAndSimRepeated.png")
     plotBinDist(distrib,main="Frequencies Distributions Binned")
        	sapply(1:10,function(i){       	ul=simulateDist(distrib,length(distrib),min(distrib),max(distrib),alpha)
 	fomrage=softenedData(ul)
-    plotBinDist(fomrage,add=T,col=alpha("yellowgreen",.2))})
+    plotBinDist(fomrage,add=T,col=alpha("yellowgreen",.2),pch=20,cex=1.5)})
 sapply(1:10,function(i){       	       	ul=simulateDist(distrib,length(distrib)*10,min(distrib),max(distrib),alpha)
 	fomrage=softenedData(ul)
-    plotBinDist(fomrage,add=T,col=alpha("orange",.2))})
+    plotBinDist(fomrage,add=T,col=alpha("green",.2),pch=20,cex=1.5)})
 sapply(1:10,function(i){       	ul=simulateDist(distrib,length(distrib)*100,min(distrib),max(distrib),alpha)
 	fomrage=softenedData(ul)
-    plotBinDist(fomrage,add=T,col=alpha("purple",.2))})
-    legend("topright",legend=c("data","sim(len x 1)","sim(len x 10)","sim(len x 100)"),col=c(1,"yellowgreen","orange","purple"),pch=22)
+    plotBinDist(fomrage,add=T,col=alpha("purple",.2),pch=20,cex=1.5)})
+    legend("topright",legend=c("data","sim(len x 1)","sim(len x 10)","sim(len x 100)"),col=c(1,"yellowgreen","orange","purple"),pch=21)
     dev.off()
    
 
