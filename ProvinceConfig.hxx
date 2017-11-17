@@ -47,6 +47,7 @@ class ProvinceConfig : public Engine::Config
 	float _plMax;//param for opo size distribution
 	float _plMin;
 	float _plAlpha;
+	std::string _distribUse;
 
 public:
 	ProvinceConfig( const std::string & xmlFile );

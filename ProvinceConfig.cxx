@@ -41,6 +41,7 @@ void ProvinceConfig::loadParams()
 	//events setup
 	try{
 	    _distrib = getParamStr( "popdistrib", "type");
+	    _distribUse = getParamStr( "popdistrib", "impact");
 	    std::cout<<"fdsdfsd"<<_distrib<<std::endl;
 
 	    try{
