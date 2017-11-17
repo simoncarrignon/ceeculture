@@ -107,7 +107,8 @@ namespace Epnet
 				    }
 
 				    if(goodWanted != "coins") 
-					requestedQuantity= (M-N)/(goods.size()-1);
+					//requestedQuantity= (M-N)/(goods.size()-1);
+				    	requestedQuantity= (offerer.getNeed(goodWanted)-N);
 				    else
 					requestedQuantity= offerer.getNeed(goodWanted);
 
@@ -194,7 +195,8 @@ namespace Epnet
 						}
 
 						if(offererProducedGood != "coins") 
-						    responderTradeWill= (M-N)/(goods.size()-1);
+						    //responderTradeWill= (M-N)/(goods.size()-1);
+						    responderTradeWill= (responder.getNeed(offererProducedGood)-N);
 						else
 						    responderTradeWill= responder.getNeed(offererProducedGood);
 //std::cout<<responderTradeWill<<" MN:"<<M<<", "<<N<<std::endl;
@@ -253,8 +255,10 @@ namespace Epnet
 						    (provinceWorld.getTradeVolSelFunction()=="brughman17") &&
 						    ( responder.getPrice(goodWanted) < offerer.getPrice(goodWanted) || AlmostEqualRelative(responder.getPrice(goodWanted),offerer.getPrice(goodWanted) , epsilon))&&// 		//the quantity asked is available in the stock of the responder
 					            ( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, epsilon)) &&		//the quantity asked is available in the stock of the responder
-					            ( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, epsilon) )  	//the quantity proposed is available in the offerer stock
+					            ( offerer.getQuantity(offererProducedGood) > proposedQuantity||AlmostEqualRelative(offerer.getQuantity(offererProducedGood),proposedQuantity, epsilon) ) && 	//the quantity proposed is available in the offerer stock
 					    //        //( responderTradCounter > requestedQuantity ||AlmostEqualRelative(responderTradCounter,requestedQuantity, epsilon))				//the quantity asked is less that the value estimated by the responder
+					            (responderTradeWill > 0.0) && 				//the quantity offered is at least egual to the quantity the other estim good for him
+					            (requestedQuantity > 0.0)  				//the quantity offered is at least egual to the quantity the other estim good for him
 					      )
 					    {
 						//trade is a success
@@ -265,10 +269,15 @@ namespace Epnet
 						}
 
 
+						if (provinceWorld.isPopSize())requestedQuantity=requestedQuantity * offerer.getSize();
+						if( responder.getQuantity(goodWanted) > requestedQuantity ||AlmostEqualRelative(responder.getQuantity(goodWanted),requestedQuantity, epsilon)  
+							
+							){
 						//if we didn't had a better trade before we set this one as the best
 						if(std::get<2>(bestTrade) <= requestedQuantity){ 
 						    bestTrade=std::make_tuple(*itO,requestedQuantity,proposedQuantity);
 						    tradeDone=1;
+						}
 						}
 					    }
 					    else{
