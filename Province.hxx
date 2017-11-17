@@ -78,6 +78,7 @@ namespace Epnet
 		void removeFromListOfProd(std::string agent,std::string good);//remove the agent __agent__ from the list of producers of the good __good__ 
 
 		int getASize(); //return a integer give the distrib parameter of the config file
+		bool isPopSize(); //return true if pop size is taken into account, false else
 	};
 
 } // namespace Epnet

@@ -279,6 +279,7 @@ namespace Epnet
 				}
 
 
+				if(std::get<0>(producedGood) != "coins") agent->setSize(1);
 
 				//set rate of production of the production good
 				if(agent->getProductionRate(std::get<0>(producedGood))<=0) //this is all about HOW you want to initialize your production rate. So far it's really badly done if you want to set them up manually
@@ -681,6 +682,7 @@ void Province::stepEnvironment()
 		    if( std::get<0>(agent->getProducedGood()) == "coins" && newProd<5){
 			agent->setProductionRate(goodType,1.0);
 			agent->setProductionRate("coins",0.0);
+			agent->setSize(1);
 			if(_good2Producers.find(goodType) == _good2Producers.end())
 			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{agent->getId()}));
 			else
@@ -785,6 +787,11 @@ void Province::stepEnvironment()
 	    else
 		return(Engine::GeneralState::statistics().getUniformDistValue(0,1000));
 
+	}
+	bool Province::isPopSize(){ //return true if pop size is taken into account, false else
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+	    if(provinceConfig._distribUse == "on")return (true);
+	    else return (false);
 	}
 
 
