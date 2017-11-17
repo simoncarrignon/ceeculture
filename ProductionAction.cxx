@@ -35,7 +35,11 @@ namespace Epnet
 			// 	 double producedQuantity = (double)(romanAgent.getProductionRate(good)*provinceWorld.getNumberOfAgents()*romanAgent.getNeed(good));
 			//double producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good));
 			//double producedQuantityold = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*allGood.size());
-			double producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*(ratio)*allGood.size());
+			double producedQuantity;
+			if(provinceWorld.isPopSize())producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*provinceWorld.getTotPopSize());
+			else  producedQuantity = (double)(romanAgent.getProductionRate(good)*romanAgent.getNeed(good)*(ratio)*allGood.size());
+			if(good=="coins" && romanAgent.getProductionRate(good) > 0  ) producedQuantity = allGood.size();
+			//std::cout<<producedQuantity<<std::endl;
 			romanAgent.setQuantity(good,producedQuantity);
 
 		}

@@ -2,27 +2,27 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="4500" serializeResolution="225"/> 
+	<numSteps value="15000" serializeResolution="225"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="5"/>
 	<logs>
 	    <trade value="false"/>
 	</logs>
-	<numAgents value="500"/>
+	<numAgents value="1000"/>
 	<market size="1"/>
 	<controller type="basic" >
-	    <good type="manual" money="false"/> <!-- how good need are initialized can be : random,randn,manual,gintis07--> 
+	    <good type="manual"/> <!-- how good need are initialized can be : random,randn,manual,gintis07--> 
 	    <agent type="custom"/> <!--not used-->
-	    <trade volsel="gintis06" util="custom"/>
+	    <trade volsel="brughman17" util="brughman17"/>
 	    <!-- trade/volsel allow to choose how requested quantities are selected can be : custom,gintis07,gintis06,gintis06-outneed -->
 <!--trade/util allow to choose how agent score is computed can be : custom,gintis07,gintis06,brughman17-->
 
-	    <culture transmission="copymin" innovation="trade" mumax="1" mutation=".18" copy="10" step="15"/> :w
+	    <culture transmission="copymax" innovation="trade" mumax="1" mutation=".1" copy="1" step="15"/> 
 	    
 	   
 	</controller>
 
-	<popdistrib type="pl" max="500000" min="2000" alpha="-2.23"/> <!--this allow to define fuction that willl define the distribution of the size of the agents-->
+	<popdistrib type="pl" max="500000" min="2000" alpha="-2.23" impact="off"/> <!--this allow to define fuction that willl define the distribution of the size of the agents-->
 	<!--
 	<network type="sw" nparam="2">
 	    	<prop0 id="v" value= "2"/>
@@ -45,18 +45,18 @@
 	</goods>
 -->
 
-	<goods num="2" prod="unbalanced">
+	<goods num="3" prod="unbalanced">
 		<good0	id="g0"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="5"/>
-		<good1	id="coins"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1"	productionRate="0" nprod="-1"/>
-		<good2	id="g2"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="5"/>
-		<good3	id="g3"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="5"/>
+		<good1	id="g1"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="5"/>
+		<good2	id="coins"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1"	productionRate="0" nprod="-1"/>
+		<good3	id="coins"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1"	productionRate="0" nprod="-1"/>
 		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="14"/>
 		<good5	id="coins"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="1"	productionRate="0" nprod="-1"/>
 		<good4	id="g4"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="5.0"	productionRate="0"/>
 		<good5	id="g5"	initialQuantity="0"	maxQuantity="1000"	price="1"	need="6.0"	productionRate="0"/>
 	</goods>
 
-	<events type="rate" rate="25" stop="4500"/> 
+	<events type="rate" rate="40" stop="7200"/> 
 
 
 </config>

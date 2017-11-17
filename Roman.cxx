@@ -103,7 +103,6 @@ namespace Epnet
 
 	serializeAttribute("size", (float)_size);
 	serializeAttribute("p_good", std::get<0>(getProducedGood()));
-	serializeAttribute("size", (float)_size);
 	if(_type == "gintis07"){
 	    serializeAttribute("u", (float)_curUtility);
 	    serializeAttribute("opt_u", (float)_optUtility);
