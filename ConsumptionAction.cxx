@@ -69,7 +69,9 @@ namespace Epnet
 		    else if(provinceWorld.getTradeUtilFunction() == "brughman17"){ //thus should be used with copymax in that case the score is just the sum of all goods
 			if(good == std::get<0>(romanAgent.getProducedGood()) || good == "coins") 
 			    romanAgent.setQuantity(good,0); //
-			consumptionScore+=romanAgent.getQuantity(good);
+			if(provinceWorld.isPopSize())consumptionScore+=romanAgent.getQuantity(good)/romanAgent.getSize();
+			else consumptionScore+=romanAgent.getQuantity(good);
+		//if(provinceWorld.getTradeUtilFunction() == "brughman17")score=score/romanAgent.getSize();
 		    }
 		    else{
 			if(good == std::get<0>(romanAgent.getProducedGood())) 
@@ -108,6 +110,7 @@ namespace Epnet
 
 		double score=romanAgent.getScore()+consumptionScore;
 		//std::cout<< "final score="<< score <<std::endl;
+		//if(provinceWorld.getTradeUtilFunction() == "brughman17")score=score/romanAgent.getSize();
 		romanAgent.setScore(score);
 		
 
