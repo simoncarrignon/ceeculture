@@ -23,6 +23,7 @@ numAgents = xmldoc.find('numAgents')
 
 nA=int(numAgents.attrib["value"])
 
+
 #Number of goods
 numGoods = xmldoc.find('goods')
 nG=int(numGoods.attrib['num'])
@@ -31,11 +32,22 @@ nG=int(numGoods.attrib['num'])
 networkConf = xmldoc.find('network')
 typeN=networkConf.attrib['type']
 
+sizeN="full"
+
+if 'size' in networkConf.attrib:
+	sizeN=networkConf.attrib['size'] #to use a non full network
+	print "Social network will be:" + sizeN
+
 #for s in itemlist:
 #        print(s.attributes['name'].value)
 
 # cultural network size
-N = nA / nG
+if sizeN == "full":
+	N=nA
+	nG=1
+else:
+	N = nA / nG
+
 print("Generation of "+str(nG)+" "+typeN+" network made of "+ str(N)+" agents." )
 
 
