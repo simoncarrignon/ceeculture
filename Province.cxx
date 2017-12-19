@@ -261,7 +261,7 @@ namespace Epnet
 			std::string type = provinceConfig._networkType; 
 			
 			
-			Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
+			Network n = Network(groupOfproducer,type,it->first,true);
 			//Network n = Network(groupOfproducer,type,it->first,true);
 			if(provinceConfig._networkOut == "true")
 			    n.write();
