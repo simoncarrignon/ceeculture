@@ -13,6 +13,7 @@ do
 	ln -s ../../province exp_$i/; 
 	ln -s ../../AnalyseTools/analysis exp_$i/; 
 	ln -s ../config.xml exp_$i/; 
+	ln -s ../../networks exp_$i/; 
 	cd exp_$i ; 
 	./province ; 
 	./analysis ; 
