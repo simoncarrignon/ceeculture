@@ -128,24 +128,25 @@ getMeanRatio<-function(datas,nres,timestep,timeA=0,timeB=0,abs=TRUE){
 getMeanRatio2<-function(datas,timestep=1,timeA=0,timeB=0,type="q"){
 
     res=c()
-    datas=datas[datas$timeStep %% timestep == 0,]
-
     if(timeB>timeA)
 	datas=datas[datas$timeStep >timeA & datas$timeStep < timeB ,]
 ##    for(p in levels(datas$p_good)){
 ##	cur=datas[datas$p_good == p,]
 	for(i in levels(datas$p_good)[which(levels(datas$p_good) != "coins")]){
 		wRes=paste(i,"_",type,sep="")	
+		wResQ=paste(i,"_q",sep="")	
 		wResN=paste(i,"_n",sep="")	
 	#	print(wRes)
 		#if(type=="q")toBind=tapply(datas[datas[,wRes]>0,wRes]-datas[datas[,wRes]>0,wResN],datas$timeStep[datas[,wRes]>0],mean)
-		if(type=="q")toBind=tapply(datas[datas[,wRes]>0,wRes]-1,datas$timeStep[datas[,wRes]>0],mean)
+		#if(type=="q")toBind=tapply(datas[datas[,wRes]>0,wRes],datas$timeStep[datas[,wRes]>0],mean)
 		#if(type=="p")toBind=tapply(datas[datas[,wRes]>0,wRes]-1/datas[datas[,wRes]>0,wResN],datas$timeStep[datas[,wRes]>0],mean)
-		if(type=="p")toBind=tapply(abs(datas[datas[,wRes]>0,wRes]-1),datas$timeStep[datas[,wRes]>0],mean)
+		toBind=tapply(datas[datas[,wResQ]>=0,wRes],datas$timeStep[datas[,wResQ]>=0],mean)
+		#if(type=="p")toBind=tapply(datas[,wRes],datas$timeStep,mean)
 
 		res=rbind(res,toBind)
 	#}
     }
+	rownames(res)=levels(datas$p_good)[which(levels(datas$p_good) != "coins")]
     return(res)
 }
 
@@ -291,7 +292,7 @@ getAllMeanDiff<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,type
 	    sim=sim+1
 	}
 	else
-	    print(paste("Fodler",folder,"doesn't contains the agents.csv file"))
+	    print(paste("Folder",expe,"doesn't contains the agents.csv file"))
     }
     return(all)
 }
@@ -1461,6 +1462,8 @@ getOf <- function(dats,elt="n",fun=sum){
 
 getAllOf <- function(dats,elt="n"){
     ngoods=length(levels(dats$p_good))
+    if("coins" %in% levels(dats$p_good))
+	ngoods=ngoods-1
     clns=paste("g",0:(ngoods-1),"_",elt,sep="")
     sapply(levels(dats$agent),function(i)dats[dats$agent == i , clns])
 }
@@ -1485,5 +1488,67 @@ concateOnMeasurement<-function(work,ty="q",fun="mean",exclude=T,...){
 	    return(toBind)
 }
 
+simpsonDiv <- function(x)sum((x/sum(x))^2) #Compute the simpson diversity index as 
 
-get
+simpsonDiv2 <- function(x)sum((x/sum(x))^2)
+
+computeSimpsonForOneExpe  <-  function(expe,jf=sum,breaks,min)apply(agentWith(expe,breaks=breaks,joinfunction=jf,min=min),1,simpsonDiv) #this compute  the  simson index of the number of settlement with differents good for one experiments
+
+computeSimpsonForOneFold  <-  function(fold,jf=sum,breaks=NULL,maxfold=NULL){
+
+    toanalyse=list.dirs(fold, recursive=F)
+    if(!is.null(maxfold)) #maxfold allows to speed up the test by skip some redondent result
+	toanalyse=toanalyse[1:maxfold]
+    if(length(toanalyse)>0){ 
+    allfold= Filter(Negate(is.null),lapply(toanalyse,function(f){ #lapply will return a list with simpson diversity for all experiments, Filter will remove the null elements from this list
+	work=tryCatch(read.csv(file.path(f,"agents.csv"),sep=";"),error=function(e)NULL) #try to read the agent.csv file or return null
+	if(is.data.frame(work)){#if it's data.frame it emans it's not null, thus we can compute the simpson diversity
+	    print(paste("computing simpson div for",f))
+	    computeSimpsonForOneExpe(work,breaks=breaks)
+	}
+	      
+	 }))
+   simplify2array(allfold,higher=FALSE)
+    }
+    else{print(paste("the folder",fold,"is empty or doesn't exist") )}
+}
+
+
+		  print(cur)
+
+##this functino return the number of agent with at least on goods of the goods in the list "goods" and for the timestep in "timestep"
+#joinfucntion is the function used to group years put together
+agentWith <- function(expe,goods=NULL,timestep=NULL,breaks=NULL,joinfunction=sum,min=1){
+    if(is.null(goods))
+	goods=levels(expe$p_good)[which(levels(expe$p_good) != "coins")]
+    if(!is.null(breaks))
+	expe$timeStep=cut(expe$timeStep,breaks=breaks,label=F)
+    if(is.null(timestep))
+	timestep=unique(expe$timeStep)
+    expe[is.na(expe)]=0
+    sapply(goods,function(g){
+	   sapply( timestep, function(tmstp){
+		  cur=expe[expe$timeStep == tmstp & expe$p_good != g,] 
+		  if(!is.null(breaks)){#if we want to breaks the dataset in period then we need to put join the timestep of a same period using joinfunction (usually 'sum') 
+		      join=tapply(cur[,paste(g,"_q",sep="")],cur$agent,joinfunction)
+		      if(min==0)return(length(join[join>=min]))
+		      if(min==1)return(length(join[join>min]))
+		  }
+		  else{ #if not we just count the number of agent with a quatnity > the min
+		      if(min==1)return(length(cur[ cur[,paste(g,"_q",sep="")] >= min,"agent"]))
+		      if(min==0)return(length(cur[ cur[,paste(g,"_q",sep="")] > min,"agent"]))
+		  }
+	 })
+	      
+})
+
+}
+
+#this function return a  "period" of the dataset
+#period is the index of the box we went to compare, break sis the number of period we went to split the original dataset
+getIndForOnperiodOfTime<-function(datas,period=4,breaks=10){
+    periods=round(seq(-200,300,length.out=breaks))
+    datas$timeStep =cut(datas$timeStep ,breaks=breaks,labels=periods)
+return(datas[datas$timeStep == periods[period],])
+
+}
