@@ -327,12 +327,12 @@ getAll<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,listOfXmlValue=c(),fun=mean){
 
     all=data.frame()
-    files=list.files(expeDir,pattern="exp*")
+    files=list.dirs(expeDir,recursive=F) #list.dirs allow smor interoperability than a filter on the files, and the subflder with missing agents.cs should be handle with the try() in the forloop
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
-	folder=	file.path(expeDir,i)
-	file=	file.path(expeDir,i,"/agents.csv")
+	#folder=	file.path(expeDir,i)
+	file=	file.path(i,"/agents.csv")
 	print(file)
 	work=try(read.csv(file,sep=";"))
 	if(is.data.frame(work)){
@@ -1008,7 +1008,7 @@ xmltest<-function(){
 	   #This function use a folder with set of network to create a list... baah is complicated
 	   makeListWithAllFolder=function(homrep){
 	       allG=c()
-	       for(g in list.files(homrep)){
+	       for(g in list.dirs(homrep,recursive=F)){
 		   print(paste(homrep,g,sep=""))
 		   allG[[g]] = getAllMeanScore(paste(homrep,g,"/",sep=""))
 		   allG[[g]] = allG[[g]][complete.cases(allG[[g]]),]
