@@ -339,7 +339,6 @@ getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,lis
 	    work=work[work$timeStep %% timestep == 0,]
 	    #toBind=tapply(work$scores,work[,c("timeStep","p_good")],fun)
 	    toBind=tapply(work$scores,work[,c("timeStep")],fun)
-
 	    #	m=getPropFromXml(folder,"network","m")
 	    #v=getPropFromXml(folder,"network","v")
 	    #network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
@@ -347,7 +346,7 @@ getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,lis
 	    sim=sim+1
 	}
 	else
-	    print(paste("Fodler",folder,"doesn't contains the agents.csv file"))
+	    print(paste("Fodler",i,"doesn't contains the agents.csv file"))
     }
     return(all)
 }
@@ -1009,8 +1008,8 @@ xmltest<-function(){
 	   makeListWithAllFolder=function(homrep){
 	       allG=c()
 	       for(g in list.dirs(homrep,recursive=F)){
-		   print(paste(homrep,g,sep=""))
-		   allG[[g]] = getAllMeanScore(paste(homrep,g,"/",sep=""))
+		   print(g)
+		   allG[[g]] = getAllMeanScore(g)
 		   allG[[g]] = allG[[g]][complete.cases(allG[[g]]),]
 	       }
 	       return(allG);

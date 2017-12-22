@@ -41,15 +41,16 @@ test<-function(){
 
     net6=makeListWithAllFolder("~/result/6Net_test/")
     net15=makeListWithAllFolder("~/result/15Net_test/")
+    names(net15)=basename(names(net15))
     net6Rp=makeListWithAllFolder("~/result/6Net_testRandomPrice//")
     netLast=makeListWithAllFolder("~/result/lastNet/")
     net4=makeListWithAllFolder("~/result/4Net_test/")
     net4Rp=makeListWithAllFolder("~/result/4Net_testRandomPrice/")
     plotMeanSd(net15)
     #boxplot(net6[[1]][1,]-net6[[1]][1,seq_along(net6[[1]][1,])]+1])
-    plotDerive(net15,ylim=c(-0.05,0.05))
+    plotDerive(netLast,ylim=c(-0.05,0.05))
     png("checkMDeriv.png")
-    plotDeriveOfMean(netLast,ylim=c(-0.,.1))
+    plotDeriveOfMean(netLast,ylim=c(-0.1,.1))
     dev.off()
     png("checkM.png")
     plotFun(a)
@@ -79,6 +80,8 @@ test<-function(){
     boxplot(u$mean[u$timestep > 2000] ~ u$net[u$timestep > 2000])         
 
     dataRead=read.csv( "~/Downloads/G1-6.csv")
+    dataRead=read.csv( "~/Downloads/G1-6.csv") 
+    dataRead=read.csv( "~/Dropbox/trade/python/complete/fits.csv") 
     dataRead=read.csv( "G1-15.csv")
     res=fitting(net15)
     pdf("meanCurveAndFit.pdf",width=9,height=10)
@@ -140,4 +143,42 @@ test<-function(){
 	   plotAllClassMean(test) 
 
 }
+
+
+newPrintFunction <- function(){
+    
+    netLast=c(netLast,net15)
+    netLastB=netLast
+    netLast=netLastB
+    names(netLastAll)=basename(names(netLastAll))
+    tims=2
+    timsA=0
+    timsB=1
+    for( i in 1:12){
+    print(tims)
+    allmeanAt=sapply(netLastAll,function(i)i[1:98,tims])   #get score value of last time step
+    dataRead=read.csv( "~/Dropbox/trade/python/complete/fits.csv") 
+    dataRead=dataRead[ dataRead$network %in% colnames(allmeanAt),]    ##get only the data that are in allmean
+    meanPer=apply(allmeanAt,2,sd) #take the means of all different exp at the end
+    clrsD=heat.colors(length(dataRead$dens)) 
+    names(clrsD)=sort(dataRead$dens,decreasing=T) 
+
+    clrsL=heat.colors(length(dataRead$dist)) 
+    names(clrsL)=sort(dataRead$dist) 
+
+    png(paste0("SD-density-n-lengh",formatC(tims,width=5,flag=0),".png"),width=1000)
+    par(mfrow=c(1,2))
+    plot(meanPer[ as.character(dataRead$network) ] ~ dataRead$dist,xlab="dist",ylab="mean score at the end",log="x",bg=clrsD[as.character(dataRead$dens)],pch=21,cex=2,ylim=c(0,2),main=paste("Time step:",colnames(netLast[[1]])[tims]))
+    plot(meanPer[ as.character(dataRead$network) ] ~ dataRead$dens,xlab="dens",ylab="sd score at the end",bg=clrsL[as.character(dataRead$dist)],pch=21,cex=2,ylim=c(0,2),main=paste("Time step:",colnames(netLast[[1]])[tims]))
+    dev.off()
+	tims=timsA+timsB
+    timsA=timsB
+    timsB=tims
+    }
+
+
+    ##create csv for ignacio
+
+aaa=sapply(colnames(netLastAll[[1]])[seq(1,222,4)],function(tims) apply(sapply(netLastAll,function(i)i[1:98,tims]),2,sd) )
+write.csv(aaa,"allSDScoreByTimeAndNet.csv")
 

@@ -1777,14 +1777,17 @@ names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
      #{timeSet,timeSetSizeOn,timeSetRandomCopy,timeSetSizeOnHighCopy,timeSetSizeOnHighMutLow}
     fold="~/result/firstSetFixedGoods/"
     #forCopy(expDir in unlist(lapply(file.path(fold,pref),file.path,exps))){
-    for(pr in pref[1]){
+    for(pr in pref){
 	for(ex in  exps){
 	    expDir=file.path(fold,pr,ex)
 	    print(paste0(pr,ex))
 
 	    imgFold=paste0(pr,"-",ex)
+
+	    allIndB=list(quantities=NULL,prices=NULL,scores=NULL,simpson=NULL)
 	    for(i in list.dirs(expDir,recursive=F)){
 		       pathAllInd=i
+	    print(i)
 		       binAllInd=file.path(tmpBin,gsub("/","-",paste0(i)))
 		       allInd=NULL
 		       if(!file.exists(binAllInd)){ ##if else to avoid recreate each time very long file
@@ -1794,24 +1797,37 @@ names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
 			   load(binAllInd)
 			   print(paste("backup data",binAllInd))
 		       }
-	    }
+		       allInd=lapply(allInd,function(i)cbind(i,V2=getProp(file.path(pathAllInd,"config.xml"),type="culture", cla="step")))
+		       allInd=lapply(allInd,function(i)cbind(i,V3=getProp(file.path(pathAllInd,"config.xml"),type="numSteps", cla="value")))
+		       allInd=lapply(allInd,function(i)cbind(i,ratio=1/i$V2))
+		       allInd=lapply(allInd,function(i)cbind(i,id=paste0(i$ratio,"/",i$V3)))
+			   allIndB=lapply(names(allInd),function(i)rbind(allIndB[[i]],allInd[[i]]))
+		       names(allIndB)=names(allInd)
 
+	    }
+	    if(is.null(allInd)||length(allInd)==0)
+		print(paste0("nothing in",binAllInd))
+	    else{
 	    for(period in seq(2,10,2)){
 	        pathHC=file.path("/home/scarrign/result/firstSetFixedGoods/",pr,ex)
 	        binHC=file.path(tmpBin,gsub("/","-",paste0(pathHC,period)))
 	        hc=NULL
-	        if(!file.exists(binHC)){ ##if else to avoid recreate each time very long file
-	            hc=getAllIndForAyear(pathHC,maxfolder=100,period=period) ##get all info for all indicatores (scores, simpson.prices,quantities)  for on given period 
-	            save(hc,file=binHC)
-	        }else{
-	            load(binHC)
-	            print(paste("backup data",binHC))
-	        }
+	        #if(!file.exists(binHC)){ ##if else to avoid recreate each time very long file
+	        #    hc=getAllIndForAyear(pathHC,maxfolder=100,period=period) ##get all info for all indicatores (scores, simpson.prices,quantities)  for on given period 
+	        #    save(hc,file=binHC)
+	        #}else{
+	        #    load(binHC)
+	        #    print(paste("backup data",binHC))
+	        #}
+
 
 	    ind=c("Quantities","Prices","Scores","Simpson")
 	    lapply(ind,function(i){
-	          comp= hc[[tolower(i)]]
-	          comp$order=comp$V2+comp$V3
+		   periodLab=names(allIndB[[tolower(i)]])[period]
+		   comp=allIndB[[tolower(i)]][c(periodLab,"V2","V3","ratio","id")]
+		   comp$order=comp$V2+comp$V3
+		   
+	          #comp= hc[[tolower(i)]]
 
 	           png(paste0("compareRatio/ratio-",i,period,ex,pref,".png"))
 	        labelLength=(unique(comp[order(comp$order),c(2,3,6)])$V3)/3
@@ -1822,8 +1838,8 @@ names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
 	    	boxplot(comp[,1] ~ comp$order,ylim=lims[[i]],axes=F,col=colgrey[as.character(labelLength)])
 	        axis(2)
 
-	        axis(1,at=1:9,labels=labelLength)
-	        axis(1,line=3,at=1:9,labels=(labelratio),outer=F)
+	        axis(1,at=1:length(labelLength),labels=labelLength) ##length in labelLengt here means=length of the simulation
+	        axis(1,line=3,at=1:length(labelratio),labels=(labelratio),outer=F)
 	        dev.off()
 	           matResult=matrix(paste0("\\includegraphics[width=.30\\textwidth]{/home/scarrign/projects/PhD/dev/ceeculture/AnalyseTools/",imgFold,"/",i,"-",todExp[paramIzaT],"}"),nrow=nrow(paramIzaT))
 	           matResult[grep("*NA*",matResult)]=NA  ##Good way to remove cells where no images has been produced
@@ -1835,6 +1851,7 @@ names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
 
 	}
 	}
+    }
     }
 
     
