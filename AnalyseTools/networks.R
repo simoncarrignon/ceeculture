@@ -159,7 +159,7 @@ newPrintFunction <- function(){
     allmeanAt=sapply(netLastAll,function(i)i[1:98,tims])   #get score value of last time step
     dataRead=read.csv( "~/Dropbox/trade/python/complete/fits.csv") 
     dataRead=dataRead[ dataRead$network %in% colnames(allmeanAt),]    ##get only the data that are in allmean
-    meanPer=apply(allmeanAt,2,sd) #take the means of all different exp at the end
+    meanPer=apply(allmeanAt,2,mean) #take the means of all different exp at the end
     clrsD=heat.colors(length(dataRead$dens)) 
     names(clrsD)=sort(dataRead$dens,decreasing=T) 
 
@@ -168,7 +168,7 @@ newPrintFunction <- function(){
 
     png(paste0("SD-density-n-lengh",formatC(tims,width=5,flag=0),".png"),width=1000)
     par(mfrow=c(1,2))
-    plot(meanPer[ as.character(dataRead$network) ] ~ dataRead$dist,xlab="dist",ylab="mean score at the end",log="x",bg=clrsD[as.character(dataRead$dens)],pch=21,cex=2,ylim=c(0,2),main=paste("Time step:",colnames(netLast[[1]])[tims]))
+    plot(meanPer[ as.character(dataRead$network) ] ~ dataRead$dist,xlab="dist",ylab="sd score at the end",log="x",bg=clrsD[as.character(dataRead$dens)],pch=21,cex=2,ylim=c(10,35),main=paste("Time step:",colnames(netLast[[1]])[tims]))
     plot(meanPer[ as.character(dataRead$network) ] ~ dataRead$dens,xlab="dens",ylab="sd score at the end",bg=clrsL[as.character(dataRead$dist)],pch=21,cex=2,ylim=c(0,2),main=paste("Time step:",colnames(netLast[[1]])[tims]))
     dev.off()
 	tims=timsA+timsB
