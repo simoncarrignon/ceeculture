@@ -1769,7 +1769,8 @@ generateExplenationTables <- function(){
 }
 
 generateAllIndicatorsAndTablesWithResults <- function(){
-
+    #this big function hshould generate all the gfraph and the latex table to show the grag
+ lims=list(Prices=c(0,10),Quantities=c(),Simpson=c(0,1),Scores=c(0,1)) 
 
     pref=c("MoreAgents","AllTimeSet1ProdWithMut1","AllTimeSet1ProdWithMut5")
 exps=c("timeSetRandomCopy","timeSet","timeSetSizeOn","timeSetSizeOnHighCopy","timeSetSizeOnHighMutLow")
@@ -1777,36 +1778,45 @@ names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
      #{timeSet,timeSetSizeOn,timeSetRandomCopy,timeSetSizeOnHighCopy,timeSetSizeOnHighMutLow}
     fold="~/result/firstSetFixedGoods/"
     #forCopy(expDir in unlist(lapply(file.path(fold,pref),file.path,exps))){
-    for(pr in pref){
+    for(pr in pref[2:3]){
 	for(ex in  exps){
 	    expDir=file.path(fold,pr,ex)
-	    print(paste0(pr,ex))
+	    print(paste(pr,ex))
 
 	    imgFold=paste0(pr,"-",ex)
 
 	    allIndB=list(quantities=NULL,prices=NULL,scores=NULL,simpson=NULL)
-	    for(i in list.dirs(expDir,recursive=F)){
-		       pathAllInd=i
-	    print(i)
-		       binAllInd=file.path(tmpBin,gsub("/","-",paste0(i)))
+	    for(fexp in list.dirs(expDir,recursive=F)){
+		       pathAllInd=fexp
+	    	#print(fexp)
+		       binAllInd=file.path(tmpBin,gsub("/","-",paste0(fexp)))
 		       allInd=NULL
 		       if(!file.exists(binAllInd)){ ##if else to avoid recreate each time very long file
 			  allInd=try(get3IndicatorFromFolder(i,maxfolder=100))
 			   save(allInd,file=binAllInd)
 		       }else{
 			   load(binAllInd)
-			   print(paste("backup data",binAllInd))
+			   #print(paste("backup data",binAllInd))
 		       }
+		       if(is.null(allInd)||length(allInd)==0)
+			   a=1
+			   #print(paste0("nothing in",binAllInd))
+		       else{
+		       allInd[["scores"]]=allInd[["scores"]]/getProp(file.path(pathAllInd,"config.xml"),type="culture", cla="step")
 		       allInd=lapply(allInd,function(i)cbind(i,V2=getProp(file.path(pathAllInd,"config.xml"),type="culture", cla="step")))
 		       allInd=lapply(allInd,function(i)cbind(i,V3=getProp(file.path(pathAllInd,"config.xml"),type="numSteps", cla="value")))
 		       allInd=lapply(allInd,function(i)cbind(i,ratio=1/i$V2))
 		       allInd=lapply(allInd,function(i)cbind(i,id=paste0(i$ratio,"/",i$V3)))
+		       #print(allInd[["simpson"]][1,"id"])
 			   allIndB=lapply(names(allInd),function(i)rbind(allIndB[[i]],allInd[[i]]))
-		       names(allIndB)=names(allInd)
+			   names(allIndB)=names(allInd)
+			   print(paste0("how is growing: ",nrow(allIndB[[1]])))
+		       }
 
 	    }
-	    if(is.null(allInd)||length(allInd)==0)
-		print(paste0("nothing in",binAllInd))
+
+	    if(is.null(allIndB)||length(allIndB)==0)
+		print(paste0("nothing in ",binAllInd))
 	    else{
 	    for(period in seq(2,10,2)){
 	        pathHC=file.path("/home/scarrign/result/firstSetFixedGoods/",pr,ex)
@@ -1829,7 +1839,7 @@ names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
 		   
 	          #comp= hc[[tolower(i)]]
 
-	           png(paste0("compareRatio/ratio-",i,period,ex,pref,".png"))
+	           png(paste0("compareRatio/ratio-",i,period,ex,pr,".png"))
 	        labelLength=(unique(comp[order(comp$order),c(2,3,6)])$V3)/3
 	        labelratio=(unique(comp[order(comp$order),c(2,3,6)])$V2)
 	        colgrey= brewer.pal(length(unique(labelLength)),"Greys")
@@ -1853,8 +1863,12 @@ names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
 	}
     }
     }
+}
 
     
+printLatex <- function(){
+
+    #subroutines to print the latex table with the good file name
 
     ###print latex table to show side by side the graphe previously done
     for(indices in ind){
@@ -1924,8 +1938,10 @@ getAllIndForAyear <- function(expDir,period=4,maxfolder=100){
 }
 
 
- lims=list(Prices=c(0,10),Quantities=c(),Simpson=c(0,1),Scores=c(0,1)) 
 
+
+otherSubRout <- function(){
+    #other subrootine to print the latex table with includes"
     pref=c("MoreAgents","AllTimeSet1ProdWithMut1","AllTimeSet1ProdWithMut5")
     #exps=c("timeSet","timeSetSizeOn","timeSetRandomCopy","timeSetSizeOnHighCopy","timeSetSizeOnHighMutLow")
     fold="~/result/firstSetFixedGoods/"
@@ -1947,3 +1963,4 @@ getAllIndForAyear <- function(expDir,period=4,maxfolder=100){
 
 	}
 	}
+}
