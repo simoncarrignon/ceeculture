@@ -1653,8 +1653,9 @@ illustrateSimpson <- function(){
     dev.off()
 
     full_dataset2=read.csv("~/data_per_year.csv")
-    full_dataset2$date=cut(full_dataset2$date,breaks=250)
-    data2=sapply( levels(full_dataset2$good) , function(g)sapply(sort(unique(full_dataset2$date)),function(ts){length(unique(full_dataset2$Location_ascii[full_dataset2$date == ts & full_dataset2$good == g]))}))
+    full_dataset2$goods=full_dataset2$Fabric
+    full_dataset2$date=cut(full_dataset2$date,breaks=50) #the new dataset
+    data2=sapply( levels(full_dataset2$goods) , function(g)sapply(sort(unique(full_dataset2$date)),function(ts){length(unique(full_dataset2$Location_ascii[full_dataset2$date == ts & full_dataset2$goods == g]))}))
 
 
     data=sapply( levels(full_dataset$good) , function(g)sapply(sort(unique(full_dataset$date)),function(ts)length(full_dataset$Location_ascii[full_dataset$date == ts & full_dataset$good == g])))
@@ -1810,7 +1811,7 @@ names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
 		       #print(allInd[["simpson"]][1,"id"])
 			   allIndB=lapply(names(allInd),function(i)rbind(allIndB[[i]],allInd[[i]]))
 			   names(allIndB)=names(allInd)
-			   print(paste0("how is growing: ",nrow(allIndB[[1]])))
+			   #print(paste0("how is growing: ",nrow(allIndB[[1]])))
 		       }
 
 	    }
@@ -1963,4 +1964,15 @@ otherSubRout <- function(){
 
 	}
 	}
+}
+
+
+#i have to compute score given the data
+ScoreAnalysis <- function(){
+    allmean=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSet/timeSet_1/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
+    allmean2=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSet/timeSet_30/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
+    allmean3=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSetSizeOnHighMutLow/timeSet_30/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
+    allmean3b=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSetSizeOnHighMutLow/timeSet_1/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
+    
+
 }
