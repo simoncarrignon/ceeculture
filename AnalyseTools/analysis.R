@@ -1372,7 +1372,7 @@ computeSimpsonForOneFold  <-  function(fold,jf=sum,breaks=NULL,maxfold=NULL){
 
 
 
-##this functino return the number of agent with at least on goods of the goods in the list "goods" and for the timestep in "timestep"
+##this function return the number of agent with at least on goods of the goods in the list "goods" and for the timestep in "timestep"
 #joinfucntion is the function used to group years put together
 agentWith <- function(expe,goods=NULL,timestep=NULL,breaks=NULL,joinfunction=sum,min=1){
     if(is.null(goods))
