@@ -46,6 +46,11 @@ getSetOfResu <- function(pat){
 }
 
 
+ sapply(colnames(aa),function(i){
+	png(paste0(i,"png")
+	    plotDensities("~/",i,.16,range(aa[,i])[1],range(aa[,i])[2]) dev.off()})
+
+
 plotDensities <- function(path,param,epsilon,from,to,...){
     htcol=topo.colors(length(epsilon),alpha=1)
     names(htcol)=epsilon
@@ -54,20 +59,23 @@ plotDensities <- function(path,param,epsilon,from,to,...){
     names(htcolF)=epsilon
     listParticles=lapply(epsilon,function(eps){print(eps);cbind(read.csv(paste(path,"result_",eps,".csv",sep="") ),epsilon=eps)})
     names(listParticles)=epsilon
-    print(listParticles)
+    #print(listParticles)
     densities=lapply(listParticles,function(i){density(i[,param],from=from,to=to)})
+    rdnm=runif(5000,from,to)
+    densitiesPrio=density(rdnm,from=from,to=to)
     names(densities)=epsilon
     rangex=range(lapply(densities,function(i)range(i$x)))
     rangey=range(lapply(densities,function(i)range(i$y)))
     par(mar=c(5,5,1,1))
-    plot(density(listParticles[[1]][,param]),ylim=rangey,type="n",main="", xlab=expression(mu),...)
+    plot(density(listParticles[[1]][,param]),ylim=rangey,type="n",main="", xlab=substitute(p,list(p=param)),...)
+    polygon(c(from,densitiesPrio$x,to),c(0,densitiesPrio$y,0),col=htcolF[2],lwd=2)
     lapply(seq_along(densities),function(i){
-	   polygon(c(0,densities[[i]]$x,to),c(0,densities[[i]]$y,0),col=htcolF[names(densities)[i]],lwd=2)#,density=20,angle=45*i,border=htcol[names(densities)[i]])
+	   polygon(c(from,densities[[i]]$x,to),c(0,densities[[i]]$y,0),col=htcolF[names(densities)[i]],lwd=2)#,density=20,angle=45*i,border=htcol[names(densities)[i]])
 #	   abline(v=mean(densities[[i]]$x),col=htcol[names(densities)[i]])
 #	   text(mean(densities[[i]]$x),0,names(densities)[i],col=htcol[names(densities)[i]])
 	})
-    text(.65,1.2,expression(prior:mu %~% italic(u)(0,1)))
-    legend("topright",legend=c("prior","posterior"),fill=htcolF)
+    text(from,max(densitiesPrio$y)+.05*max(densitiesPrio$y),substitute(prior:param %~% italic(u)(from,to),list(param=param,from=from,to=to)))
+    legend("topright",legend=c("prior","posterior"),fill=rev(htcolF))
 }
 
 
