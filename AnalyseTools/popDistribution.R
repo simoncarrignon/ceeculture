@@ -1,3 +1,4 @@
+library(scales)
 #take a list of vallue and plot it's distribution
     plotBinDist <- function(dat,add=F,...){
 	maxSize=max(dat) #max of dataset
@@ -7,9 +8,6 @@
 	binCOEV=cut(dat,labels=labs,breaks=breaks)
 	countSize=table(binCOEV)
 	countSize=countSize[countSize>0]/sum(countSize)
-	fit=lm(log2(countSize/sum(countSize)) ~ log2(as.numeric(names(countSize))))                                                     
-
-	fit=lm(log2(countSize/sum(countSize)) ~ log2(as.numeric(names(countSize))))                                                     
 
 	if(add)
 	    points(as.numeric(names(countSize)),as.numeric(countSize),...)
@@ -40,16 +38,16 @@ dev.off()
  
 distrib2=read.csv("Population-distribution_Wilson2011.txt",header=F)
 distrib=read.csv("population-distribution-Hanson-2016.txt",header=F)
+distrib=read.csv("population-distribution-Hanson-2016-all.txt",header=F)
 distrib=distrib$V1
 distrib2=distrib2$V1
 
 
 png("distribRank.png")
-    points(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="settlement size",log="yx")
-    plot(sort(distrib2) ~ order(distrib2) ,xlab="rank",ylab="settlement size",log="yx",col="red")
+    plot(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="settlement size",log="yx",xlim=c(1,length(distrib2)+10))
+    points(sort(distrib2) ~ order(distrib2) ,xlab="rank",ylab="settlement size",log="yx",col="red")
 dev.off() 
 png("distribRankFit.png")
-	fit=lm(log(sort(distrib))~log(order(distrib)))
 	fit=lm(log(sort(distrib))~log(order(distrib)))
 	fit2=lm(log(sort(distrib2))~log(order(distrib2)))
 	plot(sort(distrib) ~ order(distrib) ,xlab="rank",ylab="settlement size",log="yx")
@@ -95,8 +93,13 @@ sapply(1:100,function(i){
 	points(sort(distrib)~order(distrib),log="xy")
 
     png("distribDataBined.png")
-    plotBinDist(distrib,main="Frequencies Distributions Binned",add=T)
     plotBinDist(ul,main="Frequencies Distributions Binned",add=F,col="red")
+    plotBinDist(distrib2,main="Frequencies Distributions Binned",add=F,type="b",xlim=c(50,max(distrib)))
+    plotBinDist(distrib,main="Frequencies Distributions Binned",add=T,col="red",type="b")
+    plotBinDist(distrib[distrib > 5000],main="Frequencies Distributions Binned",add=T,col="red",lty=2,type="b")
+    cutoff=distrib
+    cutoff[distrib<5000]=2000
+    plotBinDist(cutoff,main="Frequencies Distributions Binned",add=T,col="red",lty=3,type="b")
     dev.off()
 
     png("distribDataBinedAndSimRepeated.png")

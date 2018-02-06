@@ -128,24 +128,25 @@ getMeanRatio<-function(datas,nres,timestep,timeA=0,timeB=0,abs=TRUE){
 getMeanRatio2<-function(datas,timestep=1,timeA=0,timeB=0,type="q"){
 
     res=c()
-    datas=datas[datas$timeStep %% timestep == 0,]
-
     if(timeB>timeA)
 	datas=datas[datas$timeStep >timeA & datas$timeStep < timeB ,]
 ##    for(p in levels(datas$p_good)){
 ##	cur=datas[datas$p_good == p,]
 	for(i in levels(datas$p_good)[which(levels(datas$p_good) != "coins")]){
 		wRes=paste(i,"_",type,sep="")	
+		wResQ=paste(i,"_q",sep="")	
 		wResN=paste(i,"_n",sep="")	
 	#	print(wRes)
 		#if(type=="q")toBind=tapply(datas[datas[,wRes]>0,wRes]-datas[datas[,wRes]>0,wResN],datas$timeStep[datas[,wRes]>0],mean)
-		if(type=="q")toBind=tapply(datas[datas[,wRes]>0,wRes]-1,datas$timeStep[datas[,wRes]>0],mean)
+		#if(type=="q")toBind=tapply(datas[datas[,wRes]>0,wRes],datas$timeStep[datas[,wRes]>0],mean)
 		#if(type=="p")toBind=tapply(datas[datas[,wRes]>0,wRes]-1/datas[datas[,wRes]>0,wResN],datas$timeStep[datas[,wRes]>0],mean)
-		if(type=="p")toBind=tapply(abs(datas[datas[,wRes]>0,wRes]-1),datas$timeStep[datas[,wRes]>0],mean)
+		toBind=tapply(datas[datas[,wResQ]>=0,wRes],datas$timeStep[datas[,wResQ]>=0],mean)
+		#if(type=="p")toBind=tapply(datas[,wRes],datas$timeStep,mean)
 
 		res=rbind(res,toBind)
 	#}
     }
+	rownames(res)=levels(datas$p_good)[which(levels(datas$p_good) != "coins")]
     return(res)
 }
 
@@ -291,7 +292,7 @@ getAllMeanDiff<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,type
 	    sim=sim+1
 	}
 	else
-	    print(paste("Fodler",folder,"doesn't contains the agents.csv file"))
+	    print(paste("Folder",expe,"doesn't contains the agents.csv file"))
     }
     return(all)
 }
@@ -326,19 +327,18 @@ getAll<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000){
 getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,listOfXmlValue=c(),fun=mean){
 
     all=data.frame()
-    files=list.files(expeDir,pattern="exp*")
+    files=list.dirs(expeDir,recursive=F) #list.dirs allow smor interoperability than a filter on the files, and the subflder with missing agents.cs should be handle with the try() in the forloop
     sim=0
 
     for ( i in files[1:min(c(length(files),maxfolder))]){
-	folder=	file.path(expeDir,i)
-	file=	file.path(expeDir,i,"/agents.csv")
+	#folder=	file.path(expeDir,i)
+	file=	file.path(i,"/agents.csv")
 	print(file)
 	work=try(read.csv(file,sep=";"))
 	if(is.data.frame(work)){
 	    work=work[work$timeStep %% timestep == 0,]
 	    #toBind=tapply(work$scores,work[,c("timeStep","p_good")],fun)
 	    toBind=tapply(work$scores,work[,c("timeStep")],fun)
-
 	    #	m=getPropFromXml(folder,"network","m")
 	    #v=getPropFromXml(folder,"network","v")
 	    #network=paste("networks/",sim,"_",colnames(toBind),".gdf",sep= "")
@@ -346,7 +346,7 @@ getAllMeanScore<-function(expeDir,timeA=0,timeB=0,timestep=1,maxfolder=10000,lis
 	    sim=sim+1
 	}
 	else
-	    print(paste("Fodler",folder,"doesn't contains the agents.csv file"))
+	    print(paste("Fodler",i,"doesn't contains the agents.csv file"))
     }
     return(all)
 }
@@ -1007,9 +1007,9 @@ xmltest<-function(){
 	   #This function use a folder with set of network to create a list... baah is complicated
 	   makeListWithAllFolder=function(homrep){
 	       allG=c()
-	       for(g in list.files(homrep)){
-		   print(paste(homrep,g,sep=""))
-		   allG[[g]] = getAllMeanScore(paste(homrep,g,"/",sep=""))
+	       for(g in list.dirs(homrep,recursive=F)){
+		   print(g)
+		   allG[[g]] = getAllMeanScore(g)
 		   allG[[g]] = allG[[g]][complete.cases(allG[[g]]),]
 	       }
 	       return(allG);
@@ -1041,148 +1041,6 @@ xmltest<-function(){
 	   }
 
 
-test<-function(){
-    uSF=read.csv("../agents.csv",sep=";")
-    boxplot(40 - uSF$scores ~ uSF$timeStep,ylim=c(0,40),outline=F)    
-    plotAllClassMean(uSF) 
-
-    uSW=read.csv("../agents.csv",sep=";")
-    boxplot(30 - uSW$scores ~ uSW$timeStep,ylim=c(0,30),outline=F)    
-    plotAllClassMean(uSW) 
-    ####G1-4
-    resG1=getAllMeanScore("~/result/6Net_test/g1/")
-    resG2=getAllMeanScore("~/result/6Net_test/g2/")
-    resG3=getAllMeanScore("~/result/6Net_test/g3/")
-    resG4=getAllMeanScore("~/result/6Net_test/g4/")
-    resG5=getAllMeanScore("~/result/6Net_test/g5/")
-    resG6=getAllMeanScore("~/result/6Net_test/g6/")
-    allG=rbind(
-	       cbind(resG1,net="G1"),
-	       cbind(resG1,net="G2"),
-	       cbind(resG1,net="G3"),
-	       cbind(resG1,net="G4"))
-    allG=rbind(
-	       cbind(timestep=colnames(resG1),mean=apply(resG1,2,mean),sd=apply(resG1,2,sd),net="G1"),
-	       cbind(timestep=colnames(resG2),mean=apply(resG2,2,mean),sd=apply(resG2,2,sd),net="G2"),
-	       cbind(timestep=colnames(resG3),mean=apply(resG3,2,mean),sd=apply(resG3,2,sd),net="G3"),
-	       cbind(timestep=colnames(resG4),mean=apply(resG4,2,mean),sd=apply(resG4,2,sd),net="G4"))
-
-    interaction.plot( allG$net,allG$mean,allG$timestep) 
-    allG=data.frame(allG)
-    homrep="~/result/4Net_test/"
-    homrep="~/result/6Net_test/"
-    allrep=sapply(list.files(homrep),function(x) paste(homrep,x,sep=""))
-    dataFiles6=sapply(allrep,function(x) paste(x,list.files(x),"agents.csv",sep="/"))
-
-    allData=lapply(dataFiles,function(x) sapply(x,read.csv,sep=";"))
-    g1=dataFiles$g1
-
-    d1=lapply(names(dataFiles),function(x){ 
-	      print(x) ; 
-	      sapply(dataFiles[[x]][1:2],function(y){ cbind(read.csv(y,sep=";"),x)})
-	       })
-
-    net6=makeListWithAllFolder("~/result/6Net_test/")
-    net15=makeListWithAllFolder("~/result/15Net_test/")
-    net6Rp=makeListWithAllFolder("~/result/6Net_testRandomPrice//")
-    netLast=makeListWithAllFolder("~/result/lastNet/")
-    net4=makeListWithAllFolder("~/result/4Net_test/")
-    net4Rp=makeListWithAllFolder("~/result/4Net_testRandomPrice/")
-    plotMeanSd(net15)
-    #boxplot(net6[[1]][1,]-net6[[1]][1,seq_along(net6[[1]][1,])]+1])
-    plotDerive(net15,ylim=c(-0.05,0.05))
-    png("checkMDeriv.png")
-    plotDeriveOfMean(netLast,ylim=c(-0.,.1))
-    dev.off()
-    png("checkM.png")
-    plotFun(a)
-
-    conpl$new(net6[[1]][2:length(net6[[1]])])
-    x=1:300
-    points(x,u$xmin+x^(-u$pars),type="l")
-    fit1 <- lm( y~offset(x) -1 )
-    fit2 <- lm( y~x )
-    fit3 <- lm( y~poly(x,3) )
-    fit4 <- lm( y~poly(x,9) )
-    library(splines)
-    fit5 <- lm( y~ns(x, 3) )
-    fit6 <- lm( y~ns(x, 9) )
-    fit7 <- lm( y ~ x + cos(x*pi) )
-
-    xx <- x
-    lines(xx, predict(fit1, data.frame(x=xx)), col='blue')
-    lines(xx, predict(fit2, data.frame(x=xx)), col='green')
-    lines(xx, predict(fit3, data.frame(x=xx)), col='red')
-    points(xx, predict(fit4, data.frame(x=xx)), col='purple')
-    lines(xx, predict(fit5, data.frame(x=xx)), col='orange')
-    points(xx, predict(fit6, data.frame(x=xx)), col='grey')
-    lines(xx, predict(fit7, data.frame(x=xx)), col='black')
-
-
-    boxplot(u$mean[u$timestep > 2000] ~ u$net[u$timestep > 2000])         
-
-    dataRead=read.csv( "~/Downloads/G1-6.csv")
-    dataRead=read.csv( "G1-15.csv")
-    res=fitting(net15)
-    pdf("meanCurveAndFit.pdf",width=9,height=10)
-    layout(matrix(c(1,1,2,3), 2, 2, byrow = TRUE))
-    plotFun(netLast)
-    mtext("Fitted model : y ~ i * x ^ -z+k",side=1,line=4)
-    plot(dataRead$average_dist,res$z,col=1:15,ylab="z",xlab="average_path")   
-    text(label=dataRead$network,x=dataRead$average_dist,y=res$z-0.002,col=1:15)   
-    plot(dataRead$density,res$k,col=1:15,ylab="i",xlab="dens")   
-    text(label=dataRead$network,x=dataRead$density,y=res$k-0.03,col=1:15)   
-    dev.off()
-    plot(res$z,res$i,col=1:6,xlab="z",ylab="i")
-
-
-    lines(predict(nls1),col="red")
-    plot(data.frame(x=x,y=y))
-
-    dev.off()
-    net6[[5]]=net6[[5]][complete.cases(net6[[5]]),]
-    all=createTable(net6)
-   all15=createTable(net15)
-   allLas=createTable(netLast)
-   alla=createTable(a)
-
-    sparsities=c(0,900,940,980)
-   sapply(names(a),function(g){
-	a[[g]] = cbind(G )       })
-    sapply(alla,function(i){
-	   pdf(paste("tmp/100/agentwrtK_D-",formatC(1000-i,width=4,format="d",flag="0"),".pdf",sep=""),pointsize=14)
-	   t_comp=getLastIt(alld100WOUT[alld100WOUT$Sparsity ==i,])
-	   plot(1,1,xlim=c(.5,6.5),ylim=c(0,100),type="n",xaxt="n",ylab="number of active agents",xlab="tournament size",main=paste("Evolution of #agents for different tournament size\n and density of ",(1000-i)/1000 ,sep=""))
-	   axis(1,at=seq_along(tsize),labels=sort(tsize))
-	   sapply(seq_along(tsize),function(k){
-		  vioplot(t_comp$alive[t_comp$t_size == sort(tsize)[k]],at=k,add=T,col="white")})
-	   dev.off()
-	})
-
-
-    utest=sapply(net6,function(net){
-		 u=apply(net,2,mean);
-		 fi=lm(y ~ x , list(y=u,x=as.numeric(names(u))));
-	       })
-
-
-	   l=net6[[1]][1,]
-	   boxplot()
-	   plotMeanSd(net4)
-	   plotFun(net6,fun=sd)
-
-
-
-
-	   dev.off()
-
-
-
-
-	   test=read.csv("~/result/4Net_test/g2/run_0001/agents.csv",sep=";")
-	   plotAllClassMean(test) 
-
-}
 
 
 fitting=function(idata){
@@ -1461,6 +1319,8 @@ getOf <- function(dats,elt="n",fun=sum){
 
 getAllOf <- function(dats,elt="n"){
     ngoods=length(levels(dats$p_good))
+    if("coins" %in% levels(dats$p_good))
+	ngoods=ngoods-1
     clns=paste("g",0:(ngoods-1),"_",elt,sep="")
     sapply(levels(dats$agent),function(i)dats[dats$agent == i , clns])
 }
@@ -1485,5 +1345,66 @@ concateOnMeasurement<-function(work,ty="q",fun="mean",exclude=T,...){
 	    return(toBind)
 }
 
+simpsonDiv <- function(x)sum((x/sum(x))^2) #Compute the simpson diversity index as 
 
-get
+simpsonDiv2 <- function(x)sum((x/sum(x))^2)
+
+computeSimpsonForOneExpe  <-  function(expe,jf=sum,breaks,min)apply(agentWith(expe,breaks=breaks,joinfunction=jf,min=min),1,simpsonDiv) #this compute  the  simson index of the number of settlement with differents good for one experiments
+
+computeSimpsonForOneFold  <-  function(fold,jf=sum,breaks=NULL,maxfold=NULL){
+
+    toanalyse=list.dirs(fold, recursive=F)
+    if(!is.null(maxfold)) #maxfold allows to speed up the test by skip some redondent result
+	toanalyse=toanalyse[1:maxfold]
+    if(length(toanalyse)>0){ 
+    allfold= Filter(Negate(is.null),lapply(toanalyse,function(f){ #lapply will return a list with simpson diversity for all experiments, Filter will remove the null elements from this list
+	work=tryCatch(read.csv(file.path(f,"agents.csv"),sep=";"),error=function(e)NULL) #try to read the agent.csv file or return null
+	if(is.data.frame(work)){#if it's data.frame it emans it's not null, thus we can compute the simpson diversity
+	    print(paste("computing simpson div for",f))
+	    computeSimpsonForOneExpe(work,breaks=breaks)
+	}
+	      
+	 }))
+   simplify2array(allfold,higher=FALSE)
+    }
+    else{print(paste("the folder",fold,"is empty or doesn't exist") )}
+}
+
+
+
+##this function return the number of agent with at least on goods of the goods in the list "goods" and for the timestep in "timestep"
+#joinfucntion is the function used to group years put together
+agentWith <- function(expe,goods=NULL,timestep=NULL,breaks=NULL,joinfunction=sum,min=1){
+    if(is.null(goods))
+	goods=levels(expe$p_good)[which(levels(expe$p_good) != "coins")]
+    if(!is.null(breaks))
+	expe$timeStep=cut(expe$timeStep,breaks=breaks,label=F)
+    if(is.null(timestep))
+	timestep=unique(expe$timeStep)
+    expe[is.na(expe)]=0
+    sapply(goods,function(g){
+	   sapply( timestep, function(tmstp){
+		  cur=expe[expe$timeStep == tmstp & expe$p_good != g,] 
+		  if(!is.null(breaks)){#if we want to breaks the dataset in period then we need to put join the timestep of a same period using joinfunction (usually 'sum') 
+		      join=tapply(cur[,paste(g,"_q",sep="")],cur$agent,joinfunction)
+		      if(min==0)return(length(join[join>=min]))
+		      if(min==1)return(length(join[join>min]))
+		  }
+		  else{ #if not we just count the number of agent with a quatnity > the min
+		      if(min==1)return(length(cur[ cur[,paste(g,"_q",sep="")] >= min,"agent"]))
+		      if(min==0)return(length(cur[ cur[,paste(g,"_q",sep="")] > min,"agent"]))
+		  }
+	 })
+	      
+})
+
+}
+
+#this function return a  "period" of the dataset
+#period is the index of the box we went to compare, break sis the number of period we went to split the original dataset
+getIndForOnperiodOfTime<-function(datas,period=4,breaks=10){
+    periods=round(seq(-200,300,length.out=breaks))
+    datas$timeStep =cut(datas$timeStep ,breaks=breaks,labels=periods)
+return(datas[datas$timeStep == periods[period],])
+
+}

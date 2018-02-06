@@ -1,5 +1,8 @@
+library(xtable)
 source("analysis.R")
 source("configHandle.R")
+
+tmpBin <- "tmpBin"
 
 cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 options(scipen=10)
@@ -8,7 +11,7 @@ ceramics=read.csv("type.csv",row.names=1)
 ceramics[is.na(ceramics)]=0
 ceramics=ceramics[,colnames(ceramics)[c(2,5,4,1,3)]]
 #pdf("~/presModel/type.pdf")
-#barplot(t(ceramics),main="Real Data",space=0,border=NA)
+barplot(t(ceramics),main="Real Data",space=0,border=NA)
 #dev.off()
 
 basuraJunio <- function(){
@@ -235,14 +238,6 @@ plotAgentsWithSmthg <- function(expe){
 })
 }
 
-agentWith <- function(expe){
-
-    expe[is.na(expe)]=0
-    sapply(levels(expe$p_good)[which(levels(expe$p_good) != "coins")],function(g){
-	   sapply( unique(expe$timeStep), function(tmstp){length(expe[ expe[,paste(g,"_q",sep="")] >= 1 & expe$timeStep == tmstp & expe$p_good != g,"agent"])})
-})
-
-}
 
 noIdea <- function(){
     paintmat=matrix(0,nrow=101,ncol=6)
@@ -269,23 +264,109 @@ plotNumCopy<-function(cul){
 
 #this function pop up 3 windows with the evolution through time of various indicators 
 #if tofile is tru then pdf of the graph are saved in the folder `tofilefolder`
-print3IndicatorFromFolder <- function(folder,tofile=F,tofilefolder=""){
+print3IndicatorFromFolder <- function(folder,tofile=F,tofilefolder="",timestep=10,maxfolder=20){
 
-    Scores=getAllMeanScore(folder)
-    if(tofile)pdf(file.path(tofilefolder,paste("Scores-",basename(folder),".pdf",sep="")))
-    else dev.new()
-    boxplot(Scores,main="Evolution of Scores through time")
-    if(tofile)dev.off()
-    Prices=getAllMeanDiff(folder,type="p")
-    if(tofile)pdf(file.path(tofilefolder,paste("Prices-",basename(folder),".pdf",sep="")))
-    else dev.new()
-    boxplot(Prices,ylim=c(-1,1),main="Difference from ideal prices through time")
-    if(tofile)dev.off()
-    Quantities=getAllMeanDiff(folder,type="q")
-    if(tofile)pdf(file.path(tofilefolder,paste("Quantities-",basename(folder),".pdf",sep="")))
-    else dev.new()
-    boxplot(Quantities,main="Difference from ideal quantites through time",ylim=c(-5,0))
-    if(tofile)dev.off()
+    print(paste("print 3 indicators for:",folder))
+    if(tofilefolder != "")dir.create(tofilefolder)
+    folds=list.dirs(folder,recursive=F)
+
+    allScores=data.frame()
+    allP=data.frame()
+    allQ=data.frame()
+    allSim=data.frame()
+    sim=0
+    work=NULL
+
+    for ( f in folds[1:min(c(length(folds),maxfolder))]){
+	expe=file.path(f,"/agents.csv")
+	print(expe)
+	work=tryCatch(read.csv(expe,sep=";"),error=function(e)NULL)
+	impact=getProp(file.path(folder,"config.xml"),type="popdistrib", cla="impact",num=F) == "off"
+	if(!(is.null(work))){
+	    timestep=min(timestep,length(unique(work$timeStep)))
+	    work$timeStep =cut(work$timeStep ,breaks=timestep,labels=round(seq(-200,300,length.out=timestep)))
+	    scoreToBind=tapply(work$scores,work[,c("timeStep")],mean)
+	    qToBind=getMeanRatio2(work,type="q")
+	    pToBind=getMeanRatio2(work,type="p")
+	    simpsToBind=computeSimpsonForOneExpe(work,breaks=NULL,min=as.numeric(impact=="on"))
+	    allScores=rbind(allScores,t(scoreToBind))
+	    allSim=rbind(allSim,simpsToBind)
+	    allQ=rbind(allQ,qToBind)
+	    allP=rbind(allP,pToBind)
+	    sim=sim+1
+	    colnames(allSim)=levels(work$timeStep)
+	}
+	else{
+	    print(paste("Folder",expe,"doesn't contains the agents.csv file"))
+	    work=NULL
+	}
+    }
+
+    if(sim>2){
+	if(tofile)png(file.path(tofilefolder,paste("Scores-",basename(folder),".png",sep="")))
+	else dev.new()
+	par(mar=c(0,2,0,0))
+	boxplot(allScores)
+	if(tofile)dev.off()
+	if(tofile)png(file.path(tofilefolder,paste("Prices-",basename(folder),".png",sep="")))
+	else dev.new()
+	par(mar=c(0,2,0,0))
+	boxplot(allP,ylim=c(0,10))
+	if(tofile)dev.off()
+	if(tofile)png(file.path(tofilefolder,paste("Quantities-",basename(folder),".png",sep="")))
+	else dev.new()
+	par(mar=c(0,2,0,0))
+	boxplot(allQ)
+	if(tofile)dev.off()
+	if(tofile)png(file.path(tofilefolder,paste("Simpson-",basename(folder),".png",sep="")))
+	par(mar=c(0,2,0,0))
+	boxplot((1-allSim),ylim=c(0,1))
+	if(tofile)dev.off()
+    }
+    else print(paste("the folder", folder,"has no valide experiment"))
+}
+
+get3IndicatorFromFolder <- function(folder,timestep=10,maxfolder=20){
+
+    print(paste("print 3 indicators for:",folder))
+    folds=list.dirs(folder,recursive=F)
+
+    allScores=data.frame()
+    allP=data.frame()
+    allQ=data.frame()
+    allSim=data.frame()
+    sim=0
+    work=NULL
+
+    for ( f in folds[1:min(c(length(folds),maxfolder))]){
+	expe=file.path(f,"/agents.csv")
+	print(expe)
+	work=tryCatch(read.csv(expe,sep=";"),error=function(e)NULL)
+	impact=getProp(file.path(folder,"config.xml"),type="popdistrib", cla="impact",num=F) == "off"
+	if(!(is.null(work))){
+	    timestep=min(timestep,length(unique(work$timeStep)))
+	    work$timeStep =cut(work$timeStep ,breaks=timestep,labels=round(seq(-200,300,length.out=timestep)))
+	    scoreToBind=tapply(work$scores,work[,c("timeStep")],mean)
+	    qToBind=getMeanRatio2(work,type="q")
+	    pToBind=getMeanRatio2(work,type="p")
+	    simpsToBind=computeSimpsonForOneExpe(work,breaks=NULL,min=as.numeric(impact=="on"))
+	    allScores=rbind(allScores,t(scoreToBind))
+	    allSim=rbind(allSim,simpsToBind)
+	    allQ=rbind(allQ,qToBind)
+	    allP=rbind(allP,pToBind)
+	    sim=sim+1
+	    colnames(allSim)=levels(work$timeStep)
+	}
+	else{
+	    print(paste("Folder",expe,"doesn't contains the agents.csv file"))
+	    work=NULL
+	}
+    }
+
+    if(sim>2){
+	return(list(scores=allScores,prices=allP,quantities=allQ,simpson=allSim))
+    }
+    else {print(paste("the folder", folder,"has no valide experiment")); return(NULL)}
 }
 
 
@@ -415,11 +496,12 @@ siteWithAmount <- function(expe){
 }
 
 
-heatmapSiteWithGood <- function(expe){
     countSite=agentWith(expe)
     rownames(countSite)=unique(expe$timestep)
+
+heatmapSiteWithGood <- function(countSite,border=NA,space=0,legend=colnames(countSite),...){
     colrs=brewer.pal(length(colnames(countSite)),"Set2")
-    barplot(t(countSite),legend=colnames(countSite),space=0,border=NA,main="Number of sites with good type",args.legend=list(x="topleft"),col=colrs)
+    barplot(t(countSite),space=space,border=border,main="Number of sites with good type",args.legend=list(x="topleft"),col=colrs,...)
 
 }
 
@@ -438,7 +520,7 @@ plotSiteWithGood <- function(matrixGoodPerSite,g=NA,...){
 	names(clrs)=colnames(matrixGoodPerSite)
 	par(xpd=NA)
 	plot(1:nrow(matrixGoodPerSite),matrixGoodPerSite[,1] ,type="n",main="Number of sites with good type",ylim=range(matrixGoodPerSite),bty="n",ylab="number of site",xlab="timestep") 
-	lines(1:nrow(matrixGoodPerSite), matrixGoodPerSite[,g]   ,col=clrs[g],lwd=3)
+	points(1:nrow(matrixGoodPerSite), matrixGoodPerSite[,g]   ,col=clrs[g],lwd=3)
 	legend("bottomright",legend=colnames(matrixGoodPerSite),col=clrs,lwd=3,cex=.8)
 	text(nrow(matrixGoodPerSite)+.2,matrixGoodPerSite[nrow(matrixGoodPerSite),g],labels=paste(colnames(matrixGoodPerSite))[g],cex=.8,adj=0)
     }
@@ -1183,7 +1265,7 @@ newTest <- function(){
 
 
     #plot binned gien log distrib
-    plotBinDist <- function(dat,add=F,...){
+    ptotBinDist <- function(dat,add=F,...){
 	maxSize=max(dat) #max of dataset
 	logMax=log2(maxSize) #log of the max 
 	breaks=2^(0:logMax+1) 
@@ -1274,7 +1356,7 @@ simulateDist <- function(dat,len,x1,x0,alpha){
 plotDist <- function(dat) plot(as.numeric(table(signif(dat,2))) ~ as.numeric(names(table(signif(dat,2)))),log="xy")
 
 
-
+{
 lines(density(x), col="chocolate", lwd=1)
 lines(density(x, adjust=2), lty="dotted", col="darkblue", lwd=2)
 h = hist(x, prob=T, breaks=40, plot=F)
@@ -1288,4 +1370,609 @@ plot(h$count, log="xy", type='l', lwd=1, lend=2,
 	simucountSize=table(simubinCOEV)
 	simucountSize=simucountSize[simucountSize>000]
 	plot(as.numeric(names(simucountSize)),simucountSize)
+}
+
+basuraBis <- function(){
+
+	sizeOnScore=getAllMeanScore("~/share_res/SizeOn/")
+	quickCheck=getAllMeanScore("~/share_res/checkQuick/")
+	sizeOnPrices=getAllMeanDiff("~/share_res/SizeOn/",type="p")
+	sizeOnQuantities=getAllMeanDiff("~/share_res/SizeOn/",type="q")
+	png("scoreWithSize.png") 
+	boxplot(sizeOnScore)
+	dev.off()
+
+	png("quantitiesWithSize.png") 
+	boxplot(sizeOnQuantities)
+	dev.off()
+
+	png("pricesWithSize.png") 
+	boxplot(sizeOnPrices)
+	dev.off()
+
+	png("scoreWithoutSize.png") 
+	plot(debSizeOff$score ~ debSizeOff$timeStep,xlab="timeStep",ylab="score")
+	dev.off()
+
+	png("quantitiesWithoutSize.png") 
+	plot(debSizeOff$score ~ debSizeOff$timeStep,xlab="timeStep",ylab="score")
+	dev.off()
+
+	png("pricesWithoutSize.png") 
+	boxplot(sizeOnPrices)
+	dev.off()
+
+	sizeOffScore=getAllMeanScore("~/share_res/SizeOff/")
+	sizeOffPrices=getAllMeanDiff("~/share_res/SizeOff/",type="p")
+	sizeOffQuantities=getAllMeanDiff("~/share_res/SizeOff/",type="q")
+	png("scoreWithoutSize.png") 
+	boxplot(sizeOffScore)
+	dev.off()
+
+	png("quantitiesWithoutSize.png") 
+	boxplot(sizeOffQuantities)
+	dev.off()
+
+	png("pricesWithoutSize.png") 
+	boxplot(sizeOffPrices)
+	dev.off()
+
+	uli2=
+	
+	g2Time=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/SizeOn", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g2", timestep= tme)
+	       })})
+	g3Time=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/SizeOn", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+	g0Time=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/SizeOn", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g0", timestep= tme)
+	       })})
+
+	g2Time_SizeOff=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/SizeOff", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g2", timestep= tme)
+	       })})
+	g3Time_SizeOff=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/SizeOff", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+	g0Time_SizeOff=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/SizeOff", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g0", timestep= tme)
+	       })})
+
+	g2Time_RandomCopy=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/RandomCopy/", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g2", timestep= tme)
+	       })})
+	g3Time_RandomCopy=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/RandomCopy", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+	g0Time_RandomCopy=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),900),function(tme){
+		      sapply(list.dirs("~/share_res/RandomCopy", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g0", timestep= tme)
+	       })})
+
+	par(mfrow=c(3,3),mar=rep(0,4))
+
+	boxplot(g0Time_SizeOff,ylim=c(0,1000))  
+	boxplot(g2Time_SizeOff,ylim=c(0,1000))  
+	boxplot(g3Time_SizeOff,ylim=c(0,1000))  
+
+	boxplot(g0Time,ylim=c(0,1000))  
+	boxplot(g2Time,ylim=c(0,1000))  
+	boxplot(g3Time,ylim=c(0,1000))  
+
+	boxplot(g0Time_RandomCopy,ylim=c(0,1000))  
+	boxplot(g2Time_RandomCopy,ylim=c(0,1000))  
+	boxplot(g3Time_RandomCopy,ylim=c(0,1000))  
+
+	sapply(list.dirs("~/share_res/SizeOff", recursive=F), function(i){
+	tmp=read.csv(file.path(i,"agents.csv"),sep=";")
+	tmp=tmp[ tmp$timeStep == 2025,]
+	       agentWith(tmp)["g2"]})
+	tmp=read.csv("~/result/firstSetFixedGoods/1_conf-diston-nstep450-nag200-trans-random/exp_0/agents.csv",sep=";")
+
+	g1Time=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),45),function(tme){
+		      sapply(list.dirs("~/share_res/checkQuick", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g1", timestep= tme)
+	       })})
+
+	g0Time=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),45),function(tme){
+		      sapply(list.dirs("~/result/firstSetFixedGoods/1_conf-diston-nstep450-nag200-trans-random/", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g0", timestep= tme)
+	       })})
+
+	g3distonRand=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),45),function(tme){
+		      sapply(list.dirs("~/result/firstSetFixedGoods/1_conf-diston-nstep450-nag200-trans-random/", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+	g3distOffRand=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),45),function(tme){
+		      sapply(list.dirs("~/result/firstSetFixedGoods/21_conf-distoff-nstep450-nag200-trans-random/", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+	g3distoffCopymax=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),45),function(tme){
+		      sapply(list.dirs("~/result/firstSetFixedGoods/22_conf-distoff-nstep450-nag200-transcopymax-mu0.01-copy0.001/", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+	g3distonCopymax=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),45),function(tme){
+		      sapply(list.dirs("~/result/firstSetFixedGoods/2_conf-diston-nstep450-nag200-transcopymax-mu0.01-copy0.001/", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+
+	g3distoffCopymax=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),45),function(tme){
+		      sapply(list.dirs("~/result/firstSetFixedGoods/12_conf-diston-nstep4500-nag200-transcopymax-mu0.01-copy0.001/", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+	g3distonCopymax=sapply(seq(min(tmp$timeStep),max(tmp$timeStep),45),function(tme){
+		      sapply(list.dirs("~/result/firstSetFixedGoods/14_conf-diston-nstep4500-nag200-transcopymax-mu1.0-copy0.001/", recursive=F), function(i){
+	agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),goods="g3", timestep= tme)
+	       })})
+}
+
+		      simpsondistonCopymax=sapply(list.dirs("~/result/firstSetFixedGoods/14_conf-diston-nstep4500-nag200-transcopymax-mu1.0-copy0.001/", recursive=F), function(i){
+	apply(agentWith(read.csv(file.path(i,"agents.csv"),sep=";")),1,simpsonDiv)})
+
+		      simpsonDistonRandom=sapply(list.dirs("~/result/firstSetFixedGoods/1_conf-diston-nstep450-nag200-trans-random/", recursive=F), function(i){apply(agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),breaks=6),1,simpsonDiv)})
+		      simpsonDistoffCopymax=sapply(list.dirs("~/result/firstSetFixedGoods/22_conf-distoff-nstep450-nag200-transcopymax-mu0.01-copy0.001/", recursive=F), function(i){apply(agentWith(read.csv(file.path(i,"agents.csv"),sep=";")),1,simpsonDiv)})
+		      simpsonDistonCopymax=sapply(list.dirs("~/result/firstSetFixedGoods/2_conf-diston-nstep450-nag200-transcopymax-mu0.01-copy0.001/", recursive=F), function(i){apply(agentWith(read.csv(file.path(i,"agents.csv"),sep=";")),1,simpsonDiv)})
+		      simpsonDistonCopymaxBigg=sapply(list.dirs("~/result/firstSetFixedGoods/7_conf-diston-nstep450-nag6000-transcopymax-mu0.01-copy0.001/", recursive=F), function(i){apply(agentWith(read.csv(file.path(i,"agents.csv"),sep=";")),1,simpsonDiv)})
+		      simpsonDistoffCopymaxBigg=sapply(list.dirs("~/result/firstSetFixedGoods/27_conf-distoff-nstep450-nag6000-transcopymax-mu0.01-copy0.001/", recursive=F), function(i){apply(agentWith(read.csv(file.path(i,"agents.csv"),sep=";")),1,simpsonDiv)})
+		      simpsonDistoffRandomBigg=sapply(list.dirs("~/result/firstSetFixedGoods/26_conf-distoff-nstep450-nag6000-trans-random/", recursive=F), function(i){apply(agentWith(read.csv(file.path(i,"agents.csv"),sep=";"),breaks=6),1,simpsonDiv)})
+comp=computeSimpsonForOneFold("~/result/firstSetFixedGoods/26_conf-distoff-nstep450-nag6000-trans-random/")
+		      par(mfrow=c(2,3),mar=rep(1,4))
+		      boxplot(1-t(simpsonDistoffRandomBigg),ylim=c(0,.7),axes=F)
+		      box()
+		      boxplot(1-t(simpsonDistoffCopymaxBigg),ylim=c(0,.7),axes=F)
+		      box()
+		      boxplot(1-t(simpsonDistonCopymaxBigg),ylim=c(0,.7),axes=F)
+		      box()
+		      boxplot(1-t(simpsonDistonRandom),ylim=c(0,.7),axes=F)
+		      box()
+		      boxplot(1-t(simpsonDistoffCopymax),ylim=c(0,.7),axes=F)
+		      box()
+		      boxplot(1-t(simpsonDistonCopymax),ylim=c(0,.7),axes=F)
+		      box()
+
+		      dev.new()
+
+
+    ###print all graph with 5 agents producing the non monetary goods
+    ##A print the change in simpson diversity index
+    allCount=sapply(list.dirs("/home/scarrign/result/firstSetFixedGoods/testTime/sizeoff/",recursive=F),function(fold){
+		    try({
+			print(paste("compute simsondiversity for fold:",fold))
+			simpson=computeSimpsonForOneFold(fold,jf=sum)
+		    png(paste("plotSimp/plotSimpsonDiversity-",basename(fold),".png",sep=""))
+		      par(mar=c(2,2,0,0))
+		      boxplot(1-t(simpson),ylim=c(0,1))
+		    dev.off()
+		    })
+	})
+    ##B print the change of more general indicators
+    sapply(list.dirs("~/result/firstSetFixedGoods/",recursive=F),function(i){print3IndicatorFromFolder(i,tofile=T,tofilefolder="plotSimp/GeneralIndicator/")})
+
+    ###print all graph with smaller number of agents producing the non monetary goods
+    ##A print the change in simpson diversity index
+    allsount=sapply(list.dirs("/home/scarrign/result/firstSetFixedGoodsSmallProd/firstSetFixedGoods//",recursive=F),function(fold){
+		    try({
+			print(paste("compute simsondiversity for fold:",fold))
+			simpson=computeSimpsonForOneFold(fold,jf=sum)
+		    png(paste("plotSimpSmallNP/plotSimpsonDiversity-",basename(fold),".png",sep=""))
+		      par(mar=c(2,2,0,0))
+		      boxplot(1-t(simpson),ylim=c(0,1))
+		    dev.off()
+		    })
+	})
+
+    ##B print the change of more general indicators
+    sapply(list.dirs("~/result/firstSetFixedGoodsSmallProd/firstSetFixedGoods/",recursive=F),function(i){print3IndicatorFromFolder(i,tofile=T,tofilefolder="plotSimpSmallNP/GeneralIndicator/")})
+
+
+    sapply(list.dirs("~/result/firstSetFixedGoods/testTime/sizeoff/",recursive=F),function(i){print3IndicatorFromFolder(i,tofile=T,tofilefolder="timeTest/")})
+
+    ##A print the change in simpson diversity index
+    allsount=sapply(list.dirs("/home/scarrign/result/firstSetFixedGoods/testTime/sizeoff/",recursive=F),function(fold){
+		    try({
+			print(paste("compute simsondiversity for fold:",fold))
+			simpson=computeSimpsonForOneFold(fold,jf=sum,maxfold=20)
+		    png(paste("timeTest/Simpson-",basename(fold),".png",sep=""))
+		      par(mar=c(2,2,1,0))
+		      boxplot(1-t(simpson),ylim=c(0,1),main=basename(fold))
+		    dev.off()
+		    })
+	})
+
+    sapply(list.dirs("~/result/firstSetFixedGoods/testTime/sizeon/",recursive=F),function(i){print3IndicatorFromFolder(i,tofile=T,tofilefolder="timeTest/")})
+
+    print3IndicatorFromFolder("~/share_res/1tsx4500/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsx4500B/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsx4500SizeOn/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsx4500SizeOnB/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsxCS10SizeOn/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsxCS10/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsxCS10x4500/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsxCS10x4500SizeOn/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsxCS1x450SizeOn/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsxCS1x450/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/1tsxCS1x500y/",tofile=T,tofilefolder=".")
+
+    print3IndicatorFromFolder("~/share_res/timeASizeOn/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/timeASizeOnRand/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/timeASizeOnLowCow/",tofile=T,tofilefolder=".")
+    print3IndicatorFromFolder("~/share_res/timeASizeOnRandLowCow/",tofile=T,tofilefolder=".")
+    p
+    fold="~/result/testRobsut/"
+			print(paste("compute simsondiversity for fold:",fold))
+			simpson=computeSimpsonForOneFold(fold,jf=sum)
+		    png(paste("timeTest/2Simpson-",basename(fold),".png",sep=""))
+		      par(mar=c(2,2,0,0))
+		      boxplot(1-t(simpson),ylim=c(0,1))
+		    dev.off()
+    fold="~/result/firstSetFixedGoods/testTime/sizeon/6_conf-nstep18000-copystep10-sizeon-regularintro-highCopy/"
+			print(paste("compute simsondiversity for fold:",fold))
+			simpson=computeSimpsonForOneFold(fold,jf=sum)
+		    png(paste("timeTest/2Simpson-",basename(fold),".png",sep=""))
+		      par(mar=c(2,2,0,0))
+		      boxplot(1-t(simpson),ylim=c(0,1))
+		    dev.off()
+
+
+    test=read.csv("~/share_res/1tsx4500/exp_1/agents.csv",sep=";")
+    testSon=read.csv("~/share_res/debSizeOn.csv",sep=";")
+    testSoff=read.csv("~/share_res/debSizeOff.csv",sep=";")
+    testRn=read.csv("~/share_res/debSizeRandCop.csv",sep=";")
+    testTASon=read.csv("~/share_res/debASizeOn.csv",sep=";")
+    boxplot(testTASon$score ~ testTASon$timeStep)
+    plotSiteWithGood(agentWith(testTASon))
+
+}
+
+
+#Simple illustration of Simpson Diversity index
+illustrateSimpson <- function(){
+    pdf("simpsonIllu.pdf")
+    expl=rbind(c(2,2,2,2,2,2),c(0,3,2,2,2,3),c(0,5,1,1,1,4),c(0,5,1,0,0,4)) 
+    colnames(expl)=1:ncol(expl)
+    rownames(expl)=round(1-apply(expl,1,simpsonDiv),digit=2)
+    heatmapSiteWithGood(expl,border=1,space=.1,legend=F)
+    mtext("Simpson diversity",1,3)
+    dev.off()
+
+    pdf("simpsonIlluData.pdf")
+    expl=ceramics
+    colnames(expl)=1:ncol(expl)
+    rownames(expl)=paste(rownames(ceramics),"\n(",round(1-apply(expl,1,simpsonDiv),digit=2),")",sep="")
+    heatmapSiteWithGood(expl,border=1,space=.1,legend=F)
+    mtext("Period\n(Simpson diversity index)",1,3)
+    dev.off()
+
+    full_dataset2=read.csv("~/data_per_year.csv")
+    full_dataset2$goods=full_dataset2$Fabric
+    full_dataset2$date=cut(full_dataset2$date,breaks=50) #the new dataset
+    data2=sapply( levels(full_dataset2$goods) , function(g)sapply(sort(unique(full_dataset2$date)),function(ts){length(unique(full_dataset2$Location_ascii[full_dataset2$date == ts & full_dataset2$goods == g]))}))
+
+
+    data=sapply( levels(full_dataset$good) , function(g)sapply(sort(unique(full_dataset$date)),function(ts)length(full_dataset$Location_ascii[full_dataset$date == ts & full_dataset$good == g])))
+    tapply(full_dataset$good , full_dataset[,c("date","Location_ascii")],sum)
+	
+    full_dataset2$date=cut(full_dataset2$date,breaks=50)
+    data2=sapply( levels(full_dataset2$good) , function(g)sapply(sort(unique(full_dataset2$date)),function(ts){length(unique(full_dataset2$Location_ascii[full_dataset2$date == ts & full_dataset2$good == g]))}))
+    types=list("ESA","ESB","ESC","ITS")
+    full_dataset$goods=full_dataset$Fabric
+
+    full_dataset2$date=cut(full_dataset2$date,breaks=50)
+    data2=sapply( levels(full_dataset2$good) , function(g)sapply(sort(unique(full_dataset2$date)),function(ts){length(unique(full_dataset2$Location_ascii[full_dataset2$date == ts & full_dataset2$good == g]))}))
+    types=list("ESA","ESB","ESC","ITS")
+    full_dataset2$goods=full_dataset2$Fabric
+    for(ty in types )
+	full_dataset$goods[grep(paste(ty,".*",sep=""),full_dataset$goods)]=ty
+    full_dataset=droplevels(full_dataset)
+
+    pdf("full_dataset.pdf")
+    plotSiteWithGood(data2)
+    dev.off()
+    pdf("full_datasetWtSimps.pdf")
+    plotSiteWithGood(data2)
+    lines(0:49,(1-apply(data2,1,simpsonDiv))*140,type="l",col="red",lwd=2)
+    axis(4,at=seq(0,140,length.out=5),lab=round(seq(0,1,length.out=5),digits=2),col="red",col.lab="red")
+    dev.off()
+
+    data2=sapply( levels(full_dataset2$good) , function(g)sapply(sort(unique(full_dataset2$date)),function(ts){length(unique(full_dataset2$Location_ascii[full_dataset2$date == ts & full_dataset2$good == g]))}))
+    types=list("ESA","ESB","ESC","ITS")
+    full_dataset2$goods=full_dataset2$Fabric
+    pdf("full_dataset100.pdf")
+    plotSiteWithGood(data2)
+    dev.off()
+    pdf("full_datasetWtSimps100.pdf")
+    plotSiteWithGood(data2)
+    lines(0:249,(1-apply(data2,1,simpsonDiv))*140,type="l",col="red",lwd=2)
+    axis(4,at=seq(0,140,length.out=5),lab=round(seq(0,1,length.out=5),digits=2),col="red",col.lab="red")
+    dev.off()
+    abline(v=(200-100)/10)
+    abline(v=(200-100)/10-1)
+    abline(v=(200-100)/10+1)
+
+    abline(v=(200-40)/10)
+    abline(v=(200-40)/10-1)
+    abline(v=(200-40)/10+1)
+
+    abline(v=(200-27)/10)
+    abline(v=(200-27)/10-1)
+    abline(v=(200-27)/10+1)
+
+    
+}
+
+drawTable <- function(){
+
+    rCT_y=c(0.5,1,2) 
+    rEI_y=c(0.5,1,10,16)
+    tEI=rEI_y*500
+    tCT=rCT_y*500
+
+
+    rCT_m=t(sapply(rEI_y,"/",rCT_y))
+    rCT_ml=apply(rCT_m,2,paste0,"CT/EI")
+    EI=rEI_y * 500
+    rCT_mlRatio=apply(rCT_m,2,"/",EI)
+    colnames(rCT_ml)=paste0(rCT_y,"CT/y")
+    rownames(rCT_ml)=paste0(rEI_y,"EI/y")
+    #rCT_ml=apply(paste0(rCT_ml,"/ei") 
+    rCT_ei=sort(unique(as.vector(rCT_m)))
+    paramIzaT=sapply(tCT,paste0,"CT ",tEI,"EI")
+    paramIzaT[rCT_m<1]=NA 
+    colnames(paramIzaT)=paste0(rCT_y,"CT/y")
+    rownames(paramIzaT)=paste0(rEI_y,"EI/y")
+
+    allParam=sapply(paste0("(",EI),paste0,",",rCT_ei,")")
+    allParam=sapply(EI,"*",rCT_ei)
+    sapply(EI,paste0,",",rCT_ei,")")
+    allCT=sapply(EI,"/",(rCT_ei))
+    sapply(EI,paste,unique(as.vector(round(allCT))))
+allParamTot=t(apply(round(allCT),1,paste0,"CT ",round(EI),"EI"))
+    
+    rownames(allParam)=rCT_ei
+    colnames(allParam)=EI
+
+    rownames(allParamTot)=paste0(rCT_ei,"CT/EI")
+    colnames(allParamTot)=paste0(EI,"EI","(",rownames(paramIzaT),")")
+
+    allParamFilt=allParamTot
+     allParamFilt[!(allParamFilt %in% paramIzaT)] = NA  
+     sim=0
+     expename="timeSet"
+     for(ei in as.character(EI))
+	 for(ct in as.character(rCT_ei[rCT_ei>=1]))
+		{
+		    sim=sim+1
+		    allParam[ct,ei]=paste0(expename,"_",sim)
+		}
+     ##To get the list of the experiment we want to do we can the do:
+     todExp=allParam[!is.na(allParamFilt)]
+     names(allParam)=allParamTot
+     names(todExp)=names(allParam[!is.na(allParamFilt)])
+}
+
+
+generateExplenationTables <- function(){
+    print(xtable(allParam),include.rownames=F,sanitize.text.function=identity,file="paramTime.tex")
+     print(xtable(paramIzaT),include.rownames=T,sanitize.text.function=identity,file="~/presModel/originParam.tex")
+     print(xtable(rCT_ml),include.rownames=T,sanitize.text.function=identity,file="~/presModel/rCT_m.tex")
+     print(xtable(allParamTot),include.rownames=T,sanitize.text.function=identity,file="~/presModel/allParam.tex")
+     print(xtable(allParamFilt),include.rownames=T,sanitize.text.function=identity,file="~/presModel/allParamFilt.tex")
+
+}
+
+generateAllIndicatorsAndTablesWithResults <- function(){
+    #this big function hshould generate all the gfraph and the latex table to show the grag
+ lims=list(Prices=c(0,10),Quantities=c(),Simpson=c(0,1),Scores=c(0,1)) 
+
+    pref=c("MoreAgents","AllTimeSet1ProdWithMut1","AllTimeSet1ProdWithMut5")
+exps=c("timeSetRandomCopy","timeSet","timeSetSizeOn","timeSetSizeOnHighCopy","timeSetSizeOnHighMutLow")
+names(exps)=c("Random Copy","Size Off","Size On","High Copy","High Mut")
+     #{timeSet,timeSetSizeOn,timeSetRandomCopy,timeSetSizeOnHighCopy,timeSetSizeOnHighMutLow}
+    fold="~/result/firstSetFixedGoods/"
+    #forCopy(expDir in unlist(lapply(file.path(fold,pref),file.path,exps))){
+    for(pr in pref[2:3]){
+	for(ex in  exps){
+	    expDir=file.path(fold,pr,ex)
+	    print(paste(pr,ex))
+
+	    imgFold=paste0(pr,"-",ex)
+
+	    allIndB=list(quantities=NULL,prices=NULL,scores=NULL,simpson=NULL)
+	    for(fexp in list.dirs(expDir,recursive=F)){
+		       pathAllInd=fexp
+	    	#print(fexp)
+		       binAllInd=file.path(tmpBin,gsub("/","-",paste0(fexp)))
+		       allInd=NULL
+		       if(!file.exists(binAllInd)){ ##if else to avoid recreate each time very long file
+			  allInd=try(get3IndicatorFromFolder(i,maxfolder=100))
+			   save(allInd,file=binAllInd)
+		       }else{
+			   load(binAllInd)
+			   #print(paste("backup data",binAllInd))
+		       }
+		       if(is.null(allInd)||length(allInd)==0)
+			   a=1
+			   #print(paste0("nothing in",binAllInd))
+		       else{
+		       allInd[["scores"]]=allInd[["scores"]]/getProp(file.path(pathAllInd,"config.xml"),type="culture", cla="step")
+		       allInd=lapply(allInd,function(i)cbind(i,V2=getProp(file.path(pathAllInd,"config.xml"),type="culture", cla="step")))
+		       allInd=lapply(allInd,function(i)cbind(i,V3=getProp(file.path(pathAllInd,"config.xml"),type="numSteps", cla="value")))
+		       allInd=lapply(allInd,function(i)cbind(i,ratio=1/i$V2))
+		       allInd=lapply(allInd,function(i)cbind(i,id=paste0(i$ratio,"/",i$V3)))
+		       #print(allInd[["simpson"]][1,"id"])
+			   allIndB=lapply(names(allInd),function(i)rbind(allIndB[[i]],allInd[[i]]))
+			   names(allIndB)=names(allInd)
+			   #print(paste0("how is growing: ",nrow(allIndB[[1]])))
+		       }
+
+	    }
+
+	    if(is.null(allIndB)||length(allIndB)==0)
+		print(paste0("nothing in ",binAllInd))
+	    else{
+	    for(period in seq(2,10,2)){
+	        pathHC=file.path("/home/scarrign/result/firstSetFixedGoods/",pr,ex)
+	        binHC=file.path(tmpBin,gsub("/","-",paste0(pathHC,period)))
+	        hc=NULL
+	        #if(!file.exists(binHC)){ ##if else to avoid recreate each time very long file
+	        #    hc=getAllIndForAyear(pathHC,maxfolder=100,period=period) ##get all info for all indicatores (scores, simpson.prices,quantities)  for on given period 
+	        #    save(hc,file=binHC)
+	        #}else{
+	        #    load(binHC)
+	        #    print(paste("backup data",binHC))
+	        #}
+
+
+	    ind=c("Quantities","Prices","Scores","Simpson")
+	    lapply(ind,function(i){
+		   periodLab=names(allIndB[[tolower(i)]])[period]
+		   comp=allIndB[[tolower(i)]][c(periodLab,"V2","V3","ratio","id")]
+		   comp$order=comp$V2+comp$V3
+		   
+	          #comp= hc[[tolower(i)]]
+
+	           png(paste0("compareRatio/ratio-",i,period,ex,pr,".png"))
+	        labelLength=(unique(comp[order(comp$order),c(2,3,6)])$V3)/3
+	        labelratio=(unique(comp[order(comp$order),c(2,3,6)])$V2)
+	        colgrey= brewer.pal(length(unique(labelLength)),"Greys")
+	         names(colgrey)=unique(sort(labelLength))
+
+	    	boxplot(comp[,1] ~ comp$order,ylim=lims[[i]],axes=F,col=colgrey[as.character(labelLength)])
+	        axis(2)
+
+	        axis(1,at=1:length(labelLength),labels=labelLength) ##length in labelLengt here means=length of the simulation
+	        axis(1,line=3,at=1:length(labelratio),labels=(labelratio),outer=F)
+	        dev.off()
+	           matResult=matrix(paste0("\\includegraphics[width=.30\\textwidth]{/home/scarrign/projects/PhD/dev/ceeculture/AnalyseTools/",imgFold,"/",i,"-",todExp[paramIzaT],"}"),nrow=nrow(paramIzaT))
+	           matResult[grep("*NA*",matResult)]=NA  ##Good way to remove cells where no images has been produced
+	           colnames(matResult)=colnames(paramIzaT)
+	           rownames(matResult)=rownames(paramIzaT)
+
+	           print(xtable(matResult),include.rownames=T,sanitize.text.function=identity,file=paste0("~/presModel/table-",pr,"-",basename(expDir),"-",i,".tex"))
+	           } )
+
+	}
+	}
+    }
+    }
+}
+
+    
+printLatex <- function(){
+
+    #subroutines to print the latex table with the good file name
+
+    ###print latex table to show side by side the graphe previously done
+    for(indices in ind){
+	for(pr in pref){
+	    tableToPrint=sapply(exps,function(i)paste0("\\includegraphics[width=.10\\textwidth]{/home/scarrign/projects/PhD/dev/ceeculture/AnalyseTools/compareRatio/ratio-",indices,seq(2,10,2),i,pr,"}"))
+	    rownames(tableToPrint)=seq(2,10,2)
+	    print(xtable(tableToPrint,aligne=c("ccccc")),include.rownames=T,sanitize.text.function=identity,file=paste0("/home/scarrign/presModel/ratio-",indices,pr,".tex"))
+	}
+    }
+
+
+    hc=getAllIndForAyear("/home/scarrign/result/firstSetFixedGoods//AllTimeSet1ProdWithMut1/timeSetSizeOnHighCopy/",maxfolder=100,period=4)
+    so=getAllIndForAyear("/home/scarrign/result/firstSetFixedGoods//AllTimeSet1ProdWithMut5/timeSetSizeOnHighMutLow/",maxfolder=100,period=4)
+    compA=hc[["simpson"]]
+    compB=so[["simpson"]]
+    
+     boxplot(compA[,1][order(compA$V3)] ~ compA$id[order(compA$V3)],ylim=c(0,1))
+     boxplot(compB[,1][order(compB$V3)] ~ compB$id[order(compB$V3)],ylim=c(0,1))
+}
+
+
+
+getAllIndForAyear <- function(expDir,period=4,maxfolder=100){
+    allScoresRatio=data.frame()
+    allPRatio=data.frame()
+    allQRatio=data.frame()
+    allSimRatio=data.frame()
+    for(folder in  list.dirs(expDir,recursive=F)){
+	folds=list.dirs(folder,recursive=F)
+	allScores=c()
+	allP=c()
+	allQ=c()
+	allSim=c()
+	sim=0
+	work=NULL
+	impact=getProp(file.path(folder,"config.xml"),type="popdistrib", cla="impact",num=F) == "off"
+	max_score=getProp(file.path(folder,"config.xml"),type="culture", cla="step",num=T)
+	print(paste0("extracting:",folder))
+	for ( f in folds[1:min(c(length(folds),maxfolder))]){
+	    expe=file.path(f,"/agents.csv")
+	    work=tryCatch(read.csv(expe,sep=";"),error=function(e)NULL)
+	    if(!(is.null(work))){
+	    	print(expe)
+		subwork=droplevels(getIndForOnperiodOfTime(work,period=period))
+		scoreToBind=mean(subwork$scores)
+		qToBind=getMeanRatio2(subwork,type="q")
+		pToBind=getMeanRatio2(subwork,type="p")
+		simpsToBind=simpsonDiv(agentWith(subwork,min=as.numeric(impact=="on")))
+		allScores=c(allScores,scoreToBind/max_score)
+		allSim=c(allSim,simpsToBind)
+		allQ=c(allQ,qToBind)
+		allP=c(allP,pToBind)
+		sim=sim+1
+	    }
+	}
+	if(sim>2){
+	    allQRatio=rbind(allQRatio,cbind(allQ,getProp(file.path(folder,"config.xml"),type="culture", cla="step"),getProp(file.path(folder,"config.xml"),type="numSteps", cla="value")  ))
+	    allSimRatio=rbind(allSimRatio,cbind(allSim,getProp(file.path(folder,"config.xml"),type="culture", cla="step"),getProp(file.path(folder,"config.xml"),type="numSteps", cla="value")  ))
+	    allScoresRatio=rbind(allScoresRatio,cbind(allScores,getProp(file.path(folder,"config.xml"),type="culture", cla="step"),getProp(file.path(folder,"config.xml"),type="numSteps", cla="value")  ))
+	    allPRatio=rbind(allPRatio,cbind(allP,getProp(file.path(folder,"config.xml"),type="culture", cla="step"),getProp(file.path(folder,"config.xml"),type="numSteps", cla="value")  ))
+	}
+    }
+    res=list(prices=allPRatio,quantities=allQRatio,simpson=allSimRatio,scores=allScoresRatio)
+    res=lapply(res,function(i)cbind(i,ratio=1/i$V2))
+    res=lapply(res,function(i)cbind(i,id=paste0(i$ratio,"/",i$V3)))
+    return(res)
+}
+
+
+
+
+otherSubRout <- function(){
+    #other subrootine to print the latex table with includes"
+    pref=c("MoreAgents","AllTimeSet1ProdWithMut1","AllTimeSet1ProdWithMut5")
+    #exps=c("timeSet","timeSetSizeOn","timeSetRandomCopy","timeSetSizeOnHighCopy","timeSetSizeOnHighMutLow")
+    fold="~/result/firstSetFixedGoods/"
+    for(pr in pref){
+	for(ex in  exps[c(3,5)]){
+	    expDir=file.path(fold,pr,ex)
+	    print(paste0(pr,ex))
+
+	    imgFold=paste0(pr,"-",ex)
+	    ind=c("Quantities","Prices","Scores","Simpson")
+	    lapply(ind,function(i){
+	           matResult=matrix(paste0("\\includegraphics[width=.30\\textwidth]{/home/scarrign/projects/PhD/dev/ceeculture/AnalyseTools/",imgFold,"/",i,"-",todExp[c(1,6)][paramIzaT],"}"),nrow=nrow(paramIzaT))
+	           matResult[grep("*NA*",matResult)]=NA  ##Good way to remove cells where no images has been produced
+	           colnames(matResult)=colnames(paramIzaT)
+	           rownames(matResult)=rownames(paramIzaT)
+
+	           print(xtable(matResult),include.rownames=T,sanitize.text.function=identity,file=paste0("~/presModel/tableLil-",pr,"-",basename(expDir),"-",i,".tex"))
+	           } )
+
+	}
+	}
+}
+
+
+#i have to compute score given the data
+ScoreAnalysis <- function(){
+    allmean=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSet/timeSet_1/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
+    allmean2=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSet/timeSet_30/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
+    allmean3=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSetSizeOnHighMutLow/timeSet_30/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
+    allmean3b=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSetSizeOnHighMutLow/timeSet_1/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
+    
+
 }
