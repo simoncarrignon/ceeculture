@@ -15,7 +15,7 @@ namespace Epnet
 {
 	
 
-	Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, false)
+	Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, true)
 	{
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 		
