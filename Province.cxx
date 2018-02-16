@@ -642,17 +642,8 @@ void Province::stepEnvironment()
 		stepRaster(d);
 	}
 	if( provinceConfig._events == "rate"){
-	    //std::cout<<provinceConfig._eventsRate<< " ts "<<getCurrentTimeStep() <<std::endl;
 	    if( getCurrentTimeStep() >= provinceConfig._culturalStep* 3 *provinceConfig._eventsRate  && getCurrentTimeStep() % (provinceConfig._culturalStep* 3 * provinceConfig._eventsRate ) == 0 && getCurrentTimeStep() <= provinceConfig._eventsStop ){
-		//std::cout << "=========="<< std::endl;
-	//	std::cout << "need:"<< std::get<0>(_needs[0])<< "="<< std::get<1>(_needs[0])<<std::endl;
-	//	std::cout << "need:"<< std::get<0>(_needs[_needs.size()-1])<< "="<< std::get<1>(_needs[_needs.size()-1])<<std::endl;
 		
-		//switch the first need with the last
-		//double tmp = std::get<1>(_needs[0]);
-		//std::get<1>(_needs[0])=std::get<1>(_needs[_needs.size()-1]);
-		//std::get<1>(_needs[_needs.size()-1])=tmp;
-
 		std::ostringstream sgoodType;
 		sgoodType << "g"<< _typesOfGood.size()-1;	//the new good will be simply called gN
 		std::string goodType = sgoodType.str();
@@ -672,8 +663,6 @@ void Province::stepEnvironment()
 		   Roman * agent  = dynamic_cast<Roman *>(getAgent( (*(*it)).getId()));
 		    agent->addGoodType(goodType,0.0,0.0,0.0,0.0);
 
-		    //std::cout<<"before"<<std::endl;
-		    //std::cout<<"prod good:"<<std::get<0>(agent->getProducedGood())<<std::endl; 
 		    //    //set a random properties for each goods
 		    if (getTradeVolSelFunction()=="brughman17" )
 			while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,10));// market clearing price : 1.0/(i+1)
@@ -692,20 +681,9 @@ void Province::stepEnvironment()
 			newProd++;
 		    }
 
-		    //    //set the need value for each good. Remember: in Basic Simulation the need is the same for everyone
-		    //agent->setNeed(goodType,1.0/(_needs.size()-1));
 		    agent->setNeed(goodType,1.0);
-		    //std::cout<<"after"<<std::endl;
-		    //std::cout<<"prod good:"<<std::get<0>(agent->getProducedGood())<<std::endl; 
 		}			
-
 		
-	//	std::cout << "Switch" << std::endl;
-	//	std::cout << "need:"<< std::get<0>(_needs[0])<< "="<< std::get<1>(_needs[0])<<std::endl;
-	//	std::cout << "need:"<< std::get<0>(_needs[_needs.size()-1])<< "="<< std::get<1>(_needs[_needs.size()-1])<<std::endl;
-//		std::cout<<"=========="<< std::endl;
-//	    for(auto it = _typesOfGood.begin(); it != _typesOfGood.end();it++)
-//		printListOfProd(*it);
 	    }
 	}
 }
