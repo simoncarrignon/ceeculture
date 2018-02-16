@@ -96,6 +96,7 @@ namespace Epnet
 
 		if(logTrade()){
 		    //initialize a log file that allows to log why trades fail
+		    //that's ugly dude
 		    std::stringstream tradeHeaders ;
 		    tradeHeaders<< "timestep,goodwanted,goodproposed,requestedQuantity,responderTradCounter,responder.getQuantity-goodWanted,proposedQuantity,responderTradeWill,offerer.getQuantity-offererProducedGood,responder.getQuantity-offererProducedGood,responderTradeWill_SUP_proposedQuantity,responderTradeWill_INFEQ_0,requestedQuantity_INFEQ_0,responder.getQuantity-goodWanted-_INF_requestedQuantity,offerer.getQuantity-offererProducedGood-_INF_proposedQuantity,responderTradCounter_INF_requestedQuantity-";
 		    log_INFO("trade",tradeHeaders.str());
