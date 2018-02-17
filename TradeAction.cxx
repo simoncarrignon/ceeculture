@@ -363,8 +363,8 @@ namespace Epnet
 		double SumOj=0;
 		//  	  double Mo=0;
 
-		std::vector< std::tuple< std::string, double, double, double, double, double > > allGoods = r.getListGoods();
-		for(std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
+		std::vector< std::tuple<std::string,double,double,double,double,double,double,double> > allGoods = r.getListGoods();
+		for(std::vector< std::tuple<std::string,double,double,double,double,double,double,double> >::iterator ot = allGoods.begin();ot != allGoods.end();ot ++){
 			std::string ressource= std::get<0>(*ot);
 			SumOj+=r.getPrice(ressource)*r.getNeed(ressource);
 			//		Mo+=r.getPrice(ressource);

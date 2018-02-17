@@ -157,7 +157,7 @@ namespace Epnet
 				if(provinceConfig._goodsParam== "random" || provinceConfig._goodsParam== "randn")
 				{
 
-					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
+					std::tuple<std::string,double,double,double,double,double,double,double> protoGood = provinceConfig._protoGood;
 					for (int g = 0; g < provinceConfig._numGoods ; g++)
 					{
 
@@ -165,7 +165,7 @@ namespace Epnet
 						sgoodType << "g"<< g;				
 						std::string goodType = sgoodType.str();
 						//id, maxQuantity, price, need and production rate of the good
-						agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood));
+						agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood),std::get<6>(protoGood),std::get<7>(protoGood));
 						//add init quantity to new good
 						agent->addGood(goodType,std::get<1>(protoGood));
 						//the protoGood is used to calibrate all other goods. 
@@ -186,7 +186,7 @@ namespace Epnet
 				else if(provinceConfig._goodsParam== "gintis07" )
 				{
 				    	
-					std::tuple< std::string, double, double, double, double, double > protoGood = provinceConfig._protoGood;
+					std::tuple<std::string,double,double,double,double,double,double,double> protoGood = provinceConfig._protoGood;
 					for (int g = 0; g < provinceConfig._numGoods ; g++)
 					{
 
@@ -194,7 +194,7 @@ namespace Epnet
 						sgoodType << "g"<< g;				
 						std::string goodType = sgoodType.str();
 						//id, maxQuantity, price, need and production rate of the good
-						agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood));
+						agent->addGoodType(goodType,std::get<2>(protoGood),std::get<3>(protoGood),std::get<4>(protoGood),std::get<5>(protoGood),std::get<6>(protoGood),std::get<7>(protoGood));
 						//add init quantity to new good
 						agent->addGood(goodType,std::get<1>(protoGood));
 						//the protoGood is used to calibrate all other goods. 
@@ -229,7 +229,7 @@ namespace Epnet
 					{
 						//id, maxQuantity, price, need and production rate of the good
 					    std::string goodType = std::get<0>(*it);
-						agent->addGoodType(goodType,std::get<2>(*it),std::get<3>(*it),std::get<4>(*it),std::get<5>(*it));
+						agent->addGoodType(goodType,std::get<2>(*it),std::get<3>(*it),std::get<4>(*it),std::get<5>(*it),std::get<6>(*it),std::get<7>(*it));
 
 						//add init quantity to new good
 						agent->addGood(goodType,std::get<1>(*it));
@@ -253,9 +253,9 @@ namespace Epnet
 				//
 				//
 				///choose the production good
-				std::tuple< std::string, double, double, double, double, double > producedGood =  std::tuple< std::string, double, double, double, double, double >();
+				std::tuple<std::string,double,double,double,double,double,double,double> producedGood =  std::tuple<std::string,double,double,double,double,double,double,double>();
 
-				if(provinceConfig._typeProd == "unbalanced"){ //an algo to setup 'on the fly' who produces what in an iunbalanced scenario
+				if(provinceConfig._typeProd == "unbalanced"){ //an algo to setup 'on the fly' who produces what in an unbalanced scenario
 				    bool found=0; //a stop condition
 				    int list=0; //indice that will be incremanted
 				    int ind=0;
@@ -662,7 +662,7 @@ void Province::stepEnvironment()
 		{
 
 		   Roman * agent  = dynamic_cast<Roman *>(getAgent( (*(*it)).getId()));
-		    agent->addGoodType(goodType,0.0,0.0,0.0,0.0);
+		    agent->addGoodType(goodType,0.0,0.0,0.0,0.0,0.0,1.0);
 
 		    //    //set a random properties for each goods
 		    if (getTradeVolSelFunction()=="brughman17" )

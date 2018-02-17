@@ -127,7 +127,7 @@ void ProvinceConfig::loadParams()
 	    double price = getParamFloat(name.str(),"price");
 	    double need = getParamFloat(name.str(),"need");
 	    double productionRate = getParamFloat(name.str(),"productionRate");
-	    _protoGood = std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate);  
+	    _protoGood = std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate,0,1);  //if good are random we assume they will be created for the whole simu
 
 	}
 	else{
