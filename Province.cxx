@@ -625,13 +625,12 @@ namespace Epnet
 		}
 	    }
 	    if (_step%3  == 0){
-		for (int g = 0; g < provinceConfig._numGoods ; g++)
-		{
+		//!TODO THIS IS CRITICAL UPDATE
+		for( std::vector<std::string>::iterator it= _typesOfGood.begin() ; it!=_typesOfGood.end(); it++){
 
-		    //std::cout<<"reset scores"<< std::endl;
-		    std::ostringstream sgoodType;
-		    sgoodType << "g"<< g;				
-		    std::string goodType = sgoodType.str();
+		    std::cout<<"reset scores"<< std::endl;
+		    std::cout<<*it<< std::endl;
+		    std::string goodType = *it;
 		    setMaxScore(goodType,0.0);
 		    setMinScore(goodType,1000.0);
 
