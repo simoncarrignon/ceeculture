@@ -57,7 +57,7 @@
 		<good5	id="coins"	relstart="0.000" relend="1.000" initialQuantity="0"	maxQuantity="1000"	price="1"	need="1"	productionRate="0" nprod="-1"/>
 	</goods>
 
-	<events type="nop" rate="100" stop="7200"/> 
+	<events type="historical" rate="100" stop="7200"/> 
 
 </config>
 
