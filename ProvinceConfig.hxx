@@ -15,7 +15,7 @@ class ProvinceConfig : public Engine::Config
 
 	int _numGoods;
 	std::string _typeProd;
-	std::vector<std::tuple<std::string,double,double,double,double,double,double,double> > _paramGoods;
+	std::vector<std::tuple<std::string,double,double,double,double,double> > _paramGoods;
 
 	int _numRasters;
 	std::vector<std::tuple<std::string,double,double,double> > _paramRasters;

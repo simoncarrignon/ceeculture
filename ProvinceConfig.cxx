@@ -137,8 +137,6 @@ void ProvinceConfig::loadParams()
 		name << "goods/good" << i;
 		std::string id = getParamStr(name.str(),"id");
 		double initQuantity = getParamFloat(name.str(),"initialQuantity");
-		double startProduction = getParamFloat(name.str(),"relstart");
-		double endProduction = getParamFloat(name.str(),"relend");
 		double maxQuantity = getParamFloat(name.str(),"maxQuantity");
 		double price = getParamFloat(name.str(),"price");
 		double need = getParamFloat(name.str(),"need");
@@ -154,8 +152,7 @@ void ProvinceConfig::loadParams()
 			exit(0);
 		    }
 		}
-		_paramGoods.push_back(std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate,startProduction,endProduction));
-		std::cout<<"good:"<<i<<" named:"<<id<<"start"<<startProduction<<";"<<endProduction<<std::endl;
+		_paramGoods.push_back(std::make_tuple(id,initQuantity,maxQuantity,price,need,productionRate));
 
 	    }
 
