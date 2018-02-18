@@ -27,6 +27,7 @@ class ProvinceConfig : public Engine::Config
 	int _culturalStep;
 	std::string _goodsParam;
 	std::string _events;
+	bool _eventsHistory;
 	int _eventsRate;
 	int _eventsStop;
 	std::string _networkType;
@@ -40,7 +41,8 @@ class ProvinceConfig : public Engine::Config
 	std::string _tradeUtilFunction; //what kind of utility function will be used to trade
 	std::string _tradeVolSelFunction; //what kind of function will be sued to select the amount of good wanted
 	float _muMax; //range of the mutations
-	std::vector<std::tuple<std::string,int>> _nbProds; //totalle number of producter for each products of the simulation
+	std::vector<std::tuple<std::string,int>> _nbProds; //total number of producters for each products of the simulation
+	std::map<const std::string,std::tuple<float,float>> _historicalSchedule; //total number of producters for each products of the simulation
 	std::string _logTrade; //a string that says if a log of all the trade (amount, kind, why they failed) should be printed
 
 	std::string _distrib;//how population size should be distributed

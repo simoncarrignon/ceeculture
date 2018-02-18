@@ -81,10 +81,18 @@ namespace Epnet
 			    std::string goodType = std::get<0>(*it);
 
 			    _needs.push_back(std::make_tuple(goodType,std::get<4>(*it)));  
-			    _typesOfGood.push_back(goodType);
 			    _maxscore.push_back(std::make_tuple(goodType,0.0));
 			    _minscore.push_back(std::make_tuple(goodType,1000.0));
-			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+			    if(provinceConfig._eventsHistory){
+				//if we have historical chronoliges, check if we push this good yet or not
+				std::cout<<"we going historically accurate! "<<std::endl;
+				_typesOfGood.push_back(goodType);
+				_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+			    }
+			    else{
+				_typesOfGood.push_back(goodType);
+				_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+			    }
 
 			}
 
@@ -93,6 +101,14 @@ namespace Epnet
 		    //error no good type
 		}
 
+
+		std::map<const std::string,std::tuple<float,float>> schedule = provinceConfig._historicalSchedule;
+		for(auto it = schedule.begin();it!=schedule.end();it++){
+		    std::cout<<"good "<< it->first << ", startime="<<std::get<0>(schedule[it->first])*provinceConfig._numSteps<< ", endtime="<<std::get<1>(schedule[it->first])*provinceConfig._numSteps<<std::endl;
+		    //std::tuple<float,float> a = schedule.at(*it)
+
+		}
+		
 
 		if(logTrade()){
 		    //initialize a log file that allows to log why trades fail

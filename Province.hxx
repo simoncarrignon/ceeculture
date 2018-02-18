@@ -15,7 +15,8 @@ namespace Epnet
 		void createRasters();
 		void createAgents();
 		void executeTrade(Roman* r);
-		std::vector<std::string> _typesOfGood;
+		std::vector<std::string> _typesOfGood; //goods effectively in use and traded
+		std::vector<std::string> _allTypesOfGood; //all goods, even those that are not traded anymore or that will be traded later
 		std::map<std::string,std::vector<std::string>> _good2Producers;
 		std::map<std::string,Network> _good2CulturalNetwork;
 

@@ -63,9 +63,12 @@ void ProvinceConfig::loadParams()
 
 	try{
 	    _events = getParamStr( "events", "type");
-	    if(_events == "rate")
+	    if(_events == "rate"){
 		_eventsRate =getParamInt( "events", "rate");
 		_eventsStop =getParamInt( "events", "stop");
+	    }
+	    if(_events == "historical")
+		_eventsHistory = true;
 	}
 	catch(const Engine::Exception & e){
 	    //Create a load_config log file?
@@ -95,7 +98,7 @@ void ProvinceConfig::loadParams()
 	    std::cerr<<"Network wont be recorded"<<std::endl;
 	    _networkOut = "false";
 	}
-	
+
 	int nParam = getParamInt("network","nparam");
 	std::cout<<"Reseau "<<_networkType<<std::endl;
 	
@@ -149,6 +152,17 @@ void ProvinceConfig::loadParams()
 		    }
 		    catch( std::exception & exceptionThrown){
 			std::cout<<"you configure an unbalanced market but number of productors aren't defined"<<std::endl;
+			exit(0);
+		    }
+		}
+		if(_eventsHistory){
+		    try{
+			double relstart = getParamFloat(name.str(),"relstart");
+			double relend = getParamFloat(name.str(),"relend");
+			_historicalSchedule[id]=std::make_tuple(relstart,relend);
+		    }
+		    catch( std::exception & exceptionThrown){
+			std::cout<<"you configure historical events : you have to indicate when goods are traded"<<std::endl;
 			exit(0);
 		    }
 		}
