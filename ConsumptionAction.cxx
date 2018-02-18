@@ -36,8 +36,8 @@ namespace Epnet
 		    //std::cout<<fgood<<std::endl;
 		    consumptionScore=romanAgent.getQuantity(fgood)/romanAgent.getNeed(fgood);
 		}
-		std::vector< std::tuple<std::string,double,double,double,double,double,double,double> > allGood= romanAgent.getListGoods();
-		std::vector< std::tuple<std::string,double,double,double,double,double,double,double> >::iterator it = allGood.begin();
+		std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= romanAgent.getListGoods();
+		std::vector< std::tuple< std::string, double, double, double, double, double > >::iterator it = allGood.begin();
 
 		//std::cout << romanAgent.getId() << " | " ;
 		while(it!=allGood.end())

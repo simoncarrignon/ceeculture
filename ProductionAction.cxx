@@ -27,7 +27,7 @@ namespace Epnet
 		double ratio =  provinceWorld.getRatio(pgood);
 
 
-		std::vector< std::tuple<std::string,double,double,double,double,double,double,double> > allGood= (romanAgent.getListGoods());
+		std::vector< std::tuple< std::string, double, double, double, double, double > > allGood= (romanAgent.getListGoods());
 
 		for( auto it = allGood.begin(); it != allGood.end();it++)
 		{

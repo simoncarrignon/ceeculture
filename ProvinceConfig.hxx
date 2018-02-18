@@ -22,7 +22,7 @@ class ProvinceConfig : public Engine::Config
 	
 	std::string _controllerType;
 	std::string _controllerRandom;
-	std::tuple<std::string,double,double,double,double,double,double,double>  _protoGood;
+	std::tuple<std::string,double,double,double,double,double>  _protoGood;
 	std::string _selectionProcess;
 	int _culturalStep;
 	std::string _goodsParam;

@@ -33,7 +33,7 @@ namespace Epnet
 		std::vector<std::tuple<std::string,std::string> > receivedMessages;
 
 		//type, quantity, maxQuantity, price, need, productionRate
-		std::vector<std::tuple<std::string,double,double,double,double,double,double,double> > listGoods;
+		std::vector<std::tuple<std::string,double,double,double,double,double> > listGoods;
 
 		//type, utility, optUtility, optNeed
 		std::vector<std::tuple<std::string,double,double,double> > goodsUtilities;
@@ -140,17 +140,17 @@ namespace Epnet
 
 
 		//good system
-		void addGoodType(std::string type,double max,double price,double need,double productionRate,double relstart,double relend);
+		void addGoodType(std::string type,double max,double price,double need,double productionRate);
 		void removeGoodType(std::string type);
-		std::vector<std::tuple<std::string,double,double,double,double,double,double,double> > getListGoods() { return listGoods;};
-		std::tuple<double,double,double,double,double,double,double> getGood(std::string type);
+		std::vector<std::tuple<std::string,double,double,double,double,double> > getListGoods() { return listGoods;};
+		std::tuple<double,double,double,double,double> getGood(std::string type);
 
 
 		void addGood(std::string type,double value);
 		void removeGood(std::string type,double value);
 
 
-		std::tuple<std::string,double,double,double,double,double,double,double>  getProducedGood();
+		std::tuple<std::string,double,double,double,double,double>  getProducedGood();
 
 		//acess differents values of one ressource
 
@@ -170,7 +170,7 @@ namespace Epnet
 		void setNeed(std::string type, double value);
 		void setProductionRate(std::string type, double value);
 
-		std::vector<std::tuple<std::string,double,double,double,double,double,double,double> >  getListGoodsFrom(std::string target);
+		std::vector<std::tuple<std::string,double,double,double,double,double> >  getListGoodsFrom(std::string target);
 		void printInventory();
 
 		void initSegments();
