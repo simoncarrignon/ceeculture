@@ -22,6 +22,7 @@ namespace Epnet
 
 		std::vector<std::tuple<std::string,double>> _needs;
 		std::vector<std::tuple<std::string,int>> _nbProds;
+		std::map<const std::string,std::tuple<float,float>> _schedule;
 		std::vector<std::tuple<std::string,double>> _maxscore;
 		std::vector<std::tuple<std::string,double>> _minscore;
 		double _maxScore;

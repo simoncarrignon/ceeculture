@@ -23,6 +23,7 @@ namespace Epnet
 		_minScore=0.0;
 		_maxScore=0.0;
 		_nbProds=provinceConfig._nbProds;
+		_schedule = provinceConfig._historicalSchedule;
 		_totPopSize=0;
 	
 
@@ -86,8 +87,13 @@ namespace Epnet
 			    if(provinceConfig._eventsHistory){
 				//if we have historical chronoliges, check if we push this good yet or not
 				std::cout<<"we going historically accurate! "<<std::endl;
-				_typesOfGood.push_back(goodType);
-				_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+				float startingstep=std::get<0>(_schedule[goodType]);  
+				//during the initialization phase only the good traded at 0 are added to the market
+				if(startingstep == 0){
+					std::cout<<goodType<<" will be traded from start"<<std::endl;
+				    _typesOfGood.push_back(goodType);
+				    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{}));
+				}
 			    }
 			    else{
 				_typesOfGood.push_back(goodType);
@@ -102,9 +108,8 @@ namespace Epnet
 		}
 
 
-		std::map<const std::string,std::tuple<float,float>> schedule = provinceConfig._historicalSchedule;
-		for(auto it = schedule.begin();it!=schedule.end();it++){
-		    std::cout<<"good "<< it->first << ", startime="<<std::get<0>(schedule[it->first])*provinceConfig._numSteps<< ", endtime="<<std::get<1>(schedule[it->first])*provinceConfig._numSteps<<std::endl;
+		for(auto it = _schedule.begin();it!=_schedule.end();it++){
+		    std::cout<<"good "<< it->first << ", startime="<<std::get<0>(_schedule[it->first])*provinceConfig._numSteps<< ", endtime="<<std::get<1>(_schedule[it->first])*provinceConfig._numSteps<<std::endl;
 		    //std::tuple<float,float> a = schedule.at(*it)
 
 		}
