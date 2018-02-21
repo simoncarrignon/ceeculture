@@ -48,7 +48,7 @@
 -->
 
 	<!--introducing the relative start and end of the usage of a good. Should be set as the percent of the total time of the simulation -->
-	<goods num="5" prod="unbalanced">
+	<goods num="6" prod="unbalanced">
 		<good0	id="ESA"	relstart="0.000" relend="0.8" initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="1"/>
 		<good1	id="ESB"	relstart="0.346" relend="0.7" initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="1"/>
 		<good2	id="ESC"	relstart="0.000" relend="1.0" initialQuantity="0"	maxQuantity="1000"	price="-1"	need="1"	productionRate="0" nprod="1"/>
