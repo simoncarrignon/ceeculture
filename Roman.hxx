@@ -144,6 +144,7 @@ namespace Epnet
 		void removeGoodType(std::string type);
 		std::vector<std::tuple<std::string,double,double,double,double,double> > getListGoods() { return listGoods;};
 		std::tuple<double,double,double,double,double> getGood(std::string type);
+		std::tuple<std::string,double,double,double,double,double> getFullGood(std::string type);
 
 
 		void addGood(std::string type,double value);

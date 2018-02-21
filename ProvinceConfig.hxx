@@ -42,6 +42,7 @@ class ProvinceConfig : public Engine::Config
 	std::string _tradeVolSelFunction; //what kind of function will be sued to select the amount of good wanted
 	float _muMax; //range of the mutations
 	std::vector<std::tuple<std::string,int>> _nbProds; //total number of producters for each products of the simulation
+	std::map<const std::string,int> _totNbProds;
 	std::map<const std::string,std::tuple<float,float>> _historicalSchedule; //total number of producters for each products of the simulation
 	std::string _logTrade; //a string that says if a log of all the trade (amount, kind, why they failed) should be printed
 

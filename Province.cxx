@@ -23,6 +23,7 @@ namespace Epnet
 		_minScore=0.0;
 		_maxScore=0.0;
 		_nbProds=provinceConfig._nbProds;
+		_totNbProds=provinceConfig._totNbProds;
 		_schedule = provinceConfig._historicalSchedule;
 		_totPopSize=0;
 	
@@ -173,8 +174,7 @@ namespace Epnet
 
 				_totPopSize+=size; //add up the size of the new agent to be able to compute cumulate size
 			
-				//currency is not interesting in itself. that may be changed
-				//currency has no price by itself
+				//for each agent initialize all good. Even goods that are not trade yet, are registered. They will just appears with zeros everywhere.
 				if(provinceConfig._goodsParam== "random" || provinceConfig._goodsParam== "randn")
 				{
 
@@ -268,31 +268,52 @@ namespace Epnet
 				else{
 				    //
 				}
+
 				if(provinceConfig._goodsParam == "gintis07")
 					log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
 
-				//
-				//
 				///choose the production good
 				std::tuple< std::string, double, double, double, double, double > producedGood =  std::tuple< std::string, double, double, double, double, double >();
 
-				if(provinceConfig._typeProd == "unbalanced"){ //an algo to setup 'on the fly' who produces what in an iunbalanced scenario
-				    bool found=0; //a stop condition
-				    int list=0; //indice that will be incremanted
-				    int ind=0;
-				    int ng=_nbProds.size(); //number of goods
-
-				    while(!found && list <= (ng-1)){ //loop to see where the id of the roman fall in => the index where he falls in gives us his production good
-
-					if(std::get<1>(_nbProds[list]) < 0 || i < ind + std::get<1>(_nbProds[list]) ){
-					    //if the id is less than ...
-					    found=1;
-					    producedGood = agent->getListGoods()[list];
+				if(provinceConfig._typeProd == "unbalanced"){
+				    if(provinceConfig._eventsHistory){
+					
+					auto it = _good2Producers.begin();
+					bool found=false;
+					while(it!=_good2Producers.end() && !found){
+					    std::string good= it->first;
+					    int curnum =(it->second).size();
+					    int total =_totNbProds[good];
+					    if(curnum < total || total < 0){
+						producedGood=agent->getFullGood(good);
+						found=true;
+					    }
+					    it++;
+					    std::cout<<good<<" prod: "<<curnum<<"/"<<total<<std::endl;
 					}
 
-					ind+=std::get<1>(_nbProds[list]);
-					list++;
 				    }
+				    else{ //an algo to setup 'on the fly' who produces what in an unbalanced scenario
+
+
+					bool found=0; //a stop condition
+					int list=0; //indice that will be incremented
+					int ind=0;
+					int ng=_nbProds.size(); //number of goods
+
+					while(!found && list <= (ng-1)){ //loop to see where the id of the roman fall in => the index where he falls in gives us his production good
+
+					    if(std::get<1>(_nbProds[list]) < 0 || i < ind + std::get<1>(_nbProds[list]) ){
+						//if the id is less than ...
+						found=1;
+						producedGood = agent->getListGoods()[list];
+					    }
+
+					    ind+=std::get<1>(_nbProds[list]);
+					    list++;
+					}
+				    }
+
 				}
 				else{
 				    //Set producedGood as a modulo of the agent ID
@@ -300,15 +321,16 @@ namespace Epnet
 				    producedGood = agent->getListGoods()[randg];
 				}
 
+				std::cout<<"agents "<<oss.str()<<" prod: "<<std::get<0>(producedGood)<<std::endl;
+				//We add this agent to the list of productor of this good
+				//this is used afterward to simplify the way people are going to market
+				_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				if(std::get<0>(producedGood) != "coins") agent->setSize(1);
 
 				//set rate of production of the production good
 				if(agent->getProductionRate(std::get<0>(producedGood))<=0) //this is all about HOW you want to initialize your production rate. So far it's really badly done if you want to set them up manually
 					agent->setProductionRate(std::get<0>(producedGood),1.0); 
-				//at this agent to the list of productor of this good
-				//tis is used afterward to simplify the way people are going to market
-				_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
 
 				//loop for initialize the commercial connection of the current agent with all previously created agents.
 				for(int j=(i-1); j>=0; j--)

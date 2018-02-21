@@ -674,6 +674,22 @@ namespace Epnet
 	//return something impossible as an error
 	return std::make_tuple(-1.0,-1.0,-1.0,-1.0,-1.0);
     }
+    
+    //return all the values associated to a good
+    std::tuple<std::string,double,double,double,double,double> Roman::getFullGood(std::string type)
+    {
+	//check if a good of that type exist in the list
+	std::vector<std::tuple<std::string,double,double,double,double,double> >::iterator it = std::find_if(listGoods.begin(), listGoods.end(), [=](const std::tuple<std::string,double,double,double,double,double>& good) {return std::get<0>(good) == type;});
+	if ( it != listGoods.end() )
+	{
+	    //return quantity, maxquantity,price, need and productionRate good
+	    return *it;
+	}
+
+	//return something impossible as an error
+	return std::make_tuple("error",-1.0,-1.0,-1.0,-1.0,-1.0);
+    }
+
 
 
     //TODO: actually this function return the good that is produced. But should return a vector of goods if there are more than one good produced
