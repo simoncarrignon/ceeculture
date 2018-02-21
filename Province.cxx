@@ -113,6 +113,7 @@ namespace Epnet
 		    //std::tuple<float,float> a = schedule.at(*it)
 
 		}
+
 		
 
 		if(logTrade()){
@@ -279,7 +280,7 @@ namespace Epnet
 				    bool found=0; //a stop condition
 				    int list=0; //indice that will be incremanted
 				    int ind=0;
-				    int ng=_nbProds.size(); //number of good
+				    int ng=_nbProds.size(); //number of goods
 
 				    while(!found && list <= (ng-1)){ //loop to see where the id of the roman fall in => the index where he falls in gives us his production good
 
@@ -325,6 +326,7 @@ namespace Epnet
 			}
 		}
 		
+		//Update social and economics networks
 		if(provinceConfig._networkType != "integrate"){
 
 		for (std::map< std::string, std::vector< std::string > >::iterator it = _good2Producers.begin(); it != _good2Producers.end();it++) {
@@ -333,12 +335,14 @@ namespace Epnet
 			std::string type = provinceConfig._networkType; 
 			
 			
+			//first we generate a social network for the producers
 			Network n = Network(groupOfproducer,type,it->first,provinceConfig._networkParam);
 			//Network n = Network(groupOfproducer,type,it->first,true);
 			if(provinceConfig._networkOut == "true")
 			    n.write();
 			_good2CulturalNetwork.insert(std::pair<std::string,Network>(it->first,n));
 
+			//then we use this social network to setup the social neighbour of every producer of this network
 			for (std::vector<std::string>::iterator producer = groupOfproducer.begin(); producer != groupOfproducer.end(); producer++){
 				
 				Roman* romanProducer = dynamic_cast<Roman*> (getAgent(*producer));
@@ -349,7 +353,6 @@ namespace Epnet
 					
 				}
 				std::vector< std::string > u= n.getNeighboursOf(*producer);
-// 				std::cout<<*producer<< " as "<<u.size()<< " getNeighboursOf"<<std::endl;
 				romanProducer->setListOfCulturalNeighbours( n.getNeighboursOf(*producer));
 				
 			}
