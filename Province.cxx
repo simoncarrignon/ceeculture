@@ -289,7 +289,6 @@ namespace Epnet
 						found=true;
 					    }
 					    it++;
-					    std::cout<<good<<" prod: "<<curnum<<"/"<<total<<std::endl;
 					}
 
 				    }
@@ -650,11 +649,11 @@ namespace Epnet
 		}
 	    }
 	    if (_step%3  == 0){
-		//!TODO THIS IS CRITICAL UPDATE
+		//!TODO THIS IS CRITICAL UPDATE that should be merged everywhere asap
 		for( std::vector<std::string>::iterator it= _typesOfGood.begin() ; it!=_typesOfGood.end(); it++){
 
-		    std::cout<<"reset scores"<< std::endl;
-		    std::cout<<*it<< std::endl;
+		    //std::cout<<"reset scores"<< std::endl;
+		    //std::cout<<*it<< std::endl;
 		    std::string goodType = *it;
 		    setMaxScore(goodType,0.0);
 		    setMinScore(goodType,1000.0);
@@ -731,6 +730,54 @@ void Province::stepEnvironment()
 		
 	    }
 	}
+	///UPDATE GOODS
+	if( provinceConfig._eventsHistory){
+	    std::cout<<"-----Check goods and update----"<<std::endl;
+	    updateGoodList();
+	}
+		
+}
+
+///This function go through the map `_schedule` to check if some good have to be removed or added
+void Province::updateGoodList(){
+    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+
+    for(auto it = _schedule.begin();it!=_schedule.end();it++){
+	int currentStep=_step;
+	int totstep=provinceConfig._numSteps;
+	std::string good = it->first;
+	int absoluteStartStep = totstep * std::get<0>(it->second);
+	int absoluteEndtStep = totstep * std::get<1>(it->second);
+
+	bool isTraded =(std::find(_typesOfGood.begin(), _typesOfGood.end(), good) != _typesOfGood.end() );//tru if the good is in the list of traded good, false else
+
+	//if the current step is more than the supopsed starting step of the good
+	if((absoluteStartStep < currentStep) && !isTraded){
+	    std::cout<<"NEW good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
+	    _typesOfGood.push_back(good); //ad the good to the list of tradded good
+
+	    while(_good2Producers[good].size()<_totNbProds[good]){ 
+		std::string randAgent=_good2Producers["coins"][0]; //get a coins porducer aka a consumer
+		switchAgentProduction(randAgent,good); 		   //switch its porduction good
+	    }
+	    printListOfProd(good);
+	}
+
+	if(absoluteEndtStep < currentStep && isTraded){
+	    std::cout<<"REMOVE good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
+	}
+    }
+
+}
+
+//This function take  change the production good of an agent and update the list in consequence
+void Province::switchAgentProduction(std::string agent, std::string good){
+    Roman * ragent  = dynamic_cast<Roman *>(getAgent(agent));
+    std::string originalGood=std::get<0>(ragent->getProducedGood());
+    removeFromListOfProd(agent,originalGood);//remove agent from the list of producers of its initial production good
+    _good2Producers[good].push_back(agent); //add agent to the list of producer of its new production good
+    ragent->setProductionRate(originalGood,0.0); //agent will not receive coins anymore
+    ragent->setProductionRate(good,1.0); //set the production rate of `good` as 1
 }
 
 	//this function normlaize all the need of the non monetary goods. Whatever was the need __before__ the call of this function, it become 1/#(!monetarygood). ie if thre is 6 goods in the province, 5 of them beings non monetary, the need for the five non monetary goods will be 0.2
@@ -796,7 +843,7 @@ void Province::stepEnvironment()
 	    if(idx==listToRemove->end())
 		    std::cout<<agentId<< " is not in the list of producer of "<<good<<std::endl;
 	    else{
-		std::cout<<"find someone to dump "<<agentId<<" in good "<<good<<std::endl;
+		std::cout<<"agent "<<agentId<<" has been removed from producers list of "<<good<<std::endl;
 		listToRemove->erase(idx);
 	    }
 	    //printListOfProd(good);

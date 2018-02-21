@@ -79,6 +79,9 @@ namespace Epnet
 		bool hasEvent(); //return true if event that will change the number of goods can occurs
 		bool logTrade(); //return true if a log of the trade has to be done
 		void removeFromListOfProd(std::string agent,std::string good);//remove the agent __agent__ from the list of producers of the good __good__ 
+		void updateGoodList();// loop through the map `_schedule` to check if some good have to be removed or added
+
+		void switchAgentProduction(std::string agent, std::string good);//This function take  change the production good of an agent and update the list in consequence{
 
 		int getASize(); //return a integer give the distrib parameter of the config file
 		bool isPopSize(); //return true if pop size is taken into account, false else
