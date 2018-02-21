@@ -752,7 +752,7 @@ void Province::updateGoodList(){
 	bool isTraded =(std::find(_typesOfGood.begin(), _typesOfGood.end(), good) != _typesOfGood.end() );//tru if the good is in the list of traded good, false else
 
 	//if the current step is more than the supopsed starting step of the good
-	if((absoluteStartStep < currentStep) && !isTraded){
+	if((absoluteStartStep <= currentStep) && !isTraded && currentStep < absoluteEndtStep){
 	    std::cout<<"NEW good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
 	    _typesOfGood.push_back(good); //ad the good to the list of tradded good
 
@@ -763,8 +763,14 @@ void Province::updateGoodList(){
 	    printListOfProd(good);
 	}
 
-	if(absoluteEndtStep < currentStep && isTraded){
+	if(absoluteEndtStep <= currentStep && isTraded){
 	    std::cout<<"REMOVE good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
+	    while(!_good2Producers[good].empty()){
+		std::string randAgent=_good2Producers[good][0]; //get a coins porducer aka a consumer
+		switchAgentProduction(randAgent,"coins"); 		   //switch its porduction good
+	    }
+	    _typesOfGood.erase(std::remove(_typesOfGood.begin(), _typesOfGood.end(), good), _typesOfGood.end());
+	    printListOfProd(good);
 	}
     }
 
