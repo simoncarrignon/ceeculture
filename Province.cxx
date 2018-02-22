@@ -665,126 +665,129 @@ namespace Epnet
 
 	}
 
-void Province::stepEnvironment()
-{
-    //std::cout<<"step:=="<<_step<<std::endl;
-
-	const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-    //std::cout<<"resetscore All agents: aka ( if (_step%(3 * (provinceConfig._culturalStep) + 1) == 0) ) "<<(_step%(3 * (provinceConfig._culturalStep) + 1) == 0)<<std::endl;
-    //std::cout<<"resminmax : aka ( (_step%3  == 2) ) "<<(_step%3== 2)<<std::endl;
-    //std::cout<<"Production Action : aka ( (_step%3  == 0) ) "<<(_step%3== 0)<<std::endl;
-    //std::cout<<"trade Action : aka ( (_step%3  == 1) ) "<<(_step%3== 1)<<std::endl;
-    //std::cout<<"Consumption Action : aka ( (_step%3  == 2) ) "<<(_step%3== 2)<<std::endl;
-    //std::cout<<"Cultural Action : aka  ((_step%%(3 * (_culturalStep)) == 0) && (timestep> 3 * (_culturalStep) )) "<<( (_step%(3 * (provinceConfig._culturalStep)) == 0) && (_step> 3 * (provinceConfig._culturalStep) ) )<<std::endl;
-
-	for(size_t d=0; d<_rasters.size(); d++)
+	void Province::stepEnvironment()
 	{
+	    //std::cout<<"step:=="<<_step<<std::endl;
+
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+	    //std::cout<<"resetscore All agents: aka ( if (_step%(3 * (provinceConfig._culturalStep) + 1) == 0) ) "<<(_step%(3 * (provinceConfig._culturalStep) + 1) == 0)<<std::endl;
+	    //std::cout<<"resminmax : aka ( (_step%3  == 2) ) "<<(_step%3== 2)<<std::endl;
+	    //std::cout<<"Production Action : aka ( (_step%3  == 0) ) "<<(_step%3== 0)<<std::endl;
+	    //std::cout<<"trade Action : aka ( (_step%3  == 1) ) "<<(_step%3== 1)<<std::endl;
+	    //std::cout<<"Consumption Action : aka ( (_step%3  == 2) ) "<<(_step%3== 2)<<std::endl;
+	    //std::cout<<"Cultural Action : aka  ((_step%%(3 * (_culturalStep)) == 0) && (timestep> 3 * (_culturalStep) )) "<<( (_step%(3 * (provinceConfig._culturalStep)) == 0) && (_step> 3 * (provinceConfig._culturalStep) ) )<<std::endl;
+
+	    for(size_t d=0; d<_rasters.size(); d++)
+	    {
 		if(!_rasters.at(d) || !_dynamicRasters.at(d))
 		{
-			continue;
+		    continue;
 		}
 		stepRaster(d);
-	}
-	if( provinceConfig._events == "rate"){
-	    if( getCurrentTimeStep() >= provinceConfig._culturalStep* 3 *provinceConfig._eventsRate  && getCurrentTimeStep() % (provinceConfig._culturalStep* 3 * provinceConfig._eventsRate ) == 0 && getCurrentTimeStep() <= provinceConfig._eventsStop ){
-		
-		std::ostringstream sgoodType;
-		sgoodType << "g"<< _typesOfGood.size()-1;	//the new good will be simply called gN
-		std::string goodType = sgoodType.str();
-		_maxscore.push_back(std::make_tuple(goodType,0.0));
-		_minscore.push_back(std::make_tuple(goodType,1000.0));
+	    }
+	    if( provinceConfig._events == "rate"){
+		if( getCurrentTimeStep() >= provinceConfig._culturalStep* 3 *provinceConfig._eventsRate  && getCurrentTimeStep() % (provinceConfig._culturalStep* 3 * provinceConfig._eventsRate ) == 0 && getCurrentTimeStep() <= provinceConfig._eventsStop ){
 
-		_needs.push_back(std::make_tuple(goodType,1)); //add a new need for this new good to the global vector of need
-		//this->normalizeNeeds(); //update the need of this and all other good
-		
-		_typesOfGood.push_back(goodType); //add the good to the gloabl list of good
+		    std::ostringstream sgoodType;
+		    sgoodType << "g"<< _typesOfGood.size()-1;	//the new good will be simply called gN
+		    std::string goodType = sgoodType.str();
+		    _maxscore.push_back(std::make_tuple(goodType,0.0));
+		    _minscore.push_back(std::make_tuple(goodType,1000.0));
+
+		    _needs.push_back(std::make_tuple(goodType,1)); //add a new need for this new good to the global vector of need
+		    //this->normalizeNeeds(); //update the need of this and all other good
+
+		    _typesOfGood.push_back(goodType); //add the good to the gloabl list of good
 
 
-		int newProd=0;
-		for(auto it=_agents.begin(); it != _agents.end() ; it++)
-		{
+		    int newProd=0;
+		    for(auto it=_agents.begin(); it != _agents.end() ; it++)
+		    {
 
-		   Roman * agent  = dynamic_cast<Roman *>(getAgent( (*(*it)).getId()));
-		    agent->addGoodType(goodType,0.0,0.0,0.0,0.0);
+			Roman * agent  = dynamic_cast<Roman *>(getAgent( (*(*it)).getId()));
+			agent->addGoodType(goodType,0.0,0.0,0.0,0.0);
 
-		    //    //set a random properties for each goods
-		    if (getTradeVolSelFunction()=="brughman17" )
-			while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,10));// market clearing price : 1.0/(i+1)
-		    else
-			while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
-		    if( std::get<0>(agent->getProducedGood()) == "coins" && newProd<5){
-			agent->setProductionRate(goodType,1.0);
-			agent->setProductionRate("coins",0.0);
-			agent->setSize(1);
-			if(_good2Producers.find(goodType) == _good2Producers.end())
-			    _good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{agent->getId()}));
+			//    //set a random properties for each goods
+			if (getTradeVolSelFunction()=="brughman17" )
+			    while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,10));// market clearing price : 1.0/(i+1)
 			else
-			    _good2Producers[goodType].push_back(agent->getId());
-			std::cout<<"nouveau:"<<goodType<<" with "<<getListOfProd(goodType).size()<<" prod"<<" and the megalist is:"<<_good2Producers.size()<<std::endl;
-			removeFromListOfProd(agent->getId(),"coins");
-			newProd++;
+			    while(agent->getPrice(goodType)<=0.0)agent->setPrice(goodType,(double)Engine::GeneralState::statistics().getUniformDistValue(0,1000)/1000.0);// market clearing price : 1.0/(i+1)
+			if( std::get<0>(agent->getProducedGood()) == "coins" && newProd<5){
+			    agent->setProductionRate(goodType,1.0);
+			    agent->setProductionRate("coins",0.0);
+			    agent->setSize(1);
+			    if(_good2Producers.find(goodType) == _good2Producers.end())
+				_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{agent->getId()}));
+			    else
+				_good2Producers[goodType].push_back(agent->getId());
+			    std::cout<<"nouveau:"<<goodType<<" with "<<getListOfProd(goodType).size()<<" prod"<<" and the megalist is:"<<_good2Producers.size()<<std::endl;
+			    removeFromListOfProd(agent->getId(),"coins");
+			    newProd++;
+			}
+
+			agent->setNeed(goodType,1.0);
+		    }			
+
+		}
+	    }
+	    ///UPDATE GOODS
+	    if( provinceConfig._eventsHistory){
+		updateGoodList();
+	    }
+
+	}
+
+	///This function go through the map `_schedule` to check if some good have to be removed or added
+	void Province::updateGoodList(){
+	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+
+	    for(auto it = _schedule.begin();it!=_schedule.end();it++){
+		int currentStep=_step;
+		int totstep=provinceConfig._numSteps;
+		std::string good = it->first;
+		int absoluteStartStep = totstep * std::get<0>(it->second);
+		int absoluteEndtStep = totstep * std::get<1>(it->second);
+
+		bool isTraded =(std::find(_typesOfGood.begin(), _typesOfGood.end(), good) != _typesOfGood.end() );//tru if the good is in the list of traded good, false else
+
+		//if the current step is more than the supopsed starting step of the good
+		if((absoluteStartStep <= currentStep) && !isTraded && currentStep < absoluteEndtStep){
+		    std::cout<<"NEW good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
+		    _typesOfGood.push_back(good); //ad the good to the list of tradded good
+
+		    while(_good2Producers[good].size()<_totNbProds[good]){ 
+			std::string randAgent=_good2Producers["coins"][0]; //get a coins porducer aka a consumer
+			switchAgentProduction(randAgent,good); 		   //switch its porduction good
 		    }
+		    printListOfProd(good);
+		}
 
-		    agent->setNeed(goodType,1.0);
-		}			
-		
+		if(absoluteEndtStep <= currentStep && isTraded){
+		    std::cout<<"REMOVE good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
+		    while(!_good2Producers[good].empty()){
+			std::string randAgent=_good2Producers[good][0]; 
+			switchAgentProduction(randAgent,"coins");
+		    }
+		    _typesOfGood.erase(std::remove(_typesOfGood.begin(), _typesOfGood.end(), good), _typesOfGood.end());
+		    printListOfProd(good);
+		}
+	    }
+
+	}
+
+	//This function take  change the production good of an agent and update the list in consequence
+	void Province::switchAgentProduction(std::string agent, std::string good){
+	    Roman * ragent  = dynamic_cast<Roman *>(getAgent(agent));
+	    std::string originalGood=std::get<0>(ragent->getProducedGood());
+	    removeFromListOfProd(agent,originalGood);//remove agent from the list of producers of its initial production good
+	    _good2Producers[good].push_back(agent); //add agent to the list of producer of its new production good
+	    ragent->setProductionRate(originalGood,0.0); //agent will not receive coins anymore
+	    ragent->setProductionRate(good,1.0); //set the production rate of `good` as 1
+	    if(isPopSize()){
+		if(good=="coins")ragent->setSize(getASize());
+		else ragent->setSize(1);
 	    }
 	}
-	///UPDATE GOODS
-	if( provinceConfig._eventsHistory){
-	    std::cout<<"-----Check goods and update----"<<std::endl;
-	    updateGoodList();
-	}
-		
-}
-
-///This function go through the map `_schedule` to check if some good have to be removed or added
-void Province::updateGoodList(){
-    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
-
-    for(auto it = _schedule.begin();it!=_schedule.end();it++){
-	int currentStep=_step;
-	int totstep=provinceConfig._numSteps;
-	std::string good = it->first;
-	int absoluteStartStep = totstep * std::get<0>(it->second);
-	int absoluteEndtStep = totstep * std::get<1>(it->second);
-
-	bool isTraded =(std::find(_typesOfGood.begin(), _typesOfGood.end(), good) != _typesOfGood.end() );//tru if the good is in the list of traded good, false else
-
-	//if the current step is more than the supopsed starting step of the good
-	if((absoluteStartStep <= currentStep) && !isTraded && currentStep < absoluteEndtStep){
-	    std::cout<<"NEW good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
-	    _typesOfGood.push_back(good); //ad the good to the list of tradded good
-
-	    while(_good2Producers[good].size()<_totNbProds[good]){ 
-		std::string randAgent=_good2Producers["coins"][0]; //get a coins porducer aka a consumer
-		switchAgentProduction(randAgent,good); 		   //switch its porduction good
-	    }
-	    printListOfProd(good);
-	}
-
-	if(absoluteEndtStep <= currentStep && isTraded){
-	    std::cout<<"REMOVE good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
-	    while(!_good2Producers[good].empty()){
-		std::string randAgent=_good2Producers[good][0]; //get a coins porducer aka a consumer
-		switchAgentProduction(randAgent,"coins"); 		   //switch its porduction good
-	    }
-	    _typesOfGood.erase(std::remove(_typesOfGood.begin(), _typesOfGood.end(), good), _typesOfGood.end());
-	    printListOfProd(good);
-	}
-    }
-
-}
-
-//This function take  change the production good of an agent and update the list in consequence
-void Province::switchAgentProduction(std::string agent, std::string good){
-    Roman * ragent  = dynamic_cast<Roman *>(getAgent(agent));
-    std::string originalGood=std::get<0>(ragent->getProducedGood());
-    removeFromListOfProd(agent,originalGood);//remove agent from the list of producers of its initial production good
-    _good2Producers[good].push_back(agent); //add agent to the list of producer of its new production good
-    ragent->setProductionRate(originalGood,0.0); //agent will not receive coins anymore
-    ragent->setProductionRate(good,1.0); //set the production rate of `good` as 1
-}
 
 	//this function normlaize all the need of the non monetary goods. Whatever was the need __before__ the call of this function, it become 1/#(!monetarygood). ie if thre is 6 goods in the province, 5 of them beings non monetary, the need for the five non monetary goods will be 0.2
 	void Province::normalizeNeeds()
