@@ -2,13 +2,13 @@
 <config>  
 	<!-- Global simulation parameters -->
 	<output resultsFile="./data/province.h5" logsDir="./logs"/>
-	<numSteps value="150" serializeResolution="10"/> 
+	<numSteps value="450" serializeResolution="9"/> 
 	<!-- be sure than serializResolution == X * cultural step * 3 -->
 	<size width="1800" height="18"/>
 	<logs>
 	    <trade value="false"/>
 	</logs>
-	<numAgents value="500"/>
+	<numAgents value="300"/>
 	<market size="1"/>
 	<controller type="basic" >
 	    <good type="manual"/> <!-- how good need are initialized can be : random,randn,manual,gintis07--> 
@@ -17,7 +17,7 @@
 	    <!-- trade/volsel allow to choose how requested quantities are selected can be : custom,gintis07,gintis06,gintis06-outneed -->
 <!--trade/util allow to choose how agent score is computed can be : custom,gintis07,gintis06,brughman17-->
 
-	    <culture transmission="copymax" innovation="trade" mumax="1" mutation=".001" copy="0.01" step="1"/> 
+	    <culture transmission="copymax" innovation="trade" mumax="1" mutation=".001" copy="0.01" step="3"/> 
 	    
 	   
 	</controller>
