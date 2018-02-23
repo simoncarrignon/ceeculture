@@ -87,7 +87,6 @@ namespace Epnet
 			    _minscore.push_back(std::make_tuple(goodType,1000.0));
 			    if(provinceConfig._eventsHistory){
 				//if we have historical chronoliges, check if we push this good yet or not
-				std::cout<<"we going historically accurate! "<<std::endl;
 				float startingstep=std::get<0>(_schedule[goodType]);  
 				//during the initialization phase only the good traded at 0 are added to the market
 				if(startingstep == 0){
@@ -320,7 +319,6 @@ namespace Epnet
 				    producedGood = agent->getListGoods()[randg];
 				}
 
-				std::cout<<"agents "<<oss.str()<<" prod: "<<std::get<0>(producedGood)<<std::endl;
 				//We add this agent to the list of productor of this good
 				//this is used afterward to simplify the way people are going to market
 				_good2Producers[std::get<0>(producedGood)].push_back(oss.str());
@@ -720,7 +718,6 @@ namespace Epnet
 				_good2Producers.insert(std::pair<std::string,std::vector<std::string>>(goodType,{agent->getId()}));
 			    else
 				_good2Producers[goodType].push_back(agent->getId());
-			    std::cout<<"nouveau:"<<goodType<<" with "<<getListOfProd(goodType).size()<<" prod"<<" and the megalist is:"<<_good2Producers.size()<<std::endl;
 			    removeFromListOfProd(agent->getId(),"coins");
 			    newProd++;
 			}
@@ -739,6 +736,8 @@ namespace Epnet
 
 	///This function go through the map `_schedule` to check if some good have to be removed or added
 	void Province::updateGoodList(){
+	    std::stringstream logName;
+	    logName << "simulation_" << getId();
 	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 
 	    for(auto it = _schedule.begin();it!=_schedule.end();it++){
@@ -752,24 +751,24 @@ namespace Epnet
 
 		//if the current step is more than the supopsed starting step of the good
 		if((absoluteStartStep <= currentStep) && !isTraded && currentStep < absoluteEndtStep){
-		    std::cout<<"NEW good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
+		    log_INFO(logName.str(),"NEW good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep);
 		    _typesOfGood.push_back(good); //ad the good to the list of tradded good
 
 		    while(_good2Producers[good].size()<_totNbProds[good]){ 
 			std::string randAgent=_good2Producers["coins"][0]; //get a coins porducer aka a consumer
 			switchAgentProduction(randAgent,good); 		   //switch its porduction good
 		    }
-		    printListOfProd(good);
+		    log_DEBUG(logName.str(),printListOfProd(good));
 		}
 
 		if(absoluteEndtStep <= currentStep && isTraded){
-		    std::cout<<"REMOVE good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep<<std::endl;
+		    log_INFO(logName.str(),"REMOVE good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep);
 		    while(!_good2Producers[good].empty()){
 			std::string randAgent=_good2Producers[good][0]; 
 			switchAgentProduction(randAgent,"coins");
 		    }
 		    _typesOfGood.erase(std::remove(_typesOfGood.begin(), _typesOfGood.end(), good), _typesOfGood.end());
-		    printListOfProd(good);
+		    log_DEBUG(logName.str(),printListOfProd(good));
 		}
 	    }
 
@@ -846,16 +845,17 @@ namespace Epnet
 	}
 	void Province::removeFromListOfProd(std::string agentId,std::string good)
     	{
-	    //printListOfProd(good);
+	    std::stringstream logName;
+	    logName << "simulation_" << getId();
 	    std::vector<std::string> * listToRemove= & _good2Producers[good];
 	    auto idx = std::find(listToRemove->begin(),listToRemove->end(),agentId);
-	    if(idx==listToRemove->end())
-		    std::cout<<agentId<< " is not in the list of producer of "<<good<<std::endl;
+	    if(idx==listToRemove->end()){
+		log_INFO(logName.str(),"warnings:"<<agentId<<" is not in the list of producer of "<<good<<" when it should");
+	    }
 	    else{
-		std::cout<<"agent "<<agentId<<" has been removed from producers list of "<<good<<std::endl;
+		log_DEBUG(logName.str(),agentId<<" has been removed from producers list of "<<good);
 		listToRemove->erase(idx);
 	    }
-	    //printListOfProd(good);
 	}
 
 	int Province::getASize(){
