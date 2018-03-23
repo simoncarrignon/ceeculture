@@ -1200,14 +1200,14 @@ namespace Epnet
 	    oss <<type << "_q";
 	    std::string name=oss.str();
 	    registerFloatAttribute(name);
-	    std::ostringstream ossb;
-	    ossb <<type << "_p";
-	    name=ossb.str();
-	    registerFloatAttribute(name);
-	    std::ostringstream ossc;
-	    ossc <<type << "_n";
-	    name=ossc.str();
-	    registerFloatAttribute(name);
+	    //std::ostringstream ossb;
+	    //ossb <<type << "_p";
+	    //name=ossb.str();
+	    //registerFloatAttribute(name);
+	    //std::ostringstream ossc;
+	    //ossc <<type << "_n";
+	    //name=ossc.str();
+	    //registerFloatAttribute(name);
 
 	    if(_type == "gintis07"){
 		std::ostringstream ossd;
@@ -1224,18 +1224,18 @@ namespace Epnet
 	    float value =(float)getQuantity(type);
 	    serializeAttribute(name,value); 
 
-	    std::ostringstream ossb;
-	    ossb <<type << "_p";
-	    name=ossb.str();
-	    value =(float)getPrice(type);
-	    serializeAttribute(name,value );
-
-	    std::ostringstream ossc;
-	    ossc <<type << "_n";
-	    name=ossc.str();
-	    value =(float)getNeed(type);
-	    serializeAttribute(name,value); 
-
+//	    std::ostringstream ossb;
+//	    ossb <<type << "_p";
+//	    name=ossb.str();
+//	    value =(float)getPrice(type);
+//	    serializeAttribute(name,value );
+//
+//	    std::ostringstream ossc;
+//	    ossc <<type << "_n";
+//	    name=ossc.str();
+//	    value =(float)getNeed(type);
+//	    serializeAttribute(name,value); 
+//
 	    if(_type == "gintis07"){
 		std::ostringstream ossd;
 		ossd <<type << "_on";
