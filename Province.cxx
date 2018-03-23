@@ -17,7 +17,9 @@ namespace Epnet
 
 	Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, true)
 	{
+
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		this->_numAgents = provinceConfig._numAgents;
 		
 		double all_needs=0.0;
 		_minScore=0.0;
@@ -120,7 +122,7 @@ namespace Epnet
 		    //initialize a log file that allows to log why trades fail
 		    std::stringstream tradeHeaders ;
 		    tradeHeaders<< "timestep,goodwanted,goodproposed,requestedQuantity,responderTradCounter,responder.getQuantity-goodWanted,proposedQuantity,responderTradeWill,offerer.getQuantity-offererProducedGood,responder.getQuantity-offererProducedGood,responderTradeWill_SUP_proposedQuantity,responderTradeWill_INFEQ_0,requestedQuantity_INFEQ_0,responder.getQuantity-goodWanted-_INF_requestedQuantity,offerer.getQuantity-offererProducedGood-_INF_proposedQuantity,responderTradCounter_INF_requestedQuantity-";
-		    log_INFO("trade",tradeHeaders.str());
+		    log_DEBUG("trade",tradeHeaders.str());
 		}
 
 		
@@ -269,7 +271,7 @@ namespace Epnet
 				}
 
 				if(provinceConfig._goodsParam == "gintis07")
-					log_INFO(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
+					log_DEBUG(logName.str(), getWallTime() << " new agent: " << agent << "\n" << agent->getSegmentsProp());
 
 				///choose the production good
 				std::tuple< std::string, double, double, double, double, double > producedGood =  std::tuple< std::string, double, double, double, double, double >();
@@ -556,10 +558,13 @@ namespace Epnet
 	//
 	//return the ration of people producing the good `pgood`
 	double Province::getRatio(std::string pgood){
-		int totalAgents = this->getNumberOfAgents();
-		int nbAgentsProducingSameGood = this->getListOfProd(pgood).size();
 
-		double ratio = (double)(totalAgents)/(double)nbAgentsProducingSameGood; 
+		int nbAgentsProducingSameGood = this->getListOfProd(pgood).size();
+		double ratio = (double)(this->_numAgents)/(double)nbAgentsProducingSameGood; 
+		//int totalAgents = this->getNumberOfAgents();
+		//int nbAgentsProducingSameGood = this->getListOfProd(pgood).size();
+
+		//double ratio = (double)(totalAgents)/(double)nbAgentsProducingSameGood; 
 		return ratio;
 	}
 
@@ -594,6 +599,12 @@ namespace Epnet
 		return provinceConfig._copyRate;
 	}
 
+	double Province::getBiasStrength(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return provinceConfig._biasStrength;
+	}
+
 
 	double Province::getNeed(std::string good){
 	    //check if a good of that type exist in the list
@@ -621,7 +632,7 @@ namespace Epnet
 	{
 	    std::stringstream logName;
 	    logName << "simulation_" << getId();
-	    log_INFO(logName.str(), getWallTime() << " executing step: " << _step );
+	    log_DEBUG(logName.str(), getWallTime() << " executing step: " << _step );
 
 	    if(_step%_config->getSerializeResolution()==0)
 	    {
@@ -633,7 +644,7 @@ namespace Epnet
 	    log_DEBUG(logName.str(), getWallTime() << " step: " << _step << " has executed step environment");
 	    _scheduler->executeAgents();
 	    _scheduler->removeAgents();
-	    log_INFO(logName.str(), getWallTime() << " finished step: " << _step);
+	    log_DEBUG(logName.str(), getWallTime() << " finished step: " << _step);
 
 	    const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
 
@@ -751,7 +762,7 @@ namespace Epnet
 
 		//if the current step is more than the supopsed starting step of the good
 		if((absoluteStartStep <= currentStep) && !isTraded && currentStep < absoluteEndtStep){
-		    log_INFO(logName.str(),"NEW good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep);
+		    log_DEBUG(logName.str(),"NEW good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep);
 		    _typesOfGood.push_back(good); //ad the good to the list of tradded good
 
 		    while(_good2Producers[good].size()<_totNbProds[good]){ 
@@ -762,7 +773,7 @@ namespace Epnet
 		}
 
 		if(absoluteEndtStep <= currentStep && isTraded){
-		    log_INFO(logName.str(),"REMOVE good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep);
+		    log_DEBUG(logName.str(),"REMOVE good:"<<good<<",curr:"<<currentStep<<",start:"<<absoluteStartStep<<",end:"<<absoluteEndtStep);
 		    while(!_good2Producers[good].empty()){
 			std::string randAgent=_good2Producers[good][0]; 
 			switchAgentProduction(randAgent,"coins");
@@ -850,7 +861,7 @@ namespace Epnet
 	    std::vector<std::string> * listToRemove= & _good2Producers[good];
 	    auto idx = std::find(listToRemove->begin(),listToRemove->end(),agentId);
 	    if(idx==listToRemove->end()){
-		log_INFO(logName.str(),"warnings:"<<agentId<<" is not in the list of producer of "<<good<<" when it should");
+		log_DEBUG(logName.str(),"warnings:"<<agentId<<" is not in the list of producer of "<<good<<" when it should");
 	    }
 	    else{
 		log_DEBUG(logName.str(),agentId<<" has been removed from producers list of "<<good);

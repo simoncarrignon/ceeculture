@@ -33,6 +33,7 @@ void ProvinceConfig::loadParams()
 
 	_mutationRate= getParamFloat( "controller/culture", "mutation");
 	_copyRate= getParamFloat( "controller/culture", "copy");
+	_biasStrength= getParamFloat( "controller/culture", "strength");
 
 	_marketSize= getParamFloat( "market", "size");
 	_goodsParam= getParamStr( "controller/good", "type");

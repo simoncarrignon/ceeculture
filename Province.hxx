@@ -29,6 +29,7 @@ namespace Epnet
 		double _maxScore;
 		double _minScore;
 		int _totPopSize; //this is usefull is Roman Agent represent more than one people
+		int _numAgents; //
 
 
 
@@ -51,6 +52,7 @@ namespace Epnet
 		void setMinScore(double score){_minScore = score;};
 
 		double getCopyRate();
+		double getBiasStrength();
 		double getTotPopSize(){return _totPopSize;};
 		void setTotPopSize(double score){_totPopSize = score;};
 

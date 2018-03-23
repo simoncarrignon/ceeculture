@@ -93,17 +93,20 @@ namespace Epnet
 					std::cout<<"other: "<< r.getId()<<std::endl;
 				    }
 
-				    if(_selectionProcess == "copymin"){
-					proba = relScore < selfRelScore/2  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < selfRelScore && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > relScore ;
-				    }
-				    else if(_selectionProcess == "copymax"){
-					proba = relScore > selfRelScore*2  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > selfRelScore &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < relScore ;
-				    }
 				    if(proba && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < provinceWorld.getCopyRate() ){
 					//std::cout<<"soudo"<<std::endl;
 					//log_INFO("culture", world->getCurrentTimeStep()<< " , " <<  romanAgent.getId()<<" , "<<selfRelScore<<" , "<<r.getId()<<" , "<<relScore);
-					reproductionDone = 1;
-					romanAgent.copyPriceFrom(r.getId());
+					double diff= std::abs(selfRelScore - relScore) ;
+					if(_selectionProcess == "copymin"){
+					    proba = relScore < selfRelScore  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > diff * provinceWorld.getBiasStrength() ;
+					}
+					else if(_selectionProcess == "copymax"){
+					    proba = relScore > selfRelScore  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < diff * provinceWorld.getBiasStrength() ;
+					}
+					if(proba){
+					    reproductionDone = 1;
+					    romanAgent.copyPriceFrom(r.getId());
+					}
 				    }
 
 
