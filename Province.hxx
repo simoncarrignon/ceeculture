@@ -52,6 +52,7 @@ namespace Epnet
 		void setMinScore(double score){_minScore = score;};
 
 		double getCopyRate();
+		double getBiasStrength();
 		double getTotPopSize(){return _totPopSize;};
 		void setTotPopSize(double score){_totPopSize = score;};
 

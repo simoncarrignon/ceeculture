@@ -599,6 +599,12 @@ namespace Epnet
 		return provinceConfig._copyRate;
 	}
 
+	double Province::getBiasStrength(){
+
+		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		return provinceConfig._biasStrength;
+	}
+
 
 	double Province::getNeed(std::string good){
 	    //check if a good of that type exist in the list
