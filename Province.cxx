@@ -17,7 +17,9 @@ namespace Epnet
 
 	Province::Province(Engine::Config * config, Engine::Scheduler * scheduler ) : World(config, scheduler, true)
 	{
+
 		const ProvinceConfig & provinceConfig = (const ProvinceConfig&)getConfig();
+		this->_numAgents = provinceConfig._numAgents;
 		
 		double all_needs=0.0;
 		_minScore=0.0;
@@ -556,10 +558,13 @@ namespace Epnet
 	//
 	//return the ration of people producing the good `pgood`
 	double Province::getRatio(std::string pgood){
-		int totalAgents = this->getNumberOfAgents();
-		int nbAgentsProducingSameGood = this->getListOfProd(pgood).size();
 
-		double ratio = (double)(totalAgents)/(double)nbAgentsProducingSameGood; 
+		int nbAgentsProducingSameGood = this->getListOfProd(pgood).size();
+		double ratio = (double)(this->_numAgents)/(double)nbAgentsProducingSameGood; 
+		//int totalAgents = this->getNumberOfAgents();
+		//int nbAgentsProducingSameGood = this->getListOfProd(pgood).size();
+
+		//double ratio = (double)(totalAgents)/(double)nbAgentsProducingSameGood; 
 		return ratio;
 	}
 
