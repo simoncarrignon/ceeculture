@@ -45,7 +45,7 @@ namespace Epnet
 
 		if(_selectionProcess == "random"){
 
-			if( (Engine::GeneralState::statistics().getUniformDistValue(0,1000))/1000.0 > _mutationRate){
+            if(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < provinceWorld.getCopyRate() ){
 
 				int wsize = romanAgent.getListOfCulturalNeighbours().size();
 				std::vector< std::string > nb=romanAgent.getListOfCulturalNeighbours();
