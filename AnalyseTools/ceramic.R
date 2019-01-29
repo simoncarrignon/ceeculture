@@ -1,18 +1,52 @@
 library(xtable)
-source("analysis.R")
-source("configHandle.R")
+#source("analysis.R")
+#source("configHandle.R")
+#
+#tmpBin <- "tmpBin"
+#
+#cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+#options(scipen=10)
+#
+#ceramics=read.csv("type.csv",row.names=1)
+#ceramics[is.na(ceramics)]=0
+#ceramics=ceramics[,colnames(ceramics)[c(2,5,4,1,3)]]
+##pdf("~/presModel/type.pdf")
+#barplot(t(ceramics),main="Real Data",space=0,border=NA)
+##dev.off()
+#
+#
+#
+#
+#data <- textConnection("
+#data,start,end
+#ESA,-200,200
+#ESB,-27,150
+#ESC,-200,300
+#ESD,-100,300
+#ITS,-40,150
+#")
+#
+#introtime <- read.csv(data)
+#close(data) 
+#
+#
+#tmin=min(introtime[,2:3])
+#tmax=max(introtime[,2:3])
+#
+#relintrotime=introtime
+#relintrotime[,2:3]=(introtime[,2:3]-tmin)/(tmax-tmin)
+#plotgoods(introtime)
 
-tmpBin <- "tmpBin"
+plotgoods <- function(data){
+	tmin=min(data[,2:3])
+	tmax=max(data[,2:3])
+	plot(tmin:tmax,rep(1,tmax-tmin+1),ylim=c(0,nrow(data)),type="n")
 
-cbbPalette <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
-options(scipen=10)
-
-ceramics=read.csv("type.csv",row.names=1)
-ceramics[is.na(ceramics)]=0
-ceramics=ceramics[,colnames(ceramics)[c(2,5,4,1,3)]]
-#pdf("~/presModel/type.pdf")
-barplot(t(ceramics),main="Real Data",space=0,border=NA)
-#dev.off()
+	for( i in 1:nrow(data)){
+		pt=seq(data$start[i],data$end[i],.01)
+		points(pt,rep(data$data[i],length(pt)),col=data$data[i])
+	}
+}
 
 basuraJunio <- function(){
 
@@ -499,33 +533,14 @@ siteWithAmount <- function(expe){
     countSite=agentWith(expe)
     rownames(countSite)=unique(expe$timestep)
 
-heatmapSiteWithGood <- function(countSite,border=NA,space=0,legend=colnames(countSite),...){
+heatmapSiteWithGood <- function(countSite,border=NA,space=0,main="Number of sites with good type",legend=colnames(countSite),args.legend=list(x="topleft"),...){
     colrs=brewer.pal(length(colnames(countSite)),"Set2")
-    barplot(t(countSite),space=space,border=border,main="Number of sites with good type",args.legend=list(x="topleft"),col=colrs,...)
+    colrs=heat.colors(length(colnames(countSite)))
+    colrs=colorRampPalette(brewer.pal(3,"Blues"))(length(colnames(countSite)))
+    barplot(t(countSite),space=space,border=border,main=main,col=colrs,args.legend=args.legend,...)
 
 }
 
-plotSiteWithGood <- function(matrixGoodPerSite,g=NA,...){
-    if(is.na(g)){
-	clrs=brewer.pal(ncol(matrixGoodPerSite),"Set2")
-	names(clrs)=colnames(matrixGoodPerSite)
-	par(xpd=NA)
-	plot(1:nrow(matrixGoodPerSite),matrixGoodPerSite[,1] ,type="n",main="Number of sites with good type",ylim=range(matrixGoodPerSite),bty="n",ylab="number of site",xlab="timestep",...) 
-	sapply(colnames(matrixGoodPerSite),function(i)lines(1:nrow(matrixGoodPerSite), matrixGoodPerSite[,i]   ,col=clrs[i],lwd=3))
-	legend("bottomright",legend=colnames(matrixGoodPerSite),col=clrs,lwd=3,cex=.8)
-	text(nrow(matrixGoodPerSite)+.2,matrixGoodPerSite[nrow(matrixGoodPerSite),],labels=paste(colnames(matrixGoodPerSite)),cex=.8,adj=0)
-    }
-    else{
-	clrs=brewer.pal(ncol(matrixGoodPerSite),"Set2")
-	names(clrs)=colnames(matrixGoodPerSite)
-	par(xpd=NA)
-	plot(1:nrow(matrixGoodPerSite),matrixGoodPerSite[,1] ,type="n",main="Number of sites with good type",ylim=range(matrixGoodPerSite),bty="n",ylab="number of site",xlab="timestep") 
-	points(1:nrow(matrixGoodPerSite), matrixGoodPerSite[,g]   ,col=clrs[g],lwd=3)
-	legend("bottomright",legend=colnames(matrixGoodPerSite),col=clrs,lwd=3,cex=.8)
-	text(nrow(matrixGoodPerSite)+.2,matrixGoodPerSite[nrow(matrixGoodPerSite),g],labels=paste(colnames(matrixGoodPerSite))[g],cex=.8,adj=0)
-    }
-
-}
 
 SimppleComAugust2017 <- function(){
 
@@ -969,39 +984,39 @@ getStatFromAll <- function(allexp,fun=mean){
 }
 
 
-lowco=getAllSiteWithAmount("/home/scarrign/result/testCopy/1_mu0.002-copy0.0001/")
-highco=getAllSiteWithAmount("/home/scarrign/result/testCopy/6_mu0.002-copy10/")
-lowcohmu=getAllSiteWithAmount("/home/scarrign/result/testCopy/13_mu0.006-copy0.0001/")
-highcohmu=getAllSiteWithAmount("/home/scarrign/result/testCopy/18_mu0.006-copy10/")
-
-lowco=getAllSiteWithAmount("/home/scarrign/result/testCopyMutEvents/1_mu0.001-copy0.0001/")
-highco=getAllSiteWithAmount("/home/scarrign/result/testCopyMutEvents/6_mu0.001-copy10/")
-
-
-
-apply(sdL,2,lines)
-apply(sdH,2,lines,col="red")
-meanL=getStatFromAll(lowco)
-meanH=getStatFromAll(highco)
-sdL=getStatFromAll(lowco,sd)
-seL=getStatFromAll(lowco,se)
-meanH=getStatFromAll(highco)
-sdH=getStatFromAll(highco,sd)
-seH=getStatFromAll(highco,se)
-
-meanL2=getStatFromAll(lowcohmu)
-sdL2=getStatFromAll(lowcohmu,sd)
-seL2=getStatFromAll(lowcohmu,se)
-meanH2=getStatFromAll(highcohmu)
-sdH2=getStatFromAll(highcohmu,sd)
-seH2=getStatFromAll(highcohmu,se)
-
-apply(meanL,2,lines)    
-apply(meanH2,2,lines,col="red")    
-apply(meanA+seA,2,lines,lty=2)    
-apply(meanA-seA,2,lines,lty=2)    
-
-getStatFromAll(aaa)-getStatFromAll(aaa,sd)
+#lowco=getAllSiteWithAmount("/home/scarrign/result/testCopy/1_mu0.002-copy0.0001/")
+#highco=getAllSiteWithAmount("/home/scarrign/result/testCopy/6_mu0.002-copy10/")
+#lowcohmu=getAllSiteWithAmount("/home/scarrign/result/testCopy/13_mu0.006-copy0.0001/")
+#highcohmu=getAllSiteWithAmount("/home/scarrign/result/testCopy/18_mu0.006-copy10/")
+#
+#lowco=getAllSiteWithAmount("/home/scarrign/result/testCopyMutEvents/1_mu0.001-copy0.0001/")
+#highco=getAllSiteWithAmount("/home/scarrign/result/testCopyMutEvents/6_mu0.001-copy10/")
+#
+#
+#
+#apply(sdL,2,lines)
+#apply(sdH,2,lines,col="red")
+#meanL=getStatFromAll(lowco)
+#meanH=getStatFromAll(highco)
+#sdL=getStatFromAll(lowco,sd)
+#seL=getStatFromAll(lowco,se)
+#meanH=getStatFromAll(highco)
+#sdH=getStatFromAll(highco,sd)
+#seH=getStatFromAll(highco,se)
+#
+#meanL2=getStatFromAll(lowcohmu)
+#sdL2=getStatFromAll(lowcohmu,sd)
+#seL2=getStatFromAll(lowcohmu,se)
+#meanH2=getStatFromAll(highcohmu)
+#sdH2=getStatFromAll(highcohmu,sd)
+#seH2=getStatFromAll(highcohmu,se)
+#
+#apply(meanL,2,lines)    
+#apply(meanH2,2,lines,col="red")    
+#apply(meanA+seA,2,lines,lty=2)    
+#apply(meanA-seA,2,lines,lty=2)    
+#
+#getStatFromAll(aaa)-getStatFromAll(aaa,sd)
 
 
 timingTest <- function(){
@@ -1974,5 +1989,28 @@ ScoreAnalysis <- function(){
     allmean3=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSetSizeOnHighMutLow/timeSet_30/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
     allmean3b=sapply(1:50,function(i)   mean(apply(agentWith(read.csv(paste0("~/result/firstSetFixedGoods/AllTimeSet1ProdWithMut1/timeSetSizeOnHighMutLow/timeSet_1/exp_",i,"/agents.csv"), sep=";"),breaks=50)[,1:5] -data2,1,mean)) )
     
+    plot(enscore$absdiff$prop$div[10:19,] ~ enscore$absdiff$prop$dis[10:19,],col=colyear[rownames( enscore$absdiff$nonprop$dis[10:19,])],pch=20)
 
+
+
+}
+
+printbest <- function(data,diff,prop,pat,patB=NULL){
+	if(is.null(patB))patB=pat
+	ip= prop == "prop"
+	elected=getbest(data[[diff]][[prop]][[pat]])
+	el=unlist(strsplit(elected,"/"))
+	plotSiteWithGood(agentWith(read.csv(file.path("exter/",elected,"agents.csv"),sep=";"),numsite=200,numperiods=50,pattern=patB,proportion = ip),main=el[length(el)])
+}
+
+getboth <- function(data){
+	lapply(data,function(diff)
+	       {
+		       lapply(diff,function(prop)
+			      {
+				      list(dis=prop[["dis"]],div=prop[["div"]],both=(1/2)*(prop[["div"]]/6+prop[["dis"]]))
+			      }
+		       )
+	       }
+	)
 }
