@@ -1,4 +1,6 @@
 require("vioplot")
+source("~/projects/PhD/dev/abc-pandora/abctools.R")
+source("~/projects/PhD/dev/abc-pandora/function.R")
 #datafolder="~/share_res/agentsShort.csv"
 #expeDir="~/share_res/"
 #ds=read.csv(datafolder,sep=";")
@@ -140,6 +142,12 @@ main <- function(){
     par(mar=c(5,4,1,1))
      plotDensities(path,"mu",c("3000.00","0.90"),from=0,to=1,xlim=c(0,1))
     dev.off()
+    pdf("~/presModel/secondSim.pdf")
+     barplot(table(read.csv("../bhB.csv",header=F)),cex.names=.5,las=2)   
+    dev.off()
+    pdf("~/presModel/Sim.pdf")
+     barplot(table(read.csv("../bhB.csv",header=F)),cex.names=.5,las=2)   
+    dev.off()
 
 }
 
@@ -155,4 +163,162 @@ manualABC<-function(){
 	lines(density(prior$nag_good))
 	lines(density(posterior$nag_good))
 }
+
+lapply(names(realdatadiversities),function(i){pdf(paste0("~/presModel/realdivers",i,".pdf"));plotSiteWithGood(realdatadiversities[[i]]);dev.off()})
+lapply(names(realdatadiversities),function(i){pdf(paste0("~/presModel/realdivers",i,"prop.pdf"));plotSiteWithGood(getprop(realdatadiversities[[i]]));dev.off()})
+plot( multiexp$count ~multiexp$div)
+
+	years=rownames(multiexp$count)
+	colyear=topo.colors(length(years))
+	names(colyear)=years
+	pdf("~/presModel/zscorePATTERNtest.pdf")
+	plot(multiexp$count ~ multiexp$div,col=colyear[rownames(multiexp$count)],pch=20,ylab="diversity",xlab="distribution",main="zscores")
+	legend("topright",legend=years,col=colyear,pch=20,title="#periods")
+	dev.off()
+	pdf("~/presModel/zscorePROPtest.pdf")
+	plot(multiexp$div ~ zscorePROP$div,col=colyear[rownames(multiexp$count)],pch=20,ylab="raw",xlab="proportion",main="zscores")
+	dev.off()
+
+	pdf("~/presModel/2scoretest.pdf")
+	plot(multiexp$count ~ absdif$count,col=colyear[rownames(multiexp$count)],pch=20,ylab="zscore",xlab="absolute diff",main="zscores")
+	dev.off()
+	pdf("~/presModel/absPATTERNtest.pdf")
+	plot(absdif$count ~ absdif$div,col=colyear[rownames(absdif$count)],pch=20,ylab="diversity",xlab="distribution",main="mean of abs diff")
+	legend("topright",legend=years,col=colyear,pch=20,title="#periods")
+	dev.off()
+
+	pdf("~/presModel/zscorePSZIE.pdf")
+	plot(1,1,ylim=range(multiexp$div,na.rm=T),xlim=c(.5,length(rownames(multiexp$div))+.5),axes=F,ylab=" score" ,xlab="size of P (y)" )  
+	        axis(2)
+	        axis(1,1:length(rownames(multiexp$div)),label=rownames(multiexp$div))
+	apply(multiexp$div,2,lines,lwd=.05) 
+	dev.off()
+
+	pdf("~/presModel/zscorePSZIEcount.pdf")
+	plot(1,1,ylim=range(multiexp$count,na.rm=T),xlim=c(.5,length(rownames(multiexp$count))+.5),axes=F,ylab=" score" ,xlab="size of P (y)" )  
+	        axis(2)
+	        axis(1,1:length(rownames(multiexp$count)),label=rownames(multiexp$count))
+	apply(multiexp$count,2,lines,lwd=.05) 
+	dev.off()
+
+	pdf("~/presModel/absdifPSZIE.pdf")
+	plot(1,1,ylim=range(absdif$div,na.rm=T),xlim=c(.5,length(rownames(absdif$div))+.5),axes=F,ylab=" score" ,xlab="size of P (y)" )  
+	        axis(2)
+	        axis(1,1:length(rownames(absdif$div)),label=rownames(absdif$div))
+	apply(absdif$div,2,lines,lwd=.05) 
+	dev.off()
+
+	pdf("~/presModel/absdifPSZIEcount.pdf")
+	plot(1,1,ylim=range(absdif$count,na.rm=T),xlim=c(.5,length(rownames(absdif$count))+.5),axes=F,ylab=" score" ,xlab="size of P (y)" )  
+	        axis(2)
+	        axis(1,1:length(rownames(absdif$count)),label=rownames(absdif$count))
+	apply(absdif$count,2,lines,lwd=.05) 
+	dev.off()
+
+	pdf("~/presModel/absdifPROP_propPSZIE.pdf")
+	plot(1,1,ylim=range(absdifPROP$div,na.rm=T),xlim=c(.5,length(rownames(absdifPROP$div))+.5),axes=F,ylab=" score" ,xlab="size of P (y)" )  
+	        axis(2)
+	        axis(1,1:length(rownames(absdifPROP$div)),label=rownames(absdifPROP$div))
+	apply(absdifPROP$div,2,lines,lwd=.05) 
+	dev.off()
+
+
+	pdf("~/presModel/absdifPSPL.pdf")
+	plot(1,1,ylim=range(absdif$count_sample,na.rm=T),xlim=c(.5,6+.5),axes=F,ylab=" score" ,xlab="%sample" )  
+	        axis(2)
+	        axis(1,1:length(rownames(absdif$count_sample)),label=rownames(absdif$count_sample))
+	apply(absdif$count_sample,2,lines,lwd=.1) 
+	dev.off()
+
+	pdf("~/presModel/zscorePSPL.pdf")
+	plot(1,1,ylim=range(multiexp$count_sample,na.rm=T),xlim=c(.5,6+.5),axes=F,ylab=" score" ,xlab="%sample" )  
+	        axis(2)
+	        axis(1,1:length(rownames(multiexp$count_sample)),label=rownames(multiexp$count_sample))
+	apply(multiexp$count_sample,2,lines,lwd=.1) 
+	dev.off()
+
+	pdf("~/presModel/absdifPSPL.pdf")
+	plot(1,1,ylim=range(absdif$div_sample,na.rm=T),xlim=c(.5,6+.5),axes=F,ylab=" score" ,xlab="%sample" )  
+	        axis(2)
+	        axis(1,1:length(rownames(absdif$div_sample)),label=rownames(absdif$div_sample))
+	apply(absdif$div_sample,2,lines,lwd=.1) 
+	dev.off()
+
+	pdf("~/presModel/zscorePSPL.pdf")
+	plot(1,1,ylim=range(multiexp$div_sample,na.rm=T),xlim=c(.5,6+.5),axes=F,ylab=" score" ,xlab="%sample" )  
+	        axis(2)
+	        axis(1,1:length(rownames(multiexp$div_sample)),label=rownames(multiexp$div_sample))
+	apply(multiexp$div_sample,2,lines,lwd=.1) 
+	dev.off()
+
+	pdf("~/presModel/absdifPROPPSPL.pdf")
+	plot(1,1,ylim=range(absdifPROP$count_sample,na.rm=T),xlim=c(.5,6+.5),axes=F,ylab=" score" ,xlab="%sample" )  
+	        axis(2)
+	        axis(1,1:length(rownames(absdifPROP$count_sample)),label=rownames(absdifPROP$count_sample))
+	apply(absdifPROP$count_sample,2,lines,lwd=.1) 
+	dev.off()
+	plot(1,1,ylim=range(absdif$div,na.rm=T),xlim=c(0,10),ylab="zscore",xlab="#periods",lwd=.05)  
+
+	plot(1,1,ylim=range(absdif$count,na.rm=T),xlim=c(0,12))  
+	apply(absdif$count,2,lines) 
+	names(topten)
+
+
+	foldname=colnames(multiexp$count)
+	biases=seq(0,1,.2)
+        sample_exp = foldname[sample.int(length(foldname),50,replace=F)]
+        sample_exp = foldname[1:50]
+	spl=file.path("~/projects/PhD/dev/abc-pandora/",sample_exp,"agents.csv")
+        multiexp[["count_sample"]]=     sapply( spl,function(eij){print(eij);sapply(biases,function(y){print(y);tryCatch(zscore(t(agentWith(read.csv(eij,sep=";"),breaks=25,numsite=200*y,        type="count")),realdatadistributions[[as.character(25)]]),error=function(err){NA})})})
+        zscorePROP[["count_sample"]]=   sapply( spl,function(eij){print(eij);sapply(biases,function(y){print(y);tryCatch(zscore(getprop(t(agentWith(read.csv(eij,sep=";"),breaks=25,numsite=200*y,type="count"))),getprop(realdatadistributions[[as.character(25)]])),error=function(err){NA})})})
+
+        absdif[["count_sample"]]=       sapply( spl,function(eij){print(eij);sapply(biases,function(y){print(y);tryCatch(absdiff(t(agentWith(read.csv(eij,sep=";"),breaks=25,numsite=200*y,       type="count")),realdatadistributions[[as.character(25)]]),error=function(err){NA})})})
+        absdifPROP[["count_sample"]]=   sapply( spl,function(eij){print(eij);sapply(biases,function(y){print(y);tryCatch(absdiff(getprop(t(agentWith(read.csv(eij,sep=";"),breaks=25,numsite=200* y,type="count"))),getprop(realdatadistributions[[as.character(25)]])),error=function(err){NA})})})
+
+	pdf("~/presModel/succes.pdf")
+	plotAllDensities(getlistParticlesFromPath("~/projects/PhD/dev/abc-pandora/realIntro/CITIESPL/"))
+	dev.off()
+
+	pdf("~/presModel/random.pdf")
+	plotAllDensities(getlistParticlesFromPath("~/projects/PhD/dev/abc-pandora/realIntro/trand/"))
+	plotAllDensities(getlistParticlesFromPath("~/projects/PhD/dev/abc-pandora/nuevoscore/"))
+	dev.off()
+	rdm=getlistParticlesFromPath("~/projects/PhD/dev/abc-pandora/realIntro/trand/")
+	sbd=getlistParticlesFromPath("~/projects/PhD/dev/abc-pandora/realIntro/CITIESPL/")
+	mixd=list(random=rdm[["0.0894"]],succes=sbd[["0.0894"]])
+	plotDensities(mixd,"mu")
+
+
+plotDensities <- function(table,param,...){
+	#we assume table1 is a "priorlike" function
+	#htcolF=c(rgb(34, 139, 34,127.5,maxColorValue=255),rgb(178, 255, 255,127.5,maxColorValue=255))
+	rng=range(table[[1]][,param])
+	print(rng)
+	from=rng[1]
+	htcolF=c("blue","green")
+	names(htcolF)=c("succes","random")
+	to=rng[2]
+	listParticles=table[1:length(table)]
+	names(listParticles)=names(table)
+	densitiesPrio=density(table[[1]][,param],from=from,to=to)
+	densitiesPrio2=density(table[[2]][,param],from=from,to=to)
+	par(mar=c(5,5,1,1))
+	plot(density(listParticles[[1]][,param]),type="n",main="", xlab=substitute(p,list(p=param)),...)
+	polygon(c(from,densitiesPrio$x,to),c(0,densitiesPrio$y,0),col=htcolF[names(table)[1]],lwd=2)
+	polygon(c(from,densitiesPrio2$x,to),c(0,densitiesPrio2$y,0),col=htcolF[names(table)[2]],lwd=2)
+	legend("topright",legend=names(table),fill=htcolF[names(table)])
+}
+
+row=names(which.min(apply( multiexp$count,1,min,na.rm=T)) )
+col=names(which.min(apply( multiexp$count,2,min,na.rm=T)) )
+best=cbind(multiexp$div[row,col],multiexp$count[row,col])
+plot(multiexp$count ~ multiexp$div,col=colyear[rownames(multiexp$count)],pch=20)
+plot(multiexp$count ~ absdif$count,col=colyear[rownames(multiexp$count)],pch=20)
+plot(multiexp$div ~ absdif$div,col=colyear[rownames(multiexp$count)],pch=20)
+points(best,col="red",cex=2)
+
+col=names(which.max(apply( multiexp$count,1,max,na.rm=T)) )
+row=names(which.max(apply( multiexp$count,1,max,na.rm=T)) )
+worst=cbind(multiexp$div[row,col],multiexp$count[row,col])
+points(worst,col="red",cex=2)
 
