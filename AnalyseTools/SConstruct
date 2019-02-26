@@ -9,7 +9,7 @@ srcFiles = Split('main.cxx NoState.cxx')
 import os, sys
 from subprocess import call
 
-pandoraPath = os.getenv('PANDORAPATH', '/usr/local/pandora')
+pandoraPath = os.getenv('PANDORAPATH', '/opt/pandora')
 sys.path.append(pandoraPath+'/bin')
 
 import generateMpi 
@@ -37,9 +37,9 @@ else:
     env.Append(LIBS = 'pandora')
 
 env.Append(CPPPATH = ['.', pandoraPath+'/include'])
-env.Append(CPPPATH = ['/usr/local/hdf5/include/'])
+env.Append(CPPPATH = ['/opt/hdf5-1.8.19//include/'])
 env.Append(LIBPATH = [pandoraPath+'/lib'])
-env.Append(LIBPATH = ['/usr/local/hdf5/lib/'])
+env.Append(LIBPATH = ['/opt/hdf5-1.8.19//lib/'])
 
 # add the list of mpi code that must be generated & compiled
 mpiAgentsSrc = ['mpiCode/FactoryCode.cxx']
