@@ -3,7 +3,7 @@ if(require("vioplot")){library(vioplot)}
 if(require("RColorBrewer")){library(RColorBrewer)}
 #if(require("poweRlaw")){library(poweRlaw)}
 if(require("XML")){library(XML)}
-source("configHandle.R")
+source("ext_scripts/configHandle.R")
 
 
 
