@@ -79,7 +79,6 @@ namespace Epnet
 
 				    // a simple cultural exchange based on my score and the score of the other agents I know
 
-				    bool proba=false;
 
 				    if( relScore >1 || relScore < 0 || selfRelScore <0 || selfRelScore > 1){
 					std::cout<<"ERROR"<<std::endl;
@@ -93,21 +92,24 @@ namespace Epnet
 					std::cout<<"other: "<< r.getId()<<std::endl;
 				    }
 
-				    if(proba && Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < provinceWorld.getCopyRate() ){
-					//std::cout<<"soudo"<<std::endl;
-					//log_INFO("culture", world->getCurrentTimeStep()<< " , " <<  romanAgent.getId()<<" , "<<selfRelScore<<" , "<<r.getId()<<" , "<<relScore);
-					double diff= std::abs(selfRelScore - relScore) ;
-					if(_selectionProcess == "copymin"){
-					    proba = relScore < selfRelScore  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > diff * provinceWorld.getBiasStrength() ;
-					}
-					else if(_selectionProcess == "copymax"){
-					    proba = relScore > selfRelScore  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < diff * provinceWorld.getBiasStrength() ;
-					}
-					if(proba){
-					    reproductionDone = 1;
-					    romanAgent.copyPriceFrom(r.getId());
-					}
-				    }
+                    if(Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < provinceWorld.getCopyRate() ){
+                        bool proba=false;
+                        double diff= std::abs(selfRelScore - relScore) ;
+                        if(_selectionProcess == "copymin"){
+                            proba = relScore < selfRelScore  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX > diff * provinceWorld.getBiasStrength() ;
+                        }
+                        else if(_selectionProcess == "copymax"){
+                            proba = relScore > selfRelScore  &&  Engine::GeneralState::statistics().getUniformDistValue(0,RAND_MAX)/(double)RAND_MAX < diff * provinceWorld.getBiasStrength() ;
+                            std::cout<<"thebias"<<std::endl;
+                        }
+                        if(proba){
+                            reproductionDone = 1;
+                            romanAgent.copyPriceFrom(r.getId());
+                            std::cout<<"soudo"<<std::endl;
+                            std::cout<< world->getCurrentTimeStep()<< " , " <<  romanAgent.getId()<<" , "<<selfRelScore<<" , "<<r.getId()<<" , "<<relScore << std::endl;
+                            log_INFO("culture", world->getCurrentTimeStep()<< " , " <<  romanAgent.getId()<<" , "<<selfRelScore<<" , "<<r.getId()<<" , "<<relScore);
+                        }
+                    }
 
 
 				}
