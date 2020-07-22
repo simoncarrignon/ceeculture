@@ -54,7 +54,7 @@ add_executable( ${EX_NAME}
                 Roman.cxx
                 SendGoodsAction.cxx
                 TradeAction.cxx
-                AnalyseTools/NoState.cxx.cxx
+                #AnalyseTools/NoState.cxx
                 mpiCode/FactoryCode.cxx
                 mpiCode/${FILE_NAME}_mpi.cxx
                 )
